@@ -1,7 +1,12 @@
 package com.github.codeboyzhou.mcp.declarative;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.codeboyzhou.mcp.declarative.annotation.*;
+import com.github.codeboyzhou.mcp.declarative.annotation.McpComponentScan;
+import com.github.codeboyzhou.mcp.declarative.annotation.McpResource;
+import com.github.codeboyzhou.mcp.declarative.annotation.McpResources;
+import com.github.codeboyzhou.mcp.declarative.annotation.McpTool;
+import com.github.codeboyzhou.mcp.declarative.annotation.McpToolParam;
+import com.github.codeboyzhou.mcp.declarative.annotation.McpTools;
 import com.github.codeboyzhou.mcp.declarative.util.ReflectionHelper;
 import io.modelcontextprotocol.server.McpServer;
 import io.modelcontextprotocol.server.McpServerFeatures;
@@ -18,7 +23,11 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class McpServers {
 
@@ -47,14 +56,20 @@ public class McpServers {
 
     public static McpServers run(Class<?> applicationMainClass, String[] args) {
         McpComponentScan scan = applicationMainClass.getAnnotation(McpComponentScan.class);
-        if (scan == null) {
-            reflections = new Reflections(applicationMainClass.getPackageName());
-        } else if (!scan.basePackage().trim().isBlank()) {
-            reflections = new Reflections(scan.basePackage());
-        } else if (scan.basePackageClass() != Object.class) {
-            reflections = new Reflections(scan.basePackageClass().getPackageName());
-        }
+        reflections = new Reflections(determineBasePackage(scan, applicationMainClass));
         return INSTANCE;
+    }
+
+    private static String determineBasePackage(McpComponentScan scan, Class<?> applicationMainClass) {
+        if (scan != null) {
+            if (!scan.basePackage().trim().isBlank()) {
+                return scan.basePackage();
+            }
+            if (scan.basePackageClass() != Object.class) {
+                return scan.basePackageClass().getPackageName();
+            }
+        }
+        return applicationMainClass.getPackageName();
     }
 
     public void startSyncStdioServer(String name, String version) {

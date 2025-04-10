@@ -44,13 +44,16 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!--==================== maven plugin versions ====================-->
         <central-publishing-maven-plugin.version>0.7.0</central-publishing-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
         <maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version>
         <maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
+        <maven-surefire-plugin.version>3.2.3</maven-surefire-plugin.version>
         <sortpom-maven-plugin.version>4.0.0</sortpom-maven-plugin.version>
         <!--==================== dependency versions ======================-->
-        <mcp-sdk.version>0.9.0-SNAPSHOT</mcp-sdk.version>
         <jetty.version>12.0.18</jetty.version>
+        <junit5.version>5.10.2</junit5.version>
+        <mcp-sdk.version>0.9.0-SNAPSHOT</mcp-sdk.version>
         <reflections.version>0.10.2</reflections.version>
     </properties>
 
@@ -76,6 +79,12 @@
             <groupId>org.eclipse.jetty.ee10</groupId>
             <artifactId>jetty-ee10-servlet</artifactId>
             <version>${jetty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit5.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.reflections</groupId>
@@ -144,6 +153,41 @@
                         <goals>
                             <goal>jar-no-fork</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <!--suppress UnresolvedMavenProperty for IntelliJ IDEA-->
+                    <argLine>${jacoco.agent.argLine}</argLine>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>pre-unit-test</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <propertyName>jacoco.agent.argLine</propertyName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>post-unit-test</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <phase>test</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/unit-test-report</outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
