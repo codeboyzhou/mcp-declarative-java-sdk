@@ -1,13 +1,14 @@
 package com.github.codeboyzhou.mcp.declarative;
 
 import com.github.codeboyzhou.mcp.declarative.annotation.McpTools;
-import com.github.codeboyzhou.mcp.declarative.server.TestMcpTools;
 import com.github.codeboyzhou.mcp.declarative.server.TestMcpComponentScanBasePackageClass;
 import com.github.codeboyzhou.mcp.declarative.server.TestMcpComponentScanBasePackageString;
 import com.github.codeboyzhou.mcp.declarative.server.TestMcpComponentScanDefault;
 import com.github.codeboyzhou.mcp.declarative.server.TestMcpComponentScanIsNull;
+import com.github.codeboyzhou.mcp.declarative.server.TestMcpTools;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.reflections.Reflections;
@@ -17,6 +18,7 @@ import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -50,6 +52,14 @@ class McpServersTest {
     })
     void testRun(Class<?> applicationMainClass) {
         McpServers.run(applicationMainClass, EMPTY_ARGS);
+    }
+
+    @Test
+    void testStartSyncStdioServer() {
+        assertDoesNotThrow(() -> {
+            McpServers servers = McpServers.run(TestMcpComponentScanDefault.class, EMPTY_ARGS);
+            servers.startSyncStdioServer("test-mcp-sync-stdio-server", "1.0.0");
+        });
     }
 
     private Reflections getReflectionsField() throws NoSuchFieldException, IllegalAccessException {
