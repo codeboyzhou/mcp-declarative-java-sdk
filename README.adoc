@@ -1,8 +1,12 @@
 = Annotation-driven MCP Java SDK
 
-Declarative https://github.com/modelcontextprotocol/java-sdk[MCP Java SDK] Development with Java Annotations - No Spring Framework Required.
+Declarative https://github.com/modelcontextprotocol/java-sdk[MCP Java SDK] Development with Java Annotations.
 
-Focus on your core logic (resources/prompts/tools) - Not SDK low-level details. Instant MCP Java server in 1 LOC.
+== Advantages
+- No Spring Framework Required.
+- Instant MCP Java server in 1 LOC.
+- No need to write more SDK low-level codes.
+- Just focus on your core logic (resources/prompts/tools).
 
 == Showcase
 
@@ -19,7 +23,7 @@ public class MyMcpServer {
         // Start a STDIO MCP server
         McpServers.run(MyMcpServer.class, args).startSyncStdioServer("mcp-server", "1.0.0");
         // or a HTTP SSE MCP server
-        // McpServers.run(MyMcpServer.class, args).startSyncSseServer("mcp-server", "1.0.0");
+        McpServers.run(MyMcpServer.class, args).startSyncSseServer("mcp-server", "1.0.0");
     }
 
 }
