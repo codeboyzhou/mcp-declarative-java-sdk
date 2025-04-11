@@ -7,7 +7,6 @@ import com.github.codeboyzhou.mcp.declarative.server.TestMcpComponentScanDefault
 import com.github.codeboyzhou.mcp.declarative.server.TestMcpComponentScanIsNull;
 import com.github.codeboyzhou.mcp.declarative.server.TestMcpTools;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -28,11 +27,6 @@ class McpServersTest {
 
     Reflections reflections;
 
-    @BeforeEach
-    void setUp() {
-        reflections = null;
-    }
-
     @AfterEach
     void tearDown() throws NoSuchFieldException, IllegalAccessException {
         reflections = getReflectionsField();
@@ -41,6 +35,7 @@ class McpServersTest {
         Set<String> scannedToolClass = scannedClasses.get(McpTools.class.getName());
         assertEquals(1, scannedToolClass.size());
         assertEquals(scannedToolClass.iterator().next(), TestMcpTools.class.getName());
+        reflections = null;
     }
 
     @ParameterizedTest
@@ -57,8 +52,20 @@ class McpServersTest {
     @Test
     void testStartSyncStdioServer() {
         assertDoesNotThrow(() -> {
-            McpServers servers = McpServers.run(TestMcpComponentScanDefault.class, EMPTY_ARGS);
+            McpServers servers = McpServers.run(TestMcpComponentScanIsNull.class, EMPTY_ARGS);
             servers.startSyncStdioServer("test-mcp-sync-stdio-server", "1.0.0");
+        });
+    }
+
+    @Test
+    void testStartSyncSseServer() {
+        assertDoesNotThrow(() -> {
+            Thread thread = new Thread(() -> {
+                McpServers servers = McpServers.run(TestMcpComponentScanIsNull.class, EMPTY_ARGS);
+                servers.startSyncSseServer("test-mcp-sync-sse-server", "1.0.0");
+            });
+            thread.setDaemon(true);
+            thread.start();
         });
     }
 
