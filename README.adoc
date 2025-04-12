@@ -1,5 +1,10 @@
 = Annotation-driven MCP Java SDK
 
+image:https://img.shields.io/badge/Java-17+-blue[java-version]
+image:https://img.shields.io/maven-central/v/io.github.codeboyzhou/mcp-declarative-java-sdk?color=blue[maven-central-version]
+image:https://img.shields.io/codecov/c/github/awesome-java-web/spring-boot-commons?color=brightgreen[codecov-coverage]
+image:https://img.shields.io/github/actions/workflow/status/io.github.codeboyzhou/mcp-declarative-java-sdk/maven-build.yml[github-action-status]
+
 Declarative https://github.com/modelcontextprotocol/java-sdk[MCP Java SDK] Development with Java Annotations.
 
 == Advantages
@@ -15,7 +20,7 @@ Just put this one line code in your `main` method:
 [source,java]
 ----
 // You can use this annotation to specify the base package
-// to scan for MCP resources, prompts, tools, but it's not required.
+// to scan for MCP resources, prompts, tools, but it's optional.
 @McpComponentScan(basePackage = "com.github.codeboyzhou.mcp.examples")
 public class MyMcpServer {
 
@@ -82,6 +87,7 @@ Add the following Maven dependency to your project:
 
 [source,xml]
 ----
+<!-- Internally relies on native MCP Java SDK 0.8.1 -->
 <dependency>
     <groupId>io.github.codeboyzhou</groupId>
     <artifactId>mcp-declarative-java-sdk</artifactId>
