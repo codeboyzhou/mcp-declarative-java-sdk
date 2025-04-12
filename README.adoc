@@ -11,6 +11,7 @@ Declarative https://github.com/modelcontextprotocol/java-sdk[MCP Java SDK] Devel
 - No Spring Framework Required.
 - Instant MCP Java server in 1 LOC.
 - No need to write more SDK low-level codes.
+- Get rid of complex and lengthy JSON schema definitions.
 - Just focus on your core logic (resources/prompts/tools).
 
 == Showcase
@@ -87,11 +88,11 @@ Add the following Maven dependency to your project:
 
 [source,xml]
 ----
-<!-- Internally relies on native MCP Java SDK 0.8.1 -->
+<!-- Internally relies on native MCP Java SDK 0.9.0 -->
 <dependency>
     <groupId>io.github.codeboyzhou</groupId>
     <artifactId>mcp-declarative-java-sdk</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
 </dependency>
 ----
 
