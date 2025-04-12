@@ -2,8 +2,8 @@
 
 image:https://img.shields.io/badge/Java-17+-blue[java-version]
 image:https://img.shields.io/maven-central/v/io.github.codeboyzhou/mcp-declarative-java-sdk?color=blue[maven-central-version]
-image:https://img.shields.io/codecov/c/github/awesome-java-web/spring-boot-commons?color=brightgreen[codecov-coverage]
-image:https://img.shields.io/github/actions/workflow/status/io.github.codeboyzhou/mcp-declarative-java-sdk/maven-build.yml[github-action-status]
+image:https://img.shields.io/codecov/c/github/codeboyzhou/mcp-declarative-java-sdk?color=brightgreen[codecov-coverage]
+image:https://img.shields.io/github/actions/workflow/status/codeboyzhou/mcp-declarative-java-sdk/maven-build.yml[github-action-status]
 
 Declarative https://github.com/modelcontextprotocol/java-sdk[MCP Java SDK] Development with Java Annotations.
 
