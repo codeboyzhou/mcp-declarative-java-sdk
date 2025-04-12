@@ -59,14 +59,11 @@ class McpServersTest {
 
     @Test
     void testStartSyncSseServer() {
-        assertDoesNotThrow(() -> {
-            Thread thread = new Thread(() -> {
-                McpServers servers = McpServers.run(TestMcpComponentScanIsNull.class, EMPTY_ARGS);
-                servers.startSyncSseServer("test-mcp-sync-sse-server", "1.0.0");
-            });
-            thread.setDaemon(true);
-            thread.start();
-        });
+        System.setProperty("mcp.declarative.java.sdk.testing", "true");
+        McpServers servers = McpServers.run(TestMcpComponentScanIsNull.class, EMPTY_ARGS);
+        assertDoesNotThrow(() -> servers.startSyncSseServer("test-mcp-sync-sse-server", "1.0.0"));
+        assertDoesNotThrow(() -> servers.startSyncSseServer("test-mcp-sync-sse-server", "1.0.0", 9118));
+        assertDoesNotThrow(() -> servers.startSyncSseServer("test-mcp-sync-sse-server", "1.0.0", "/message", "/sse", 9119));
     }
 
     private Reflections getReflectionsField() throws NoSuchFieldException, IllegalAccessException {

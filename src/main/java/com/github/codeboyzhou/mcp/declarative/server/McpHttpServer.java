@@ -9,6 +9,8 @@ import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
+
 public class McpHttpServer<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(McpHttpServer.class);
@@ -58,6 +60,8 @@ public class McpHttpServer<T> {
 
         Server httpserver = new Server(serverInfo.port());
         httpserver.setHandler(handler);
+        httpserver.setStopAtShutdown(true);
+        httpserver.setStopTimeout(Duration.ofSeconds(5).getSeconds());
 
         try {
             httpserver.start();
@@ -68,6 +72,13 @@ public class McpHttpServer<T> {
 
             // Add a shutdown hook to stop the HTTP server and MCP server gracefully
             addShutdownHook(httpserver);
+
+            // Check if the server is running in test mode
+            final boolean testing = Boolean.parseBoolean(System.getProperty("mcp.declarative.java.sdk.testing"));
+            if (testing) {
+                logger.debug("Jetty-based HTTP server is running in test mode, not waiting for HTTP server to stop");
+                return;
+            }
 
             // Wait for the HTTP server to stop
             httpserver.join();
