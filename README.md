@@ -1,25 +1,25 @@
-= Annotation-driven MCP Java SDK
+# Annotation-driven MCP Java SDK
 
-image:https://img.shields.io/badge/Java-17+-blue[java-version]
-image:https://img.shields.io/maven-central/v/io.github.codeboyzhou/mcp-declarative-java-sdk?color=blue[maven-central-version]
-image:https://img.shields.io/codecov/c/github/codeboyzhou/mcp-declarative-java-sdk?color=brightgreen[codecov-coverage]
-image:https://img.shields.io/github/actions/workflow/status/codeboyzhou/mcp-declarative-java-sdk/maven-build.yml[github-action-status]
+![Java](https://img.shields.io/badge/Java-17+-blue)
+[![maven-central](https://img.shields.io/maven-central/v/io.github.codeboyzhou/mcp-declarative-java-sdk?color=blue)](https://mvnrepository.com/artifact/io.github.codeboyzhou/mcp-declarative-java-sdk)
+[![coverage](https://img.shields.io/codecov/c/github/codeboyzhou/mcp-declarative-java-sdk?logo=codecov&color=brightgreen)](https://app.codecov.io/github/codeboyzhou/mcp-declarative-java-sdk)
+[![GitHub Action](https://github.com/codeboyzhou/mcp-declarative-java-sdk/actions/workflows/maven-build.yml/badge.svg)](https://github.com/codeboyzhou/mcp-declarative-java-sdk/actions/workflows/maven-build.yml)
 
-Declarative https://github.com/modelcontextprotocol/java-sdk[MCP Java SDK] Development with Java Annotations.
+Declarative [MCP Java SDK](https://github.com/modelcontextprotocol/java-sdk) Development with Java Annotations.
 
-== Advantages
+## Advantages
+
 - No Spring Framework Required.
 - Instant MCP Java server in 1 LOC.
 - No need to write more SDK low-level codes.
 - Get rid of complex and lengthy JSON schema definitions.
 - Just focus on your core logic (resources/prompts/tools).
 
-== Showcase
+## Showcase
 
 Just put this one line code in your `main` method:
 
-[source,java]
-----
+```java
 // You can use this annotation to specify the base package
 // to scan for MCP resources, prompts, tools, but it's optional.
 @McpComponentScan(basePackage = "com.github.codeboyzhou.mcp.examples")
@@ -33,12 +33,11 @@ public class MyMcpServer {
     }
 
 }
-----
+```
 
 No need to care about the low-level details of native MCP Java SDK and how to create the MCP resources, prompts, and tools. Just annotate them like this:
 
-[source,java]
-----
+```java
 @McpResources
 public class MyMcpResources {
 
@@ -51,10 +50,9 @@ public class MyMcpResources {
 
     // Your other MCP resources here...
 }
-----
+```
 
-[source,java]
-----
+```java
 @McpTools
 public class MyMcpTools {
 
@@ -68,45 +66,43 @@ public class MyMcpTools {
 
     // Your other MCP tools here...
 }
-----
+```
 
 Now it's all set, run your MCP server, choose one MCP client you like and start your MCP exploration journey.
 
-[WARNING]
+> [!WARNING]
+> Please note that this project is under development and is not ready for production use.
 
-Please note that this project is under development and is not ready for production use.
+## Getting Started
 
-== Getting Started
-
-=== Requirements
+### Requirements
 
 - Java 17 or later (Restricted by MCP Java SDK)
 
-=== Installation
+### Installation
 
 Add the following Maven dependency to your project:
 
-[source,xml]
-----
+```xml
 <!-- Internally relies on native MCP Java SDK 0.9.0 -->
 <dependency>
     <groupId>io.github.codeboyzhou</groupId>
     <artifactId>mcp-declarative-java-sdk</artifactId>
     <version>0.2.0</version>
 </dependency>
-----
+```
 
-=== Examples
+### Examples
 
-You can find more examples and usages in this https://github.com/codeboyzhou/mcp-declarative-java-sdk-examples[repository].
+You can find more examples and usages in this [repository](https://github.com/codeboyzhou/mcp-declarative-java-sdk-examples).
 
-== What is MCP?
+## What is MCP?
 
-The https://modelcontextprotocol.io[Model Context Protocol (MCP)] lets you build servers that expose data and functionality to LLM applications in a secure, standardized way. Think of it like a web API, but specifically designed for LLM interactions. MCP servers can:
+The [Model Context Protocol (MCP)](https://modelcontextprotocol.io) lets you build servers that expose data and functionality to LLM applications in a secure, standardized way. Think of it like a web API, but specifically designed for LLM interactions. MCP servers can:
 
 - Expose data through **Resources** (think of these sort of like GET endpoints; they are used to load information into the LLM's context)
 - Provide functionality through **Tools** (sort of like POST endpoints; they are used to execute code or otherwise produce a side effect)
 - Define interaction patterns through **Prompts** (reusable templates for LLM interactions)
 - And more!
 
-You can start exploring everything about *MCP* from https://modelcontextprotocol.io[here].
+You can start exploring everything about **MCP** from [here](https://modelcontextprotocol.io).
