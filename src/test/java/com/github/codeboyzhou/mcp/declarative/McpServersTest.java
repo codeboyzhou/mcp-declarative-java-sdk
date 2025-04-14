@@ -1,6 +1,8 @@
 package com.github.codeboyzhou.mcp.declarative;
 
 import com.github.codeboyzhou.mcp.declarative.annotation.McpTools;
+import com.github.codeboyzhou.mcp.declarative.server.McpServerInfo;
+import com.github.codeboyzhou.mcp.declarative.server.McpSseServerInfo;
 import com.github.codeboyzhou.mcp.declarative.server.TestMcpComponentScanBasePackageClass;
 import com.github.codeboyzhou.mcp.declarative.server.TestMcpComponentScanBasePackageString;
 import com.github.codeboyzhou.mcp.declarative.server.TestMcpComponentScanDefault;
@@ -53,7 +55,12 @@ class McpServersTest {
     void testStartSyncStdioServer() {
         assertDoesNotThrow(() -> {
             McpServers servers = McpServers.run(TestMcpComponentScanIsNull.class, EMPTY_ARGS);
-            servers.startSyncStdioServer("test-mcp-sync-stdio-server", "1.0.0");
+            McpServerInfo serverInfo = McpServerInfo.builder()
+                .instructions("test-mcp-sync-stdio-server-instructions")
+                .name("test-mcp-sync-stdio-server")
+                .version("1.0.0")
+                .build();
+            servers.startSyncStdioServer(serverInfo);
         });
     }
 
@@ -61,9 +68,18 @@ class McpServersTest {
     void testStartSyncSseServer() {
         System.setProperty("mcp.declarative.java.sdk.testing", "true");
         McpServers servers = McpServers.run(TestMcpComponentScanIsNull.class, EMPTY_ARGS);
-        assertDoesNotThrow(() -> servers.startSyncSseServer("test-mcp-sync-sse-server", "1.0.0"));
-        assertDoesNotThrow(() -> servers.startSyncSseServer("test-mcp-sync-sse-server", "1.0.0", 9118));
-        assertDoesNotThrow(() -> servers.startSyncSseServer("test-mcp-sync-sse-server", "1.0.0", "/message", "/sse", 9119));
+        assertDoesNotThrow(() -> {
+            McpSseServerInfo serverInfo = McpSseServerInfo.builder()
+                .instructions("test-mcp-sync-sse-server-instructions")
+                .baseUrl("http://127.0.0.1:8080")
+                .messageEndpoint("/message")
+                .sseEndpoint("/sse")
+                .port(8080)
+                .name("test-mcp-sync-sse-server")
+                .version("1.0.0")
+                .build();
+            servers.startSyncSseServer(serverInfo);
+        });
     }
 
     private Reflections getReflectionsField() throws NoSuchFieldException, IllegalAccessException {

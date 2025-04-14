@@ -16,9 +16,6 @@ import io.modelcontextprotocol.server.transport.StdioServerTransportProvider;
 import io.modelcontextprotocol.spec.McpServerTransportProvider;
 import org.reflections.Reflections;
 
-import static io.modelcontextprotocol.server.transport.HttpServletSseServerTransportProvider.DEFAULT_BASE_URL;
-import static io.modelcontextprotocol.server.transport.HttpServletSseServerTransportProvider.DEFAULT_SSE_ENDPOINT;
-
 public class McpServers {
 
     private static final McpServers INSTANCE = new McpServers();
@@ -57,9 +54,8 @@ public class McpServers {
         McpServerComponentRegisters.registerAllTo(server, reflections);
     }
 
-    @Deprecated(since = "0.2.0")
-    public void startSyncStdioServer(String name, String version) {
-        startSyncStdioServer(name, version, "You are using a deprecated API with default server instructions");
+    public void startSyncStdioServer(McpServerInfo serverInfo) {
+        startSyncStdioServer(serverInfo.name(), serverInfo.version(), serverInfo.instructions());
     }
 
     public void startSyncSseServer(McpSseServerInfo serverInfo, McpHttpServerStatusListener<McpSyncServer> listener) {
@@ -75,36 +71,6 @@ public class McpServers {
 
     public void startSyncSseServer(McpSseServerInfo serverInfo) {
         startSyncSseServer(serverInfo, new DefaultMcpSyncHttpServerStatusListener());
-    }
-
-    @Deprecated(since = "0.2.0")
-    public void startSyncSseServer(String name, String version, String messageEndpoint, String sseEndpoint, int port) {
-        McpSseServerInfo serverInfo = McpSseServerInfo.builder().name(name).version(version)
-            .instructions("You are using a deprecated API with default server instructions")
-            .baseUrl(DEFAULT_BASE_URL).messageEndpoint(messageEndpoint)
-            .sseEndpoint(sseEndpoint).port(port)
-            .build();
-        startSyncSseServer(serverInfo);
-    }
-
-    @Deprecated(since = "0.2.0")
-    public void startSyncSseServer(String name, String version, int port) {
-        McpSseServerInfo serverInfo = McpSseServerInfo.builder().name(name).version(version)
-            .instructions("You are using a deprecated API with default server instructions")
-            .baseUrl(DEFAULT_BASE_URL).messageEndpoint(DEFAULT_MESSAGE_ENDPOINT)
-            .sseEndpoint(DEFAULT_SSE_ENDPOINT).port(port)
-            .build();
-        startSyncSseServer(serverInfo);
-    }
-
-    @Deprecated(since = "0.2.0")
-    public void startSyncSseServer(String name, String version) {
-        McpSseServerInfo serverInfo = McpSseServerInfo.builder().name(name).version(version)
-            .instructions("You are using a deprecated API with default server instructions")
-            .baseUrl(DEFAULT_BASE_URL).messageEndpoint(DEFAULT_MESSAGE_ENDPOINT)
-            .sseEndpoint(DEFAULT_SSE_ENDPOINT).port(DEFAULT_HTTP_SERVER_PORT)
-            .build();
-        startSyncSseServer(serverInfo);
     }
 
 }
