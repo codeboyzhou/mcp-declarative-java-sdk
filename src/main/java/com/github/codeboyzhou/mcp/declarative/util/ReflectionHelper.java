@@ -28,6 +28,11 @@ public final class ReflectionHelper {
         return method.invoke(object);
     }
 
+    public static Object invokeMethod(Class<?> clazz, Method method, Map<String, Object> parameters) throws Exception {
+        Object object = clazz.getDeclaredConstructor().newInstance();
+        return method.invoke(object, parameters.values().toArray());
+    }
+
     public static Object invokeMethod(Class<?> clazz, Method method, McpSchema.JsonSchema schema, Map<String, Object> parameters) throws Exception {
         Object object = clazz.getDeclaredConstructor().newInstance();
         Map<String, Object> typedParameters = asTypedParameters(schema, parameters);
