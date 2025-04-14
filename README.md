@@ -22,6 +22,7 @@ Just put this one line code in your `main` method:
 ```java
 // You can use this annotation to specify the base package
 // to scan for MCP resources, prompts, tools, but it's optional.
+// If not specified, it will scan the package where the main method is located.
 @McpComponentScan(basePackage = "com.github.codeboyzhou.mcp.examples")
 public class MyMcpServer {
 
@@ -42,7 +43,7 @@ No need to care about the low-level details of native MCP Java SDK and how to cr
 public class MyMcpResources {
 
     // This method defines a MCP resource to expose the OS env variables
-    @McpResource(uri = "env://variables", name = "env", description = "OS env variables")
+    @McpResource(uri = "env://variables", description = "OS env variables")
     public String getSystemEnv() {
         // Just put your logic code here, forget about the MCP SDK details.
         return System.getenv().toString();
@@ -57,7 +58,7 @@ public class MyMcpResources {
 public class MyMcpTools {
 
     // This method defines a MCP tool to read a file
-    @McpTool(name = "read_file", description = "Read complete file contents with UTF-8 encoding")
+    @McpTool(description = "Read complete file contents with UTF-8 encoding")
     public String readFile(
         @McpToolParam(name = "path", description = "filepath", required = true) String path) {
         // Just put your logic code here, forget about the MCP SDK details.
