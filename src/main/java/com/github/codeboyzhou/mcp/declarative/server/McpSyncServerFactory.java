@@ -12,7 +12,8 @@ public class McpSyncServerFactory implements McpServerFactory<McpSyncServer> {
             .instructions(serverInfo.instructions())
             .capabilities(configureServerCapabilities())
             .serverInfo(serverInfo.name(), serverInfo.version())
+            .requestTimeout(serverInfo.requestTimeout())
             .build();
     }
-    
+
 }

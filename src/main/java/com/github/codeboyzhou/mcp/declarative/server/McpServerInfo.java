@@ -1,5 +1,7 @@
 package com.github.codeboyzhou.mcp.declarative.server;
 
+import java.time.Duration;
+
 public class McpServerInfo {
 
     private final String name;
@@ -8,10 +10,13 @@ public class McpServerInfo {
 
     private final String instructions;
 
+    private final Duration requestTimeout;
+
     protected McpServerInfo(Builder<?> builder) {
         this.name = builder.name;
         this.version = builder.version;
         this.instructions = builder.instructions;
+        this.requestTimeout = builder.requestTimeout;
     }
 
     public static Builder<?> builder() {
@@ -30,6 +35,10 @@ public class McpServerInfo {
         return instructions;
     }
 
+    public Duration requestTimeout() {
+        return requestTimeout;
+    }
+
     @SuppressWarnings("unchecked")
     public static class Builder<T extends Builder<T>> {
 
@@ -38,6 +47,8 @@ public class McpServerInfo {
         protected String version;
 
         protected String instructions;
+
+        protected Duration requestTimeout;
 
         protected T self() {
             return (T) this;
@@ -59,6 +70,11 @@ public class McpServerInfo {
 
         public T instructions(String instructions) {
             this.instructions = instructions;
+            return self();
+        }
+
+        public T requestTimeout(Duration requestTimeout) {
+            this.requestTimeout = requestTimeout;
             return self();
         }
 
