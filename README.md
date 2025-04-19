@@ -95,7 +95,7 @@ Add the following Maven dependency to your project:
 
 ### Examples
 
-You can find more examples and usages in this [repository](https://github.com/codeboyzhou/mcp-declarative-java-sdk-examples).
+You can find more examples and usages in this [repository](https://github.com/codeboyzhou/mcp-java-sdk-examples).
 
 ## What is MCP?
 
