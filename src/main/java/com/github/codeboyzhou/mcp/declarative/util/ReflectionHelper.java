@@ -5,22 +5,34 @@ import io.modelcontextprotocol.spec.McpSchema;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import static java.util.stream.Collectors.toSet;
+import java.util.stream.Stream;
 
 public final class ReflectionHelper {
 
-    public static Set<Method> getMethodsAnnotatedWith(Class<?> clazz, Class<? extends Annotation> annotation) {
+    /**
+     * has to use list as result to make order correct
+     * @param clazz
+     * @param annotation
+     * @return
+     */
+    public static List<Method> getMethodsAnnotatedWith(Class<?> clazz, Class<? extends Annotation> annotation) {
         Method[] methods = clazz.getMethods();
-        return Set.of(methods).stream().filter(m -> m.isAnnotationPresent(annotation)).collect(toSet());
+        return Stream.of(methods).filter(m -> m.isAnnotationPresent(annotation)).toList();
     }
 
-    public static Set<Parameter> getParametersAnnotatedWith(Method method, Class<? extends Annotation> annotation) {
+    /**
+     * has to use list as result to make order correct
+     * @param method
+     * @param annotation
+     * @return
+     */
+    public static List<Parameter> getParametersAnnotatedWith(Method method, Class<? extends Annotation> annotation) {
         Parameter[] parameters = method.getParameters();
-        return Set.of(parameters).stream().filter(p -> p.isAnnotationPresent(annotation)).collect(toSet());
+        return Stream.of(parameters).filter(p -> p.isAnnotationPresent(annotation)).toList();
     }
 
     public static Object invokeMethod(Class<?> clazz, Method method) throws Exception {

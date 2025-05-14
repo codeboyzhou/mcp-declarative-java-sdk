@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,7 +33,7 @@ public class McpSyncServerToolRegister
     @Override
     public void registerTo(McpSyncServer server) {
         for (Class<?> toolClass : toolClasses) {
-            Set<Method> methods = ReflectionHelper.getMethodsAnnotatedWith(toolClass, McpTool.class);
+            List<Method> methods = ReflectionHelper.getMethodsAnnotatedWith(toolClass, McpTool.class);
             for (Method method : methods) {
                 McpServerFeatures.SyncToolSpecification tool = createComponentFrom(toolClass, method);
                 server.addTool(tool);
@@ -63,10 +63,11 @@ public class McpSyncServerToolRegister
     }
 
     private McpSchema.JsonSchema createJsonSchema(Method method) {
-        Map<String, Object> properties = new HashMap<>();
+        //has to use linkedhashmap to make order correct
+        Map<String, Object> properties = new LinkedHashMap<>();
         List<String> required = new ArrayList<>();
 
-        Set<Parameter> parameters = ReflectionHelper.getParametersAnnotatedWith(method, McpToolParam.class);
+        List<Parameter> parameters = ReflectionHelper.getParametersAnnotatedWith(method, McpToolParam.class);
         for (Parameter parameter : parameters) {
             McpToolParam toolParam = parameter.getAnnotation(McpToolParam.class);
             final String parameterName = toolParam.name();

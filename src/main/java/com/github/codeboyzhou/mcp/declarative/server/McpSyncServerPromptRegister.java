@@ -29,7 +29,7 @@ public class McpSyncServerPromptRegister
     @Override
     public void registerTo(McpSyncServer server) {
         for (Class<?> promptClass : promptClasses) {
-            Set<Method> methods = ReflectionHelper.getMethodsAnnotatedWith(promptClass, McpPrompt.class);
+            List<Method> methods = ReflectionHelper.getMethodsAnnotatedWith(promptClass, McpPrompt.class);
             for (Method method : methods) {
                 McpServerFeatures.SyncPromptSpecification prompt = createComponentFrom(promptClass, method);
                 server.addPrompt(prompt);
@@ -59,7 +59,7 @@ public class McpSyncServerPromptRegister
     }
 
     private List<McpSchema.PromptArgument> createPromptArguments(Method method) {
-        Set<Parameter> parameters = ReflectionHelper.getParametersAnnotatedWith(method, McpPromptParam.class);
+        List<Parameter> parameters = ReflectionHelper.getParametersAnnotatedWith(method, McpPromptParam.class);
         List<McpSchema.PromptArgument> promptArguments = new ArrayList<>(parameters.size());
         for (Parameter parameter : parameters) {
             McpPromptParam promptParam = parameter.getAnnotation(McpPromptParam.class);

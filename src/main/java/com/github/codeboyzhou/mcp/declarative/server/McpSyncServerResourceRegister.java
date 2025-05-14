@@ -26,7 +26,7 @@ public class McpSyncServerResourceRegister
     @Override
     public void registerTo(McpSyncServer server) {
         for (Class<?> resourceClass : resourceClasses) {
-            Set<Method> methods = ReflectionHelper.getMethodsAnnotatedWith(resourceClass, McpResource.class);
+            List<Method> methods = ReflectionHelper.getMethodsAnnotatedWith(resourceClass, McpResource.class);
             for (Method method : methods) {
                 McpServerFeatures.SyncResourceSpecification resource = createComponentFrom(resourceClass, method);
                 server.addResource(resource);
