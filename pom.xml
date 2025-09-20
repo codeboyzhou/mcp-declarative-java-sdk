@@ -56,11 +56,11 @@
         <!--==================== dependency versions ======================-->
         <annotations.version>26.0.2</annotations.version>
         <guice.version>7.0.0</guice.version>
-        <jackson-dataformat-yaml.version>2.19.2</jackson-dataformat-yaml.version>
+        <jackson-dataformat-yaml.version>2.17.0</jackson-dataformat-yaml.version>
         <jetty.version>12.1.0</jetty.version>
         <junit5.version>5.13.4</junit5.version>
         <logback.version>1.5.18</logback.version>
-        <mcp-sdk.version>0.12.1</mcp-sdk.version>
+        <mcp-sdk.version>0.13.0</mcp-sdk.version>
         <mockito.version>5.19.0</mockito.version>
         <reflections.version>0.10.2</reflections.version>
     </properties>
@@ -97,7 +97,11 @@
         </dependency>
         <dependency>
             <groupId>io.modelcontextprotocol.sdk</groupId>
-            <artifactId>mcp</artifactId>
+            <artifactId>mcp-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.modelcontextprotocol.sdk</groupId>
+            <artifactId>mcp-json-jackson2</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty.ee10</groupId>

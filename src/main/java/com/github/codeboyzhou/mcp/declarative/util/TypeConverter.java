@@ -3,10 +3,10 @@ package com.github.codeboyzhou.mcp.declarative.util;
 import com.github.codeboyzhou.mcp.declarative.enums.JsonSchemaDataType;
 import org.jetbrains.annotations.VisibleForTesting;
 
-public final class Types {
+public final class TypeConverter {
 
   @VisibleForTesting
-  Types() {
+  TypeConverter() {
     throw new UnsupportedOperationException("Utility class should not be instantiated");
   }
 
@@ -64,7 +64,7 @@ public final class Types {
 
   private static Object getDefaultValue(Class<?> type) {
     if (type == String.class) {
-      return Strings.EMPTY;
+      return StringHelper.EMPTY;
     }
     if (type == int.class || type == Integer.class) {
       return 0;
@@ -86,7 +86,7 @@ public final class Types {
 
   private static Object getDefaultValue(String jsonSchemaType) {
     if (JsonSchemaDataType.STRING.getType().equalsIgnoreCase(jsonSchemaType)) {
-      return Strings.EMPTY;
+      return StringHelper.EMPTY;
     }
     if (JsonSchemaDataType.INTEGER.getType().equalsIgnoreCase(jsonSchemaType)) {
       return 0;

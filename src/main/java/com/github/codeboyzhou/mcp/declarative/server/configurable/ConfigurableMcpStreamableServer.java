@@ -3,7 +3,7 @@ package com.github.codeboyzhou.mcp.declarative.server.configurable;
 import com.github.codeboyzhou.mcp.declarative.configuration.McpServerConfiguration;
 import com.github.codeboyzhou.mcp.declarative.configuration.McpServerStreamable;
 import com.github.codeboyzhou.mcp.declarative.server.EmbeddedJettyServer;
-import com.github.codeboyzhou.mcp.declarative.util.ObjectMappers;
+import io.modelcontextprotocol.json.McpJsonMapper;
 import io.modelcontextprotocol.server.McpServer;
 import io.modelcontextprotocol.server.transport.HttpServletStreamableServerTransportProvider;
 import java.time.Duration;
@@ -19,7 +19,7 @@ public class ConfigurableMcpStreamableServer extends AbstractConfigurableMcpServ
     McpServerStreamable streamable = configuration.streamable();
     HttpServletStreamableServerTransportProvider transportProvider =
         HttpServletStreamableServerTransportProvider.builder()
-            .objectMapper(ObjectMappers.JSON_MAPPER)
+            .jsonMapper(McpJsonMapper.getDefault())
             .mcpEndpoint(streamable.mcpEndpoint())
             .disallowDelete(streamable.disallowDelete())
             .keepAliveInterval(Duration.ofMillis(streamable.keepAliveInterval()))

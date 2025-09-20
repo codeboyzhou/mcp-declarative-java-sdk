@@ -5,8 +5,8 @@ import com.github.codeboyzhou.mcp.declarative.annotation.McpPromptParam;
 import com.github.codeboyzhou.mcp.declarative.reflect.MethodMetadata;
 import com.github.codeboyzhou.mcp.declarative.reflect.ReflectionCache;
 import com.github.codeboyzhou.mcp.declarative.server.converter.McpPromptParameterConverter;
-import com.github.codeboyzhou.mcp.declarative.util.ObjectMappers;
-import com.github.codeboyzhou.mcp.declarative.util.Strings;
+import com.github.codeboyzhou.mcp.declarative.util.JacksonHelper;
+import com.github.codeboyzhou.mcp.declarative.util.StringHelper;
 import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema;
@@ -41,7 +41,8 @@ public class McpServerPrompt
     instance = injector.getInstance(methodCache.getDeclaringClass());
 
     McpPrompt promptMethod = methodCache.getMcpPromptAnnotation();
-    final String name = Strings.defaultIfBlank(promptMethod.name(), methodCache.getMethodName());
+    final String name =
+        StringHelper.defaultIfBlank(promptMethod.name(), methodCache.getMethodName());
     final String title = resolveComponentAttributeValue(promptMethod.title());
     final String description = resolveComponentAttributeValue(promptMethod.description());
 
@@ -50,7 +51,7 @@ public class McpServerPrompt
 
     log.debug(
         "Registering prompt: {} (Cached: {})",
-        ObjectMappers.toJson(prompt),
+        JacksonHelper.toJsonString(prompt),
         ReflectionCache.INSTANCE.isCached(method));
 
     return new McpServerFeatures.SyncPromptSpecification(

@@ -1,6 +1,6 @@
 package com.github.codeboyzhou.mcp.declarative.server;
 
-import com.github.codeboyzhou.mcp.declarative.util.ObjectMappers;
+import io.modelcontextprotocol.json.McpJsonMapper;
 import io.modelcontextprotocol.server.McpServer;
 import io.modelcontextprotocol.server.transport.HttpServletStreamableServerTransportProvider;
 
@@ -9,7 +9,7 @@ public class McpStreamableServer extends AbstractMcpServer<McpStreamableServerIn
   public McpServer.SyncSpecification<?> sync(McpStreamableServerInfo info) {
     HttpServletStreamableServerTransportProvider transportProvider =
         HttpServletStreamableServerTransportProvider.builder()
-            .objectMapper(ObjectMappers.JSON_MAPPER)
+            .jsonMapper(McpJsonMapper.getDefault())
             .mcpEndpoint(info.mcpEndpoint())
             .disallowDelete(info.disallowDelete())
             .contextExtractor(info.contextExtractor())

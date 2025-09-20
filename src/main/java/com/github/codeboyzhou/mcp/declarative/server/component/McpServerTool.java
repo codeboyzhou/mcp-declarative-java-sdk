@@ -8,8 +8,8 @@ import com.github.codeboyzhou.mcp.declarative.enums.JsonSchemaDataType;
 import com.github.codeboyzhou.mcp.declarative.reflect.MethodMetadata;
 import com.github.codeboyzhou.mcp.declarative.reflect.ReflectionCache;
 import com.github.codeboyzhou.mcp.declarative.server.converter.McpToolParameterConverter;
-import com.github.codeboyzhou.mcp.declarative.util.ObjectMappers;
-import com.github.codeboyzhou.mcp.declarative.util.Strings;
+import com.github.codeboyzhou.mcp.declarative.util.JacksonHelper;
+import com.github.codeboyzhou.mcp.declarative.util.StringHelper;
 import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema;
@@ -49,7 +49,7 @@ public class McpServerTool
     instance = injector.getInstance(methodCache.getDeclaringClass());
 
     McpTool toolMethod = methodCache.getMcpToolAnnotation();
-    final String name = Strings.defaultIfBlank(toolMethod.name(), methodCache.getMethodName());
+    final String name = StringHelper.defaultIfBlank(toolMethod.name(), methodCache.getMethodName());
     final String title = resolveComponentAttributeValue(toolMethod.title());
     final String description = resolveComponentAttributeValue(toolMethod.description());
 
@@ -64,7 +64,7 @@ public class McpServerTool
 
     log.debug(
         "Registering tool: {} (Cached: {})",
-        ObjectMappers.toJson(tool),
+        JacksonHelper.toJsonString(tool),
         ReflectionCache.INSTANCE.isCached(method));
 
     return McpServerFeatures.SyncToolSpecification.builder()
@@ -95,7 +95,7 @@ public class McpServerTool
     }
     final String text = result == null ? "This tool returned nullable or void" : result.toString();
     McpSchema.Content content = new McpSchema.TextContent(text);
-    return new McpSchema.CallToolResult(List.of(content), isError);
+    return McpSchema.CallToolResult.builder().content(List.of(content)).isError(isError).build();
   }
 
   private McpSchema.JsonSchema createJsonSchema(Parameter[] methodParams) {
@@ -161,7 +161,7 @@ public class McpServerTool
       fieldProperties.put("type", JsonSchemaDataType.fromJavaType(field.getType()).getType());
       fieldProperties.put("description", resolveComponentAttributeValue(property.description()));
 
-      final String fieldName = Strings.defaultIfBlank(property.name(), field.getName());
+      final String fieldName = StringHelper.defaultIfBlank(property.name(), field.getName());
       properties.put(fieldName, fieldProperties);
 
       if (property.required()) {

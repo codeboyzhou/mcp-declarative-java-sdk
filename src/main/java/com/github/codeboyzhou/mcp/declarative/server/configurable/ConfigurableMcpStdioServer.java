@@ -1,6 +1,7 @@
 package com.github.codeboyzhou.mcp.declarative.server.configurable;
 
 import com.github.codeboyzhou.mcp.declarative.configuration.McpServerConfiguration;
+import io.modelcontextprotocol.json.McpJsonMapper;
 import io.modelcontextprotocol.server.McpServer;
 import io.modelcontextprotocol.server.transport.StdioServerTransportProvider;
 
@@ -12,7 +13,6 @@ public class ConfigurableMcpStdioServer extends AbstractConfigurableMcpServer {
 
   @Override
   public McpServer.SyncSpecification<?> sync() {
-    StdioServerTransportProvider transportProvider = new StdioServerTransportProvider();
-    return McpServer.sync(transportProvider);
+    return McpServer.sync(new StdioServerTransportProvider(McpJsonMapper.getDefault()));
   }
 }

@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
-class ObjectMappersTest {
+class JacksonHelperTest {
 
   static class CircularReference {
     private final CircularReference self = this;
@@ -22,20 +22,21 @@ class ObjectMappersTest {
 
   @Test
   void testConstructor_shouldThrowException() {
-    assertThrows(UnsupportedOperationException.class, ObjectMappers::new);
+    assertThrows(UnsupportedOperationException.class, JacksonHelper::new);
   }
 
   @Test
-  void testToJson_shouldSucceed() {
-    String json = ObjectMappers.toJson(new Person("test", 25));
+  void testToJsonString_shouldSucceed() {
+    String json = JacksonHelper.toJsonString(new Person("test", 25));
     assertTrue(json.contains("\"name\":\"test\""));
     assertTrue(json.contains("\"age\":25"));
   }
 
   @Test
-  void testToJson_shouldThrowException() {
+  void testToJsonString_shouldThrowException() {
     CircularReference circularRef = new CircularReference();
-    assertThrows(McpServerJsonProcessingException.class, () -> ObjectMappers.toJson(circularRef));
+    assertThrows(
+        McpServerJsonProcessingException.class, () -> JacksonHelper.toJsonString(circularRef));
   }
 
   @Test
@@ -45,7 +46,7 @@ class ObjectMappersTest {
     try (FileWriter writer = new FileWriter(tempYaml)) {
       writer.write(yamlContent);
     }
-    Person person = ObjectMappers.fromYaml(tempYaml, Person.class);
+    Person person = JacksonHelper.fromYaml(tempYaml, Person.class);
     assertEquals("test", person.name);
     assertEquals(25, person.age);
   }
@@ -53,6 +54,6 @@ class ObjectMappersTest {
   @Test
   void testFromYaml_shouldThrowException() {
     File f = new File("non-existent.yaml");
-    assertThrows(McpServerConfigurationException.class, () -> ObjectMappers.fromYaml(f, Map.class));
+    assertThrows(McpServerConfigurationException.class, () -> JacksonHelper.fromYaml(f, Map.class));
   }
 }

@@ -1,6 +1,6 @@
 package com.github.codeboyzhou.mcp.declarative.server;
 
-import com.github.codeboyzhou.mcp.declarative.util.Strings;
+import com.github.codeboyzhou.mcp.declarative.util.StringHelper;
 
 public class McpSseServerInfo extends McpServerInfo {
 
@@ -42,7 +42,7 @@ public class McpSseServerInfo extends McpServerInfo {
 
   public static class Builder extends McpServerInfo.Builder<McpSseServerInfo.Builder> {
 
-    private String baseUrl = Strings.EMPTY;
+    private String baseUrl = StringHelper.EMPTY;
 
     private String messageEndpoint = "/mcp/message";
 

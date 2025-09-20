@@ -1,6 +1,6 @@
 package com.github.codeboyzhou.mcp.declarative.annotation;
 
-import com.github.codeboyzhou.mcp.declarative.util.Strings;
+import com.github.codeboyzhou.mcp.declarative.util.StringHelper;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -12,9 +12,9 @@ public @interface McpPromptParam {
 
   String name();
 
-  String title() default Strings.EMPTY;
+  String title() default StringHelper.EMPTY;
 
-  String description() default Strings.EMPTY;
+  String description() default StringHelper.EMPTY;
 
   boolean required() default false;
 }

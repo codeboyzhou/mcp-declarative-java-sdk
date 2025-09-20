@@ -1,7 +1,7 @@
 package com.github.codeboyzhou.mcp.declarative.configuration;
 
 import com.github.codeboyzhou.mcp.declarative.exception.McpServerConfigurationException;
-import com.github.codeboyzhou.mcp.declarative.util.ObjectMappers;
+import com.github.codeboyzhou.mcp.declarative.util.JacksonHelper;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -23,7 +23,7 @@ public record YAMLConfigurationLoader(String configFileName) {
   public McpServerConfiguration loadConfig() {
     Path configFilePath = getConfigFilePath(configFileName);
     File file = configFilePath.toFile();
-    McpServerConfiguration config = ObjectMappers.fromYaml(file, McpServerConfiguration.class);
+    McpServerConfiguration config = JacksonHelper.fromYaml(file, McpServerConfiguration.class);
     log.info("Configuration loaded successfully from file: {}", configFileName);
     return config;
   }

@@ -3,8 +3,8 @@ package com.github.codeboyzhou.mcp.declarative.server.component;
 import com.github.codeboyzhou.mcp.declarative.annotation.McpResource;
 import com.github.codeboyzhou.mcp.declarative.reflect.MethodMetadata;
 import com.github.codeboyzhou.mcp.declarative.reflect.ReflectionCache;
-import com.github.codeboyzhou.mcp.declarative.util.ObjectMappers;
-import com.github.codeboyzhou.mcp.declarative.util.Strings;
+import com.github.codeboyzhou.mcp.declarative.util.JacksonHelper;
+import com.github.codeboyzhou.mcp.declarative.util.StringHelper;
 import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema;
@@ -32,7 +32,7 @@ public class McpServerResource
     instance = injector.getInstance(methodCache.getDeclaringClass());
 
     McpResource res = methodCache.getMcpResourceAnnotation();
-    final String name = Strings.defaultIfBlank(res.name(), methodCache.getMethodName());
+    final String name = StringHelper.defaultIfBlank(res.name(), methodCache.getMethodName());
     final String title = resolveComponentAttributeValue(res.title());
     final String description = resolveComponentAttributeValue(res.description());
 
@@ -48,7 +48,7 @@ public class McpServerResource
 
     log.debug(
         "Registering resource: {} (Cached: {})",
-        ObjectMappers.toJson(resource),
+        JacksonHelper.toJsonString(resource),
         ReflectionCache.INSTANCE.isCached(method));
 
     return new McpServerFeatures.SyncResourceSpecification(

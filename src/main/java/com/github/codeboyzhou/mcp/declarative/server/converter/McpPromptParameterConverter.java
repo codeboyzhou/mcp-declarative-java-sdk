@@ -1,7 +1,7 @@
 package com.github.codeboyzhou.mcp.declarative.server.converter;
 
 import com.github.codeboyzhou.mcp.declarative.annotation.McpPromptParam;
-import com.github.codeboyzhou.mcp.declarative.util.Types;
+import com.github.codeboyzhou.mcp.declarative.util.TypeConverter;
 import java.lang.reflect.Parameter;
 import java.util.Map;
 
@@ -9,7 +9,7 @@ public class McpPromptParameterConverter extends AbstractParameterConverter<McpP
   @Override
   public Object convert(Parameter parameter, McpPromptParam annotation, Map<String, Object> args) {
     Object rawValue = args.get(annotation.name());
-    return Types.convert(rawValue, parameter.getType());
+    return TypeConverter.convert(rawValue, parameter.getType());
   }
 
   @Override

@@ -10,20 +10,20 @@ import java.io.File;
 import java.io.IOException;
 import org.jetbrains.annotations.VisibleForTesting;
 
-public final class ObjectMappers {
+public final class JacksonHelper {
 
-  public static final ObjectMapper JSON_MAPPER = new ObjectMapper(new JsonFactory());
+  private static final ObjectMapper JSON = new ObjectMapper(new JsonFactory());
 
-  private static final ObjectMapper YAML_MAPPER = new ObjectMapper(new YAMLFactory());
+  private static final ObjectMapper YAML = new ObjectMapper(new YAMLFactory());
 
   @VisibleForTesting
-  ObjectMappers() {
+  JacksonHelper() {
     throw new UnsupportedOperationException("Utility class should not be instantiated");
   }
 
-  public static String toJson(Object object) {
+  public static String toJsonString(Object object) {
     try {
-      return JSON_MAPPER.writeValueAsString(object);
+      return JSON.writeValueAsString(object);
     } catch (JsonProcessingException e) {
       throw new McpServerJsonProcessingException("Error converting object to JSON", e);
     }
@@ -31,7 +31,7 @@ public final class ObjectMappers {
 
   public static <T> T fromYaml(File yamlFile, Class<T> valueType) {
     try {
-      return YAML_MAPPER.readValue(yamlFile, valueType);
+      return YAML.readValue(yamlFile, valueType);
     } catch (IOException e) {
       final String path = yamlFile.getAbsolutePath();
       throw new McpServerConfigurationException("Error reading YAML file: " + path, e);

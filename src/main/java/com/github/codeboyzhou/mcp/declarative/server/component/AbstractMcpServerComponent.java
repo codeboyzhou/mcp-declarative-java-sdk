@@ -4,7 +4,7 @@ import static com.github.codeboyzhou.mcp.declarative.di.GuiceInjectorModule.INJE
 
 import com.github.codeboyzhou.mcp.declarative.di.DependencyInjector;
 import com.github.codeboyzhou.mcp.declarative.di.DependencyInjectorProvider;
-import com.github.codeboyzhou.mcp.declarative.util.Strings;
+import com.github.codeboyzhou.mcp.declarative.util.StringHelper;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ public abstract class AbstractMcpServerComponent<T, U, R>
     if (i18nEnabled && bundle != null && bundle.containsKey(attributeLiteralValue)) {
       return bundle.getString(attributeLiteralValue);
     }
-    return Strings.defaultIfBlank(attributeLiteralValue, NOT_SPECIFIED);
+    return StringHelper.defaultIfBlank(attributeLiteralValue, NOT_SPECIFIED);
   }
 
   private ResourceBundle loadResourceBundle() {

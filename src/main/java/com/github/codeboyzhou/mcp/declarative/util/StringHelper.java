@@ -2,14 +2,14 @@ package com.github.codeboyzhou.mcp.declarative.util;
 
 import org.jetbrains.annotations.VisibleForTesting;
 
-public final class Strings {
+public final class StringHelper {
 
   public static final String EMPTY = "";
 
   public static final String SPACE = " ";
 
   @VisibleForTesting
-  Strings() {
+  StringHelper() {
     throw new UnsupportedOperationException("Utility class should not be instantiated");
   }
 
