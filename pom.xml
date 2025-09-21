@@ -6,7 +6,7 @@
 
     <groupId>io.github.codeboyzhou</groupId>
     <artifactId>mcp-declarative-java-sdk</artifactId>
-    <version>0.8.3-SNAPSHOT</version>
+    <version>0.8.3</version>
 
     <name>MCP Declarative Java SDK</name>
     <description>Annotation-driven MCP (Model Context Protocol) Development with Java</description>
