@@ -2,13 +2,13 @@ package com.github.codeboyzhou.mcp.declarative.server.component;
 
 import com.github.codeboyzhou.mcp.declarative.annotation.McpPrompt;
 import com.github.codeboyzhou.mcp.declarative.annotation.McpPromptParam;
-import com.github.codeboyzhou.mcp.declarative.reflect.MethodMetadata;
-import com.github.codeboyzhou.mcp.declarative.reflect.ReflectionCache;
+import com.github.codeboyzhou.mcp.declarative.reflect.InvocationResult;
+import com.github.codeboyzhou.mcp.declarative.reflect.MethodCache;
 import com.github.codeboyzhou.mcp.declarative.server.converter.McpPromptParameterConverter;
 import com.github.codeboyzhou.mcp.declarative.util.JacksonHelper;
+import com.github.codeboyzhou.mcp.declarative.util.ReflectionHelper;
 import com.github.codeboyzhou.mcp.declarative.util.StringHelper;
 import io.modelcontextprotocol.server.McpServerFeatures;
-import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -19,26 +19,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class McpServerPrompt
-    extends AbstractMcpServerComponent<
-        McpServerFeatures.SyncPromptSpecification,
-        McpSchema.GetPromptRequest,
-        McpSchema.GetPromptResult> {
+    extends AbstractMcpServerComponent<McpServerFeatures.SyncPromptSpecification> {
 
   private static final Logger log = LoggerFactory.getLogger(McpServerPrompt.class);
 
-  private final McpPromptParameterConverter converter;
-
-  private Object instance;
+  private final McpPromptParameterConverter parameterConverter;
 
   public McpServerPrompt() {
-    this.converter = injector.getInstance(McpPromptParameterConverter.class);
+    this.parameterConverter = injector.getInstance(McpPromptParameterConverter.class);
   }
 
   @Override
   public McpServerFeatures.SyncPromptSpecification create(Method method) {
     // Use reflection cache for performance optimization
-    MethodMetadata methodCache = ReflectionCache.INSTANCE.getMethodMetadata(method);
-    instance = injector.getInstance(methodCache.getDeclaringClass());
+    MethodCache methodCache = ReflectionHelper.INSTANCE.getOrCache(method);
+    Object instance = injector.getInstance(methodCache.getDeclaringClass());
 
     McpPrompt promptMethod = methodCache.getMcpPromptAnnotation();
     final String name =
@@ -49,34 +44,23 @@ public class McpServerPrompt
     List<McpSchema.PromptArgument> promptArgs = createPromptArguments(methodCache.getParameters());
     McpSchema.Prompt prompt = new McpSchema.Prompt(name, title, description, promptArgs);
 
-    log.debug(
-        "Registering prompt: {} (Cached: {})",
-        JacksonHelper.toJsonString(prompt),
-        ReflectionCache.INSTANCE.isCached(method));
+    log.debug("Registering prompt: {}", JacksonHelper.toJsonString(prompt));
 
     return new McpServerFeatures.SyncPromptSpecification(
-        prompt, (exchange, request) -> invoke(method, description, exchange, request));
+        prompt, (exchange, request) -> invoke(instance, methodCache, description, request));
   }
 
-  @Override
-  public McpSchema.GetPromptResult invoke(
-      Method method,
+  private McpSchema.GetPromptResult invoke(
+      Object instance,
+      MethodCache methodCache,
       String description,
-      McpSyncServerExchange exchange,
       McpSchema.GetPromptRequest request) {
 
-    Object result;
-    MethodMetadata methodCache = ReflectionCache.INSTANCE.getMethodMetadata(method);
-    try {
-      Map<String, Object> arguments = request.arguments();
-      List<Object> convertedParams = converter.convertAllParameters(methodCache, arguments);
-      // Use cached method for invocation
-      result = methodCache.getMethod().invoke(instance, convertedParams.toArray());
-    } catch (Exception e) {
-      log.error("Error invoking prompt method: {}", methodCache.getMethodSignature(), e);
-      result = e + ": " + e.getMessage();
-    }
-    McpSchema.Content content = new McpSchema.TextContent(result.toString());
+    Map<String, Object> arguments = request.arguments();
+    List<Object> params = parameterConverter.convertAll(methodCache.getParameters(), arguments);
+    InvocationResult invocation = ReflectionHelper.INSTANCE.invoke(instance, methodCache, params);
+
+    McpSchema.Content content = new McpSchema.TextContent(invocation.result().toString());
     McpSchema.PromptMessage message = new McpSchema.PromptMessage(McpSchema.Role.USER, content);
     return new McpSchema.GetPromptResult(description, List.of(message));
   }

@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Objects;
 
-public final class MethodMetadata {
+public final class MethodCache {
 
   private final Immutable<Method> method;
 
@@ -26,7 +26,7 @@ public final class MethodMetadata {
 
   private final McpTool mcpToolAnnotation;
 
-  public MethodMetadata(Method method) {
+  public MethodCache(Method method) {
     this.method = Immutable.of(method);
     this.methodName = method.getName();
     this.declaringClass = method.getDeclaringClass();
@@ -37,8 +37,8 @@ public final class MethodMetadata {
     this.mcpToolAnnotation = method.getAnnotation(McpTool.class);
   }
 
-  public static MethodMetadata of(Method method) {
-    return new MethodMetadata(method);
+  public static MethodCache of(Method method) {
+    return new MethodCache(method);
   }
 
   public Method getMethod() {
@@ -81,7 +81,7 @@ public final class MethodMetadata {
     if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
-    MethodMetadata that = (MethodMetadata) obj;
+    MethodCache that = (MethodCache) obj;
     return Objects.equals(method, that.method);
   }
 
@@ -92,6 +92,6 @@ public final class MethodMetadata {
 
   @Override
   public String toString() {
-    return String.format("MethodMetadata{methodSignature=%s}", methodSignature);
+    return String.format("MethodCache{methodSignature=%s}", methodSignature);
   }
 }

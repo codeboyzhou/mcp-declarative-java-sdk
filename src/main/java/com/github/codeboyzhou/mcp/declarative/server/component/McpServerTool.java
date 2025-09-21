@@ -5,13 +5,13 @@ import com.github.codeboyzhou.mcp.declarative.annotation.McpJsonSchemaDefinition
 import com.github.codeboyzhou.mcp.declarative.annotation.McpTool;
 import com.github.codeboyzhou.mcp.declarative.annotation.McpToolParam;
 import com.github.codeboyzhou.mcp.declarative.enums.JsonSchemaDataType;
-import com.github.codeboyzhou.mcp.declarative.reflect.MethodMetadata;
-import com.github.codeboyzhou.mcp.declarative.reflect.ReflectionCache;
+import com.github.codeboyzhou.mcp.declarative.reflect.InvocationResult;
+import com.github.codeboyzhou.mcp.declarative.reflect.MethodCache;
 import com.github.codeboyzhou.mcp.declarative.server.converter.McpToolParameterConverter;
 import com.github.codeboyzhou.mcp.declarative.util.JacksonHelper;
+import com.github.codeboyzhou.mcp.declarative.util.ReflectionHelper;
 import com.github.codeboyzhou.mcp.declarative.util.StringHelper;
 import io.modelcontextprotocol.server.McpServerFeatures;
-import io.modelcontextprotocol.server.McpSyncServerExchange;
 import io.modelcontextprotocol.spec.McpSchema;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -27,26 +27,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class McpServerTool
-    extends AbstractMcpServerComponent<
-        McpServerFeatures.SyncToolSpecification,
-        McpSchema.CallToolRequest,
-        McpSchema.CallToolResult> {
+    extends AbstractMcpServerComponent<McpServerFeatures.SyncToolSpecification> {
 
   private static final Logger log = LoggerFactory.getLogger(McpServerTool.class);
 
-  private final McpToolParameterConverter converter;
-
-  private Object instance;
+  private final McpToolParameterConverter parameterConverter;
 
   public McpServerTool() {
-    this.converter = injector.getInstance(McpToolParameterConverter.class);
+    this.parameterConverter = injector.getInstance(McpToolParameterConverter.class);
   }
 
   @Override
   public McpServerFeatures.SyncToolSpecification create(Method method) {
     // Use reflection cache for performance optimization
-    MethodMetadata methodCache = ReflectionCache.INSTANCE.getMethodMetadata(method);
-    instance = injector.getInstance(methodCache.getDeclaringClass());
+    MethodCache methodCache = ReflectionHelper.INSTANCE.getOrCache(method);
+    Object instance = injector.getInstance(methodCache.getDeclaringClass());
 
     McpTool toolMethod = methodCache.getMcpToolAnnotation();
     final String name = StringHelper.defaultIfBlank(toolMethod.name(), methodCache.getMethodName());
@@ -62,39 +57,23 @@ public class McpServerTool
             .inputSchema(paramSchema)
             .build();
 
-    log.debug(
-        "Registering tool: {} (Cached: {})",
-        JacksonHelper.toJsonString(tool),
-        ReflectionCache.INSTANCE.isCached(method));
+    log.debug("Registering tool: {}", JacksonHelper.toJsonString(tool));
 
     return McpServerFeatures.SyncToolSpecification.builder()
         .tool(tool)
-        .callHandler((exchange, request) -> invoke(method, description, exchange, request))
+        .callHandler((exchange, request) -> invoke(instance, methodCache, request))
         .build();
   }
 
-  @Override
-  public McpSchema.CallToolResult invoke(
-      Method method,
-      String description,
-      McpSyncServerExchange exchange,
-      McpSchema.CallToolRequest request) {
+  private McpSchema.CallToolResult invoke(
+      Object instance, MethodCache methodCache, McpSchema.CallToolRequest request) {
 
-    Object result;
-    boolean isError = false;
-    MethodMetadata methodCache = ReflectionCache.INSTANCE.getMethodMetadata(method);
-    try {
-      Map<String, Object> arguments = request.arguments();
-      List<Object> convertedParams = converter.convertAllParameters(methodCache, arguments);
-      // Use cached method for invocation
-      result = methodCache.getMethod().invoke(instance, convertedParams.toArray());
-    } catch (Exception e) {
-      log.error("Error invoking tool method: {}", methodCache.getMethodSignature(), e);
-      result = e + ": " + e.getMessage();
-      isError = true;
-    }
-    final String text = result == null ? "This tool returned nullable or void" : result.toString();
-    McpSchema.Content content = new McpSchema.TextContent(text);
+    Map<String, Object> arguments = request.arguments();
+    List<Object> params = parameterConverter.convertAll(methodCache.getParameters(), arguments);
+    InvocationResult invocation = ReflectionHelper.INSTANCE.invoke(instance, methodCache, params);
+
+    final boolean isError = invocation.isError();
+    McpSchema.Content content = new McpSchema.TextContent(invocation.result().toString());
     return McpSchema.CallToolResult.builder().content(List.of(content)).isError(isError).build();
   }
 

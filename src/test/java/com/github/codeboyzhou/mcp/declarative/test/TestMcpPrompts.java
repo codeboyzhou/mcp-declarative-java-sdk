@@ -9,27 +9,62 @@ public class TestMcpPrompts {
 
   private static final Logger log = LoggerFactory.getLogger(TestMcpPrompts.class);
 
-  @McpPrompt(name = "prompt1_name", title = "prompt1_title", description = "prompt1_description")
-  public String prompt1(
-      @McpPromptParam(name = "param1", title = "param1_title", description = "param1_description")
-          String param1,
-      @McpPromptParam(name = "param2", title = "param2_title", description = "param2_description")
-          String param2,
-      String param3) {
-
-    log.debug("prompt1 called with params: {}, {}, {}", param1, param2, param3);
-    return "prompt1 is called";
+  @McpPrompt(title = "title", description = "description")
+  public String promptWithDefaultName() {
+    log.debug("calling promptWithDefaultName");
+    return "promptWithDefaultName is called";
   }
 
-  @McpPrompt(name = "prompt2_name", title = "prompt2_title", description = "prompt2_description")
-  public String prompt2(
-      @McpPromptParam(name = "param1", title = "param1_title", description = "param1_description")
-          String param1,
-      @McpPromptParam(name = "param2", title = "param2_title", description = "param2_description")
-          String param2,
-      String param3) {
+  @McpPrompt(name = "promptWithDefaultTitle", description = "description")
+  public String promptWithDefaultTitle() {
+    log.debug("calling promptWithDefaultTitle");
+    return "promptWithDefaultTitle is called";
+  }
 
-    log.debug("prompt2 called with params: {}, {}, {}", param1, param2, param3);
-    return "prompt2 is called";
+  @McpPrompt(name = "promptWithDefaultDescription", title = "title")
+  public String promptWithDefaultDescription() {
+    log.debug("calling promptWithDefaultDescription");
+    return "promptWithDefaultDescription is called";
+  }
+
+  @McpPrompt
+  public String promptWithAllDefault() {
+    log.debug("calling promptWithAllDefault");
+    return "promptWithAllDefault is called";
+  }
+
+  @McpPrompt
+  public String promptWithOptionalParam(
+      @McpPromptParam(name = "param", description = "param") String param) {
+
+    log.debug("calling promptWithOptionalParam with param: {}", param);
+    return "promptWithOptionalParam is called with param: " + param;
+  }
+
+  @McpPrompt
+  public String promptWithRequiredParam(
+      @McpPromptParam(name = "param", description = "param", required = true) String param) {
+
+    log.debug("calling promptWithRequiredParam with param: {}", param);
+    return "promptWithRequiredParam is called with param: " + param;
+  }
+
+  @McpPrompt
+  public String promptWithMultiParams(
+      @McpPromptParam(name = "param1", description = "param1") String param1,
+      @McpPromptParam(name = "param2", description = "param2", required = true) String param2) {
+
+    log.debug("calling promptWithMultiParams with params: {}, {}", param1, param2);
+    return String.format("promptWithMultiParams is called with params: %s, %s", param1, param2);
+  }
+
+  @McpPrompt
+  public String promptWithMixedParams(
+      @McpPromptParam(name = "mcpParam", description = "mcpParam") String mcpParam,
+      String nonMcpParam) {
+
+    log.debug("calling promptWithMixedParams with params: {}, {}", mcpParam, nonMcpParam);
+    return String.format(
+        "promptWithMixedParams is called with params: %s, %s", mcpParam, nonMcpParam);
   }
 }

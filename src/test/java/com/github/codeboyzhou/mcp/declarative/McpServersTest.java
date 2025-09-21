@@ -14,6 +14,7 @@ import com.github.codeboyzhou.mcp.declarative.exception.McpServerConfigurationEx
 import com.github.codeboyzhou.mcp.declarative.server.McpSseServerInfo;
 import com.github.codeboyzhou.mcp.declarative.server.McpStreamableServerInfo;
 import com.github.codeboyzhou.mcp.declarative.test.TestSimpleMcpStdioServer;
+import com.github.codeboyzhou.mcp.declarative.util.StringHelper;
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.client.transport.HttpClientSseClientTransport;
@@ -174,125 +175,214 @@ class McpServersTest {
 
   private void verifyResourcesRegistered(McpSyncClient client) {
     List<McpSchema.Resource> resources = client.listResources().resources();
-    assertEquals(1, resources.size());
-    McpSchema.Resource resource = resources.get(0);
-    assertEquals("test://resource1", resource.uri());
-    assertEquals("resource1_name", resource.name());
-    assertEquals("resource1_title", resource.title());
-    assertEquals("resource1_description", resource.description());
-    assertEquals("text/plain", resource.mimeType());
+    assertEquals(2, resources.size());
+
+    verifyResourceRegistered(
+        resources,
+        "test://resource1",
+        "resource1_name",
+        "resource1_title",
+        "resource1_description");
+    verifyResourceRegistered(
+        resources,
+        "test://resource2",
+        "resource2_name",
+        "resource2_title",
+        "resource2_description");
+  }
+
+  private void verifyResourceRegistered(
+      List<McpSchema.Resource> resources,
+      String resourceUri,
+      String resourceName,
+      String resourceTitle,
+      String resourceDescription) {
+
+    McpSchema.Resource resource =
+        resources.stream().filter(r -> r.uri().equals(resourceUri)).findAny().orElse(null);
+    assertNotNull(resource);
+    assertEquals(resourceUri, resource.uri());
+    assertEquals(resourceName, resource.name());
+    assertEquals(resourceTitle, resource.title());
+    assertEquals(resourceDescription, resource.description());
+  }
+
+  private void verifyResourcesCalled(McpSyncClient client) {
+    verifyResourceCalled(client, "test://resource1", "text/plain", "resource1_content");
+    verifyResourceCalled(client, "test://resource2", "text/plain", "resource2_content");
+  }
+
+  private void verifyResourceCalled(
+      McpSyncClient client, String resourceUri, String resourceMimeType, String resourceContent) {
+
+    McpSchema.ReadResourceRequest request = new McpSchema.ReadResourceRequest(resourceUri);
+    McpSchema.ReadResourceResult result = client.readResource(request);
+    McpSchema.TextResourceContents content =
+        (McpSchema.TextResourceContents) result.contents().get(0);
+    assertNotNull(content);
+    assertEquals(resourceUri, content.uri());
+    assertEquals(resourceMimeType, content.mimeType());
+    assertEquals(resourceContent, content.text());
   }
 
   private void verifyPromptsRegistered(McpSyncClient client) {
     List<McpSchema.Prompt> prompts = client.listPrompts().prompts();
-    assertEquals(2, prompts.size());
+    assertEquals(10, prompts.size());
 
-    McpSchema.Prompt prompt1 =
-        prompts.stream()
-            .filter(prompt -> prompt.name().equals("prompt1_name"))
-            .findAny()
-            .orElse(null);
-    assertNotNull(prompt1);
-    assertEquals("prompt1_name", prompt1.name());
-    assertEquals("prompt1_title", prompt1.title());
-    assertEquals("prompt1_description", prompt1.description());
+    verifyPromptRegistered(prompts, "promptWithDefaultName", "title", "description", 0);
+    verifyPromptRegistered(prompts, "promptWithDefaultTitle", "Not specified", "description", 0);
+    verifyPromptRegistered(prompts, "promptWithDefaultDescription", "title", "Not specified", 0);
+    verifyPromptRegistered(prompts, "promptWithAllDefault", "Not specified", "Not specified", 0);
+    verifyPromptRegistered(prompts, "promptWithOptionalParam", "Not specified", "Not specified", 1);
+    verifyPromptRegistered(prompts, "promptWithRequiredParam", "Not specified", "Not specified", 1);
+    verifyPromptRegistered(prompts, "promptWithMultiParams", "Not specified", "Not specified", 2);
+    verifyPromptRegistered(prompts, "promptWithMixedParams", "Not specified", "Not specified", 1);
+    verifyPromptRegistered(prompts, "promptWithVoidReturn", "Not specified", "Not specified", 0);
+    verifyPromptRegistered(prompts, "promptWithReturnNull", "Not specified", "Not specified", 0);
+  }
 
-    List<McpSchema.PromptArgument> arguments1 = prompt1.arguments();
-    assertEquals(2, arguments1.size());
-    assertEquals("param1", arguments1.get(0).name());
-    assertEquals("param1_title", arguments1.get(0).title());
-    assertEquals("param1_description", arguments1.get(0).description());
-    assertEquals("param2", arguments1.get(1).name());
-    assertEquals("param2_title", arguments1.get(1).title());
-    assertEquals("param2_description", arguments1.get(1).description());
+  private void verifyPromptRegistered(
+      List<McpSchema.Prompt> prompts,
+      String promptName,
+      String promptTitle,
+      String promptDescription,
+      int promptArgumentsSize) {
 
-    McpSchema.Prompt prompt2 =
-        prompts.stream()
-            .filter(prompt -> prompt.name().equals("prompt2_name"))
-            .findAny()
-            .orElse(null);
-    assertNotNull(prompt2);
-    assertEquals("prompt2_name", prompt2.name());
-    assertEquals("prompt2_title", prompt2.title());
-    assertEquals("prompt2_description", prompt2.description());
-
-    List<McpSchema.PromptArgument> arguments2 = prompt2.arguments();
-    assertEquals(2, arguments2.size());
-    assertEquals("param1", arguments2.get(0).name());
-    assertEquals("param1_title", arguments2.get(0).title());
-    assertEquals("param1_description", arguments2.get(0).description());
-    assertEquals("param2", arguments2.get(1).name());
-    assertEquals("param2_title", arguments2.get(1).title());
-    assertEquals("param2_description", arguments2.get(1).description());
+    McpSchema.Prompt prompt =
+        prompts.stream().filter(p -> p.name().equals(promptName)).findAny().orElse(null);
+    assertNotNull(prompt);
+    assertEquals(promptName, prompt.name());
+    assertEquals(promptTitle, prompt.title());
+    assertEquals(promptDescription, prompt.description());
+    assertEquals(promptArgumentsSize, prompt.arguments().size());
   }
 
   private void verifyPromptsCalled(McpSyncClient client) {
-    String name1 = "prompt1_name";
-    Map<String, Object> args1 = Map.of("param1", "value1", "param2", "value2");
-    McpSchema.GetPromptRequest request1 = new McpSchema.GetPromptRequest(name1, args1);
-    McpSchema.GetPromptResult result1 = client.getPrompt(request1);
-    McpSchema.TextContent content = (McpSchema.TextContent) result1.messages().get(0).content();
-    assertEquals("prompt1_description", result1.description());
-    assertEquals("prompt1 is called", content.text());
+    verifyPromptCalled(
+        client, "promptWithDefaultName", Map.of(), "promptWithDefaultName is called");
+    verifyPromptCalled(
+        client, "promptWithDefaultTitle", Map.of(), "promptWithDefaultTitle is called");
+    verifyPromptCalled(
+        client, "promptWithDefaultDescription", Map.of(), "promptWithDefaultDescription is called");
+    verifyPromptCalled(client, "promptWithAllDefault", Map.of(), "promptWithAllDefault is called");
+    verifyPromptCalled(
+        client,
+        "promptWithOptionalParam",
+        Map.of("param", "value"),
+        "promptWithOptionalParam is called with param: value");
+    verifyPromptCalled(
+        client,
+        "promptWithRequiredParam",
+        Map.of("param", "value"),
+        "promptWithRequiredParam is called with param: value");
+    verifyPromptCalled(
+        client,
+        "promptWithMultiParams",
+        Map.of("param1", "value1", "param2", "value2"),
+        "promptWithMultiParams is called with params: value1, value2");
+    verifyPromptCalled(
+        client,
+        "promptWithMixedParams",
+        Map.of("mcpParam", "value"),
+        "promptWithMixedParams is called with params: value, " + StringHelper.EMPTY);
+    verifyPromptCalled(
+        client,
+        "promptWithVoidReturn",
+        Map.of(),
+        "The method call succeeded but has a void return type");
+    verifyPromptCalled(
+        client,
+        "promptWithReturnNull",
+        Map.of(),
+        "The method call succeeded but the return value is null");
+  }
 
-    String name2 = "prompt2_name";
-    Map<String, Object> args2 = Map.of("param1", "value1", "param2", "value2");
-    McpSchema.GetPromptRequest request2 = new McpSchema.GetPromptRequest(name2, args2);
-    McpSchema.GetPromptResult result2 = client.getPrompt(request2);
-    McpSchema.TextContent content2 = (McpSchema.TextContent) result2.messages().get(0).content();
-    assertEquals("prompt2_description", result2.description());
-    assertEquals("prompt2 is called", content2.text());
+  private void verifyPromptCalled(
+      McpSyncClient client, String promptName, Map<String, Object> params, String expectedResult) {
+
+    McpSchema.GetPromptRequest request = new McpSchema.GetPromptRequest(promptName, params);
+    McpSchema.GetPromptResult result = client.getPrompt(request);
+    McpSchema.TextContent content = (McpSchema.TextContent) result.messages().get(0).content();
+    assertEquals(expectedResult, content.text());
   }
 
   private void verifyToolsRegistered(McpSyncClient client) {
     List<McpSchema.Tool> tools = client.listTools().tools();
-    assertEquals(3, tools.size());
+    assertEquals(10, tools.size());
 
-    McpSchema.Tool tool1 =
-        tools.stream().filter(tool -> tool.name().equals("tool1_name")).findAny().orElse(null);
-    assertNotNull(tool1);
-    assertEquals("tool1_name", tool1.name());
-    assertEquals("tool1_title", tool1.title());
-    assertEquals("tool1_description", tool1.description());
+    verifyToolRegistered(tools, "toolWithDefaultName", "title", "description", 0);
+    verifyToolRegistered(tools, "toolWithDefaultTitle", "Not specified", "description", 0);
+    verifyToolRegistered(tools, "toolWithDefaultDescription", "title", "Not specified", 0);
+    verifyToolRegistered(tools, "toolWithAllDefault", "Not specified", "Not specified", 0);
+    verifyToolRegistered(tools, "toolWithOptionalParam", "Not specified", "Not specified", 1);
+    verifyToolRegistered(tools, "toolWithRequiredParam", "Not specified", "Not specified", 1);
+    verifyToolRegistered(tools, "toolWithMultiParams", "Not specified", "Not specified", 2);
+    verifyToolRegistered(tools, "toolWithMixedParams", "Not specified", "Not specified", 1);
+    verifyToolRegistered(tools, "toolWithVoidReturn", "Not specified", "Not specified", 0);
+    verifyToolRegistered(tools, "toolWithReturnNull", "Not specified", "Not specified", 0);
+  }
 
-    McpSchema.Tool tool2 =
-        tools.stream().filter(tool -> tool.name().equals("tool2_name")).findAny().orElse(null);
-    assertNotNull(tool2);
-    assertEquals("tool2_name", tool2.name());
-    assertEquals("tool2_title", tool2.title());
-    assertEquals("tool2_description", tool2.description());
+  private void verifyToolRegistered(
+      List<McpSchema.Tool> tools,
+      String toolName,
+      String toolTitle,
+      String toolDescription,
+      int inputSchemaPropertiesSize) {
 
-    McpSchema.Tool tool3 =
-        tools.stream().filter(tool -> tool.name().equals("tool3_name")).findAny().orElse(null);
-    assertNotNull(tool3);
-    assertEquals("tool3_name", tool3.name());
-    assertEquals("tool3_title", tool3.title());
-    assertEquals("tool3_description", tool3.description());
+    McpSchema.Tool tool =
+        tools.stream().filter(t -> t.name().equals(toolName)).findAny().orElse(null);
+    assertNotNull(tool);
+    assertEquals(toolName, tool.name());
+    assertEquals(toolTitle, tool.title());
+    assertEquals(toolDescription, tool.description());
+    assertEquals(inputSchemaPropertiesSize, tool.inputSchema().properties().size());
   }
 
   private void verifyToolsCalled(McpSyncClient client) {
-    String name1 = "tool1_name";
-    Map<String, Object> args1 = Map.of("param1", "value1", "param2", "value2");
-    McpSchema.CallToolRequest request1 = new McpSchema.CallToolRequest(name1, args1);
-    McpSchema.CallToolResult result1 = client.callTool(request1);
-    McpSchema.TextContent content = (McpSchema.TextContent) result1.content().get(0);
-    assertFalse(result1.isError());
-    assertEquals("tool1 is called", content.text());
+    verifyToolCalled(client, "toolWithDefaultName", Map.of(), "toolWithDefaultName is called");
+    verifyToolCalled(client, "toolWithDefaultTitle", Map.of(), "toolWithDefaultTitle is called");
+    verifyToolCalled(
+        client, "toolWithDefaultDescription", Map.of(), "toolWithDefaultDescription is called");
+    verifyToolCalled(client, "toolWithAllDefault", Map.of(), "toolWithAllDefault is called");
+    verifyToolCalled(
+        client,
+        "toolWithOptionalParam",
+        Map.of("param", "value"),
+        "toolWithOptionalParam is called with optional param: value");
+    verifyToolCalled(
+        client,
+        "toolWithRequiredParam",
+        Map.of("param", "value"),
+        "toolWithRequiredParam is called with required param: value");
+    verifyToolCalled(
+        client,
+        "toolWithMultiParams",
+        Map.of("param1", "value1", "param2", "value2"),
+        "toolWithMultiParams is called with params: value1, value2");
+    verifyToolCalled(
+        client,
+        "toolWithMixedParams",
+        Map.of("mcpParam", "value"),
+        "toolWithMixedParams is called with params: value, " + StringHelper.EMPTY);
+    verifyToolCalled(
+        client,
+        "toolWithVoidReturn",
+        Map.of(),
+        "The method call succeeded but has a void return type");
+    verifyToolCalled(
+        client,
+        "toolWithReturnNull",
+        Map.of(),
+        "The method call succeeded but the return value is null");
+  }
 
-    String name2 = "tool2_name";
-    Map<String, Object> args2 = Map.of("param1", "value1", "param2", "value2");
-    McpSchema.CallToolRequest request2 = new McpSchema.CallToolRequest(name2, args2);
-    McpSchema.CallToolResult result2 = client.callTool(request2);
-    McpSchema.TextContent content2 = (McpSchema.TextContent) result2.content().get(0);
-    assertFalse(result2.isError());
-    assertEquals("tool2 is called", content2.text());
+  private void verifyToolCalled(
+      McpSyncClient client, String toolName, Map<String, Object> args, String expectedResult) {
 
-    String name3 = "tool3_name";
-    Map<String, Object> args3 = Map.of("param1", "value1", "param2", "value2");
-    McpSchema.CallToolRequest request3 = new McpSchema.CallToolRequest(name3, args3);
-    McpSchema.CallToolResult result3 = client.callTool(request3);
-    McpSchema.TextContent content3 = (McpSchema.TextContent) result3.content().get(0);
-    assertFalse(result3.isError());
-    assertEquals("This tool returned nullable or void", content3.text());
+    McpSchema.CallToolRequest request = new McpSchema.CallToolRequest(toolName, args);
+    McpSchema.CallToolResult result = client.callTool(request);
+    McpSchema.TextContent content = (McpSchema.TextContent) result.content().get(0);
+    assertFalse(result.isError());
+    assertEquals(expectedResult, content.text());
   }
 }

@@ -1,6 +1,5 @@
 package com.github.codeboyzhou.mcp.declarative.server.converter;
 
-import com.github.codeboyzhou.mcp.declarative.reflect.MethodMetadata;
 import com.github.codeboyzhou.mcp.declarative.util.TypeConverter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
@@ -11,11 +10,10 @@ import java.util.Map;
 public abstract class AbstractParameterConverter<A extends Annotation>
     implements ParameterConverter<A> {
 
-  public List<Object> convertAllParameters(MethodMetadata metadata, Map<String, Object> args) {
-    Parameter[] params = metadata.getParameters();
-    List<Object> result = new ArrayList<>(params.length);
+  public List<Object> convertAll(Parameter[] methodParameters, Map<String, Object> args) {
+    List<Object> convertedParameters = new ArrayList<>(methodParameters.length);
 
-    for (Parameter param : params) {
+    for (Parameter param : methodParameters) {
       A annotation = param.getAnnotation(getAnnotationType());
       Object converted;
       // Fill in a default value when the parameter is not specified or unannotated
@@ -25,9 +23,9 @@ public abstract class AbstractParameterConverter<A extends Annotation>
       } else {
         converted = convert(param, annotation, args);
       }
-      result.add(converted);
+      convertedParameters.add(converted);
     }
 
-    return result;
+    return convertedParameters;
   }
 }

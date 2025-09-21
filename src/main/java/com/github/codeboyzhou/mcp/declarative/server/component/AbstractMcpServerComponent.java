@@ -10,14 +10,13 @@ import java.util.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractMcpServerComponent<T, U, R>
-    implements McpServerComponent<T>, McpServerComponentHandler<U, R> {
+public abstract class AbstractMcpServerComponent<T> implements McpServerComponent<T> {
 
   private static final Logger log = LoggerFactory.getLogger(AbstractMcpServerComponent.class);
 
   private static final String RESOURCE_BUNDLE_BASE_NAME = "i18n/mcp_server_component_descriptions";
 
-  protected static final String NOT_SPECIFIED = "Not Specified";
+  protected static final String NOT_SPECIFIED = "Not specified";
 
   protected final DependencyInjector injector;
 
