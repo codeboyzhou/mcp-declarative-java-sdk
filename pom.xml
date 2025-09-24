@@ -60,7 +60,7 @@
         <jetty.version>12.1.0</jetty.version>
         <junit5.version>5.13.4</junit5.version>
         <logback.version>1.5.18</logback.version>
-        <mcp-sdk.version>0.13.0</mcp-sdk.version>
+        <mcp-sdk.version>0.13.1</mcp-sdk.version>
         <mockito.version>5.19.0</mockito.version>
         <reflections.version>0.10.2</reflections.version>
     </properties>
