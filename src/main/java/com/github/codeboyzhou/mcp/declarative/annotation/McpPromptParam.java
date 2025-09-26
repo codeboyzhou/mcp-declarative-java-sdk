@@ -14,8 +14,9 @@ import java.lang.annotation.Target;
  * description, and required can be specified via the corresponding attributes. If omitted, these
  * metadata fields will default to the literal string "Not specified" and {@code false}.
  *
- * @apiNote Example usage:
- *     <pre>{@code
+ * <p>Example usage:
+ *
+ * <pre>{@code
  * @McpPrompt
  * public String getWeather(@McpPromptParam(name = "city") String city) {
  *     // Method implementation...
@@ -30,15 +31,31 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface McpPromptParam {
-  /** The name of the prompt parameter. */
+  /**
+   * The name of the prompt parameter.
+   *
+   * @return the name of the prompt parameter
+   */
   String name();
 
-  /** The title of the prompt parameter. Defaults to the literal string "Not specified". */
+  /**
+   * The title of the prompt parameter. Defaults to the literal string "Not specified".
+   *
+   * @return the title of the prompt parameter
+   */
   String title() default StringHelper.EMPTY;
 
-  /** The description of the prompt parameter. Defaults to the literal string "Not specified". */
+  /**
+   * The description of the prompt parameter. Defaults to the literal string "Not specified".
+   *
+   * @return the description of the prompt parameter
+   */
   String description() default StringHelper.EMPTY;
 
-  /** Whether the prompt parameter is required. Defaults to {@code false}. */
+  /**
+   * Whether the prompt parameter is required. Defaults to {@code false}.
+   *
+   * @return whether the prompt parameter is required
+   */
   boolean required() default false;
 }

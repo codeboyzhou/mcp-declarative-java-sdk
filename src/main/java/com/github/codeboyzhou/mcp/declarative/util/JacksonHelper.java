@@ -55,6 +55,7 @@ public final class JacksonHelper {
    *
    * @param json the JSON string to deserialize
    * @param valueType the class of the object to deserialize to
+   * @param <T> the type of the object to deserialize to
    * @return the deserialized object
    */
   public static <T> T fromJson(String json, Class<T> valueType) {
@@ -70,6 +71,7 @@ public final class JacksonHelper {
    *
    * @param yamlFile the YAML file to deserialize
    * @param valueType the class of the object to deserialize to
+   * @param <T> the type of the object to deserialize to
    * @return the deserialized object
    */
   public static <T> T fromYaml(File yamlFile, Class<T> valueType) {

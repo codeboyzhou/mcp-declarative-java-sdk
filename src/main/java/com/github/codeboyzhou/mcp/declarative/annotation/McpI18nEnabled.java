@@ -15,8 +15,9 @@ import java.lang.annotation.Target;
  *
  * <p>Note: This annotation is only applicable to the main class of the MCP server application.
  *
- * @apiNote Example usage:
- *     <pre>{@code
+ * <p>Example usage:
+ *
+ * <pre>{@code
  * @McpI18nEnabled
  * public class MyMcpServerApplication {
  *     // Application logic...

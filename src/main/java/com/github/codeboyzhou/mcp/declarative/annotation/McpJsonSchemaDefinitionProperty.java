@@ -20,19 +20,26 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface McpJsonSchemaDefinitionProperty {
-
-  /** The name of the JSON schema property. If not specified, the field name will be used. */
+  /**
+   * The name of the JSON schema property. If not specified, the field name will be used.
+   *
+   * @return the name of the JSON schema property
+   */
   String name() default StringHelper.EMPTY;
 
   /**
    * The description of the JSON schema property. If not specified, the default value {@code "Not
    * specified"} will be used.
+   *
+   * @return the description of the JSON schema property
    */
   String description() default StringHelper.EMPTY;
 
   /**
    * Whether the JSON schema property is required. If not specified, the default value {@code false}
    * will be used.
+   *
+   * @return whether the JSON schema property is required
    */
   boolean required() default false;
 }

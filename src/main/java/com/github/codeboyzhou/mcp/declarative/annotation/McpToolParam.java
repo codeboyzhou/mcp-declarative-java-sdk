@@ -14,8 +14,9 @@ import java.lang.annotation.Target;
  * required status can be specified via the corresponding attributes. If omitted, these metadata
  * fields will default to the literal string "Not specified" and {@code false}.
  *
- * @apiNote Example usage:
- *     <pre>{@code
+ * <p>Example usage:
+ *
+ * <pre>{@code
  * @McpTool
  * public String getWeather(@McpToolParam(name = "city") String city) {
  *     // Method implementation...
@@ -27,12 +28,24 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface McpToolParam {
-  /** The name of the tool parameter. */
+  /**
+   * The name of the tool parameter.
+   *
+   * @return the name of the tool parameter
+   */
   String name();
 
-  /** The description of the tool parameter. Defaults to the literal string "Not specified". */
+  /**
+   * The description of the tool parameter. Defaults to the literal string "Not specified".
+   *
+   * @return the description of the tool parameter
+   */
   String description() default StringHelper.EMPTY;
 
-  /** Whether the tool parameter is required. Defaults to {@code false}. */
+  /**
+   * Whether the tool parameter is required. Defaults to {@code false}.
+   *
+   * @return whether the tool parameter is required
+   */
   boolean required() default false;
 }

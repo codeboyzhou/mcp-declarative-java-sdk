@@ -13,8 +13,9 @@ import java.lang.annotation.Target;
  * description can be specified via the corresponding attributes. If omitted, these metadata fields
  * will default to the literal string "Not specified".
  *
- * @apiNote Example usage:
- *     <pre>{@code
+ * <p>Example usage:
+ *
+ * <pre>{@code
  * @McpTool
  * public String getWeather(String city) {
  *     // Method implementation...
@@ -29,12 +30,24 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface McpTool {
-  /** The name of the tool. Defaults to the name of the annotated method. */
+  /**
+   * The name of the tool. Defaults to the name of the annotated method.
+   *
+   * @return the name of the tool
+   */
   String name() default StringHelper.EMPTY;
 
-  /** The title of the tool. Defaults to the literal string "Not specified". */
+  /**
+   * The title of the tool. Defaults to the literal string "Not specified".
+   *
+   * @return the title of the tool
+   */
   String title() default StringHelper.EMPTY;
 
-  /** The description of the tool. Defaults to the literal string "Not specified". */
+  /**
+   * The description of the tool. Defaults to the literal string "Not specified".
+   *
+   * @return the description of the tool
+   */
   String description() default StringHelper.EMPTY;
 }

@@ -21,8 +21,9 @@ import org.slf4j.LoggerFactory;
 /**
  * This class is a singleton that provides methods to start MCP servers.
  *
- * @apiNote Example usage:
- *     <pre>{@code
+ * <p>Example usage:
+ *
+ * <pre>{@code
  * McpServerInfo serverInfo = McpServerInfo.builder().build();
  * McpServers.run(MyApplication.class, args).startStdioServer(serverInfo);
  *

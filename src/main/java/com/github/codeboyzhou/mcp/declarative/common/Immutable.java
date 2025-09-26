@@ -13,6 +13,7 @@ public record Immutable<T>(T value) {
    * Creates a new instance of {@code Immutable} with the specified value.
    *
    * @param value the value to be wrapped
+   * @param <T> the type of the value
    * @return a new instance of {@code Immutable} with the specified value
    */
   public static <T> Immutable<T> of(T value) {
