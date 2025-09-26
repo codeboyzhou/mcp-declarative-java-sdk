@@ -6,8 +6,18 @@ import com.github.codeboyzhou.mcp.declarative.server.component.McpServerComponen
 import io.modelcontextprotocol.server.McpSyncServer;
 import io.modelcontextprotocol.spec.McpSchema;
 
+/**
+ * This abstract class is used to provide a base implementation for an MCP server.
+ *
+ * @author codeboyzhou
+ */
 public abstract class AbstractMcpServer<S extends McpServerInfo> implements McpServer<S> {
 
+  /**
+   * Starts the MCP server with the specified server info.
+   *
+   * @param serverInfo the server info
+   */
   public void start(S serverInfo) {
     McpSyncServer server =
         sync(serverInfo)
@@ -19,6 +29,12 @@ public abstract class AbstractMcpServer<S extends McpServerInfo> implements McpS
     McpServerComponentRegister.of(server).registerComponents();
   }
 
+  /**
+   * Returns the server capabilities for the MCP server.
+   *
+   * @param serverInfo the server info
+   * @return the server capabilities for the MCP server
+   */
   private McpSchema.ServerCapabilities serverCapabilities(S serverInfo) {
     McpSchema.ServerCapabilities.Builder capabilities = McpSchema.ServerCapabilities.builder();
     McpServerCapabilities capabilitiesConfig = serverInfo.capabilities();

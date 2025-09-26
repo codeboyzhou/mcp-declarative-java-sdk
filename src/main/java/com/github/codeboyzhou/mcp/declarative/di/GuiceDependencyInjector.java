@@ -4,10 +4,22 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
 
-public class GuiceDependencyInjector implements DependencyInjector {
+/**
+ * This class implements the {@link DependencyInjector} interface using Google Guice.
+ *
+ * @author codeboyzhou
+ */
+public final class GuiceDependencyInjector implements DependencyInjector {
 
+  /** The Guice {@link Injector} used for dependency injection. */
   private final Injector injector;
 
+  /**
+   * Creates a new instance of {@code GuiceDependencyInjector} with the specified Guice {@link
+   * Injector}.
+   *
+   * @param injector the Guice {@link Injector} to use for dependency injection
+   */
   public GuiceDependencyInjector(Injector injector) {
     this.injector = injector;
   }

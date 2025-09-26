@@ -27,24 +27,37 @@ import java.lang.reflect.Method;
 import java.util.Set;
 import org.reflections.Reflections;
 
+/**
+ * This class is a Guice module that configures bindings for classes annotated with {@link
+ * McpServerApplication}, {@link McpResource}, {@link McpPrompt}, and {@link McpTool}.
+ *
+ * @author codeboyzhou
+ */
 public final class GuiceInjectorModule extends AbstractModule {
 
+  /** The name of the injected variable for i18n enabled. */
   public static final String INJECTED_VARIABLE_NAME_I18N_ENABLED = "i18nEnabled";
 
+  /** The main class to use for configuration. */
   private final Class<?> mainClass;
 
+  /**
+   * Constructs a new {@link GuiceInjectorModule} with the specified main class.
+   *
+   * @param mainClass the main class to use for configuration
+   */
   public GuiceInjectorModule(Class<?> mainClass) {
     this.mainClass = mainClass;
   }
 
   @Override
   protected void configure() {
-    // Bind classes annotated by McpResources, McpPrompts, McpTools
+    // Bind classes of methods annotated by McpResource, McpPrompt, McpTool
     bindClassesOfMethodsAnnotatedWith(McpResource.class);
     bindClassesOfMethodsAnnotatedWith(McpPrompt.class);
     bindClassesOfMethodsAnnotatedWith(McpTool.class);
 
-    // Bind all implementations of McpServerComponentFactory
+    // Bind all implementations of McpServerComponent
     bind(McpServerResource.class).in(SINGLETON);
     bind(McpServerPrompt.class).in(SINGLETON);
     bind(McpServerTool.class).in(SINGLETON);
@@ -53,7 +66,7 @@ public final class GuiceInjectorModule extends AbstractModule {
     bind(McpPromptParameterConverter.class).in(SINGLETON);
     bind(McpToolParameterConverter.class).in(SINGLETON);
 
-    // Bind all implementations of McpServerFactory
+    // Bind all implementations of com.github.codeboyzhou.mcp.declarative.server.McpServer
     bind(McpStdioServer.class).in(SINGLETON);
     bind(McpSseServer.class).in(SINGLETON);
     bind(McpStreamableServer.class).in(SINGLETON);
@@ -65,6 +78,11 @@ public final class GuiceInjectorModule extends AbstractModule {
         .toInstance(i18nEnabled);
   }
 
+  /**
+   * Provides a {@link Reflections} instance for the main class.
+   *
+   * @return a {@link Reflections} instance for the main class
+   */
   @Provides
   @Singleton
   public Reflections provideReflections() {
@@ -73,6 +91,12 @@ public final class GuiceInjectorModule extends AbstractModule {
     return new Reflections(basePackage, MethodsAnnotated, FieldsAnnotated);
   }
 
+  /**
+   * Determines the base package for the {@link Reflections} instance to scan.
+   *
+   * @param application the {@link McpServerApplication} annotation
+   * @return the base package for the {@link Reflections} instance to scan
+   */
   private String determineBasePackage(McpServerApplication application) {
     if (application != null) {
       if (!application.basePackage().trim().isBlank()) {
@@ -85,6 +109,11 @@ public final class GuiceInjectorModule extends AbstractModule {
     return mainClass.getPackageName();
   }
 
+  /**
+   * Binds all classes of methods annotated with the specified annotation.
+   *
+   * @param annotation the annotation to scan for methods
+   */
   private void bindClassesOfMethodsAnnotatedWith(Class<? extends Annotation> annotation) {
     Reflections reflections = provideReflections();
     Set<Method> methods = reflections.getMethodsAnnotatedWith(annotation);

@@ -13,6 +13,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This class represents an MCP server resource component.
+ *
+ * @author codeboyzhou
+ */
 public class McpServerResource
     extends AbstractMcpServerComponent<McpServerFeatures.SyncResourceSpecification> {
 
@@ -45,6 +50,14 @@ public class McpServerResource
         resource, (exchange, request) -> invoke(instance, methodCache, resource));
   }
 
+  /**
+   * Invokes the resource method with the specified arguments.
+   *
+   * @param instance the instance of the class that declares the resource method
+   * @param methodCache the cached method information
+   * @param resource the resource specification
+   * @return the result of the resource invocation
+   */
   private McpSchema.ReadResourceResult invoke(
       Object instance, MethodCache methodCache, McpSchema.Resource resource) {
 

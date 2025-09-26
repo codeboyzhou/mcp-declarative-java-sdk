@@ -3,13 +3,31 @@ package com.github.codeboyzhou.mcp.declarative.util;
 import com.github.codeboyzhou.mcp.declarative.enums.JsonSchemaDataType;
 import org.jetbrains.annotations.VisibleForTesting;
 
+/**
+ * Helper class for Java and JSON schema type conversion.
+ *
+ * @author codeboyzhou
+ */
 public final class TypeConverter {
 
+  /**
+   * Private constructor to prevent instantiation of the utility class.
+   *
+   * @throws UnsupportedOperationException if instantiation is attempted
+   */
   @VisibleForTesting
   TypeConverter() {
     throw new UnsupportedOperationException("Utility class should not be instantiated");
   }
 
+  /**
+   * Converts the given value to the specified target type. If the value is null, returns the
+   * default value for the target type.
+   *
+   * @param value the value to convert
+   * @param targetType the target type to convert to
+   * @return the converted value
+   */
   public static Object convert(Object value, Class<?> targetType) {
     if (value == null) {
       return getDefaultValue(targetType);
@@ -39,6 +57,14 @@ public final class TypeConverter {
     return valueAsString;
   }
 
+  /**
+   * Converts the given value to the specified target type based on the JSON schema type. If the
+   * value is null, returns the default value for the JSON schema type.
+   *
+   * @param value the value to convert
+   * @param jsonSchemaType the JSON schema type to convert to
+   * @return the converted value
+   */
   public static Object convert(Object value, String jsonSchemaType) {
     if (value == null) {
       return getDefaultValue(jsonSchemaType);
@@ -62,6 +88,12 @@ public final class TypeConverter {
     return valueAsString;
   }
 
+  /**
+   * Returns the default value for the specified type.
+   *
+   * @param type the type to get the default value for
+   * @return the default value for the specified type
+   */
   private static Object getDefaultValue(Class<?> type) {
     if (type == String.class) {
       return StringHelper.EMPTY;
@@ -84,6 +116,12 @@ public final class TypeConverter {
     return null;
   }
 
+  /**
+   * Returns the default value for the specified JSON schema type.
+   *
+   * @param jsonSchemaType the JSON schema type to get the default value for
+   * @return the default value for the specified JSON schema type
+   */
   private static Object getDefaultValue(String jsonSchemaType) {
     if (JsonSchemaDataType.STRING.getType().equalsIgnoreCase(jsonSchemaType)) {
       return StringHelper.EMPTY;

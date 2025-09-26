@@ -4,6 +4,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.codeboyzhou.mcp.declarative.enums.ServerMode;
 import com.github.codeboyzhou.mcp.declarative.enums.ServerType;
 
+/**
+ * This record represents the configuration of an MCP (Model Context Protocol) server.
+ *
+ * <p>It contains various properties such as enabled status, server mode, name, version, type,
+ * instructions, request timeout, capabilities, change notification, SSE (Server-Sent Events), and
+ * streamable configuration.
+ *
+ * @see <a href="https://codeboyzhou.github.io/mcp-declarative-java-sdk/getting-started">MCP
+ *     Declarative Java SDK Documentation</a>
+ * @author codeboyzhou
+ */
 public record McpServerConfiguration(
     @JsonProperty("enabled") boolean enabled,
     @JsonProperty("mode") ServerMode mode,

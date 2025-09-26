@@ -18,13 +18,20 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This class represents an MCP server prompt component.
+ *
+ * @author codeboyzhou
+ */
 public class McpServerPrompt
     extends AbstractMcpServerComponent<McpServerFeatures.SyncPromptSpecification> {
 
   private static final Logger log = LoggerFactory.getLogger(McpServerPrompt.class);
 
+  /** The converter for MCP prompt parameters. */
   private final McpPromptParameterConverter parameterConverter;
 
+  /** Creates a new instance of {@code McpServerPrompt}. */
   public McpServerPrompt() {
     this.parameterConverter = injector.getInstance(McpPromptParameterConverter.class);
   }
@@ -50,6 +57,15 @@ public class McpServerPrompt
         prompt, (exchange, request) -> invoke(instance, methodCache, description, request));
   }
 
+  /**
+   * Invokes the prompt method with the specified arguments.
+   *
+   * @param instance the instance of the class that declares the prompt method
+   * @param methodCache the cached method information
+   * @param description the description of the prompt
+   * @param request the request for the prompt
+   * @return the result of the prompt invocation
+   */
   private McpSchema.GetPromptResult invoke(
       Object instance,
       MethodCache methodCache,
@@ -65,6 +81,12 @@ public class McpServerPrompt
     return new McpSchema.GetPromptResult(description, List.of(message));
   }
 
+  /**
+   * Creates a list of prompt arguments from the method parameters.
+   *
+   * @param methodParams the method parameters
+   * @return the list of prompt arguments
+   */
   private List<McpSchema.PromptArgument> createPromptArguments(Parameter[] methodParams) {
     List<McpSchema.PromptArgument> promptArguments = new ArrayList<>(methodParams.length);
 

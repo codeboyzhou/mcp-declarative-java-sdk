@@ -11,34 +11,58 @@ import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Embedded Jetty HTTP server implementation.
+ *
+ * @author codeboyzhou
+ */
 public class EmbeddedJettyServer {
 
   private static final Logger log = LoggerFactory.getLogger(EmbeddedJettyServer.class);
 
+  /** Default servlet context path. */
   private static final String DEFAULT_SERVLET_CONTEXT_PATH = "/";
 
+  /** Default servlet path. */
   private static final String DEFAULT_SERVLET_PATH = "/*";
 
+  /** Thread pool for Jetty HTTP server. */
   private final ExecutorService threadPool;
 
+  /** Servlet to be registered in Jetty HTTP server. */
   private HttpServlet servlet;
 
+  /** Port to bind Jetty HTTP server. */
   private int port;
 
+  /** Constructor to initialize Jetty HTTP server with a single thread. */
   public EmbeddedJettyServer() {
     this.threadPool = Executors.newSingleThreadExecutor(new NamedThreadFactory("mcp-http-server"));
   }
 
+  /**
+   * Register a servlet to be handled by Jetty HTTP server.
+   *
+   * @param servlet the servlet to be registered
+   * @return this server instance
+   */
   public EmbeddedJettyServer use(HttpServlet servlet) {
     this.servlet = servlet;
     return this;
   }
 
+  /**
+   * Bind Jetty HTTP server to a specific port.
+   *
+   * @param port the port to bind the server to
+   * @return this server instance
+   */
   public EmbeddedJettyServer bind(int port) {
     this.port = port;
     return this;
   }
 
+  /** Start Jetty HTTP server and bind it to the specified port. */
   public void start() {
     ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
     handler.setContextPath(DEFAULT_SERVLET_CONTEXT_PATH);
@@ -62,6 +86,11 @@ public class EmbeddedJettyServer {
     threadPool.submit(() -> await(httpserver));
   }
 
+  /**
+   * Await for Jetty HTTP server to stop.
+   *
+   * @param httpserver the Jetty HTTP server instance
+   */
   private void await(Server httpserver) {
     try {
       httpserver.join();
@@ -70,12 +99,22 @@ public class EmbeddedJettyServer {
     }
   }
 
+  /**
+   * Add a shutdown hook to Jetty HTTP server to stop it when the JVM is shutting down.
+   *
+   * @param httpserver the Jetty HTTP server instance
+   */
   private void addShutdownHook(Server httpserver) {
     Runnable runnable = () -> shutdown(httpserver);
     Thread shutdownHookThread = new Thread(runnable);
     Runtime.getRuntime().addShutdownHook(shutdownHookThread);
   }
 
+  /**
+   * Shutdown Jetty HTTP server and release resources.
+   *
+   * @param httpserver the Jetty HTTP server instance
+   */
   private void shutdown(Server httpserver) {
     try {
       log.info("Shutting down embedded Jetty server");

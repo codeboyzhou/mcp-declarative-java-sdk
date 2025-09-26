@@ -26,13 +26,20 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This class represents an MCP server tool component.
+ *
+ * @author codeboyzhou
+ */
 public class McpServerTool
     extends AbstractMcpServerComponent<McpServerFeatures.SyncToolSpecification> {
 
   private static final Logger log = LoggerFactory.getLogger(McpServerTool.class);
 
+  /** The parameter converter for MCP tool parameters. */
   private final McpToolParameterConverter parameterConverter;
 
+  /** Creates a new instance of {@code McpServerTool}. */
   public McpServerTool() {
     this.parameterConverter = injector.getInstance(McpToolParameterConverter.class);
   }
@@ -65,6 +72,14 @@ public class McpServerTool
         .build();
   }
 
+  /**
+   * Invokes the tool method with the specified arguments.
+   *
+   * @param instance the instance of the class that declares the tool method
+   * @param methodCache the cached method information
+   * @param request the tool request containing the arguments
+   * @return the result of the tool invocation
+   */
   private McpSchema.CallToolResult invoke(
       Object instance, MethodCache methodCache, McpSchema.CallToolRequest request) {
 
@@ -77,6 +92,12 @@ public class McpServerTool
     return McpSchema.CallToolResult.builder().content(List.of(content)).isError(isError).build();
   }
 
+  /**
+   * Creates a JSON schema for the tool method parameters.
+   *
+   * @param methodParams the method parameters
+   * @return the JSON schema for the tool method parameters
+   */
   private McpSchema.JsonSchema createJsonSchema(Parameter[] methodParams) {
     Map<String, Object> properties = new LinkedHashMap<>();
     Map<String, Object> definitions = new LinkedHashMap<>();
@@ -116,6 +137,12 @@ public class McpServerTool
         definitions);
   }
 
+  /**
+   * Creates a JSON schema definition for the specified class.
+   *
+   * @param definitionClass the class to create the JSON schema definition for
+   * @return the JSON schema definition for the specified class
+   */
   private Map<String, Object> createJsonSchemaDefinition(Class<?> definitionClass) {
     Map<String, Object> definitionJsonSchema = new HashMap<>();
     definitionJsonSchema.put("type", JsonSchemaDataType.OBJECT.getType());
