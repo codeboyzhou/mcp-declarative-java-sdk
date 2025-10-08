@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.github.codeboyzhou.mcp.declarative.configuration.McpServerConfiguration;
 import com.github.codeboyzhou.mcp.declarative.configuration.YAMLConfigurationLoader;
+import com.github.codeboyzhou.mcp.declarative.enums.JavaTypeToJsonSchemaMapper;
 import com.github.codeboyzhou.mcp.declarative.enums.ServerMode;
 import com.github.codeboyzhou.mcp.declarative.exception.McpServerConfigurationException;
 import com.github.codeboyzhou.mcp.declarative.server.McpSseServerInfo;
@@ -308,32 +309,105 @@ class McpServersTest {
 
   private void verifyToolsRegistered(McpSyncClient client) {
     List<McpSchema.Tool> tools = client.listTools().tools();
-    assertEquals(16, tools.size());
+    assertEquals(21, tools.size());
 
-    verifyToolRegistered(tools, "toolWithDefaultName", "title", "description", 0);
-    verifyToolRegistered(tools, "toolWithDefaultTitle", "Not specified", "description", 0);
-    verifyToolRegistered(tools, "toolWithDefaultDescription", "title", "Not specified", 0);
-    verifyToolRegistered(tools, "toolWithAllDefault", "Not specified", "Not specified", 0);
-    verifyToolRegistered(tools, "toolWithOptionalParam", "Not specified", "Not specified", 1);
-    verifyToolRegistered(tools, "toolWithRequiredParam", "Not specified", "Not specified", 1);
-    verifyToolRegistered(tools, "toolWithMultiParams", "Not specified", "Not specified", 2);
-    verifyToolRegistered(tools, "toolWithMixedParams", "Not specified", "Not specified", 1);
-    verifyToolRegistered(tools, "toolWithVoidReturn", "Not specified", "Not specified", 0);
-    verifyToolRegistered(tools, "toolWithReturnNull", "Not specified", "Not specified", 0);
-    verifyToolRegistered(tools, "toolWithIntegerParam", "Not specified", "Not specified", 1);
-    verifyToolRegistered(tools, "toolWithLongParam", "Not specified", "Not specified", 1);
-    verifyToolRegistered(tools, "toolWithFloatParam", "Not specified", "Not specified", 1);
-    verifyToolRegistered(tools, "toolWithDoubleParam", "Not specified", "Not specified", 1);
-    verifyToolRegistered(tools, "toolWithNumberParam", "Not specified", "Not specified", 1);
-    verifyToolRegistered(tools, "toolWithBooleanParam", "Not specified", "Not specified", 1);
+    verifyToolRegistered(tools, "toolWithDefaultName", "title", "description", Map.of());
+    verifyToolRegistered(tools, "toolWithDefaultTitle", "Not specified", "description", Map.of());
+    verifyToolRegistered(tools, "toolWithDefaultDescription", "title", "Not specified", Map.of());
+    verifyToolRegistered(tools, "toolWithAllDefault", "Not specified", "Not specified", Map.of());
+    verifyToolRegistered(
+        tools,
+        "toolWithOptionalParam",
+        "Not specified",
+        "Not specified",
+        Map.of("param", String.class));
+    verifyToolRegistered(
+        tools,
+        "toolWithRequiredParam",
+        "Not specified",
+        "Not specified",
+        Map.of("param", String.class));
+    verifyToolRegistered(
+        tools,
+        "toolWithMultiParams",
+        "Not specified",
+        "Not specified",
+        Map.of("param1", String.class, "param2", String.class));
+    verifyToolRegistered(
+        tools,
+        "toolWithMixedParams",
+        "Not specified",
+        "Not specified",
+        Map.of("mcpParam", String.class));
+    verifyToolRegistered(tools, "toolWithVoidReturn", "Not specified", "Not specified", Map.of());
+    verifyToolRegistered(tools, "toolWithReturnNull", "Not specified", "Not specified", Map.of());
+    verifyToolRegistered(
+        tools, "toolWithIntParam", "Not specified", "Not specified", Map.of("param", int.class));
+    verifyToolRegistered(
+        tools,
+        "toolWithIntegerParam",
+        "Not specified",
+        "Not specified",
+        Map.of("param", Integer.class));
+    verifyToolRegistered(
+        tools, "toolWithLongParam", "Not specified", "Not specified", Map.of("param", long.class));
+    verifyToolRegistered(
+        tools,
+        "toolWithLongClassParam",
+        "Not specified",
+        "Not specified",
+        Map.of("param", Long.class));
+    verifyToolRegistered(
+        tools,
+        "toolWithFloatParam",
+        "Not specified",
+        "Not specified",
+        Map.of("param", float.class));
+    verifyToolRegistered(
+        tools,
+        "toolWithFloatClassParam",
+        "Not specified",
+        "Not specified",
+        Map.of("param", Float.class));
+    verifyToolRegistered(
+        tools,
+        "toolWithDoubleParam",
+        "Not specified",
+        "Not specified",
+        Map.of("param", double.class));
+    verifyToolRegistered(
+        tools,
+        "toolWithDoubleClassParam",
+        "Not specified",
+        "Not specified",
+        Map.of("param", Double.class));
+    verifyToolRegistered(
+        tools,
+        "toolWithNumberParam",
+        "Not specified",
+        "Not specified",
+        Map.of("param", Number.class));
+    verifyToolRegistered(
+        tools,
+        "toolWithBooleanParam",
+        "Not specified",
+        "Not specified",
+        Map.of("param", boolean.class));
+    verifyToolRegistered(
+        tools,
+        "toolWithBooleanClassParam",
+        "Not specified",
+        "Not specified",
+        Map.of("param", Boolean.class));
   }
 
+  @SuppressWarnings("unchecked")
   private void verifyToolRegistered(
       List<McpSchema.Tool> tools,
       String toolName,
       String toolTitle,
       String toolDescription,
-      int inputSchemaPropertiesSize) {
+      Map<String, Class<?>> inputSchemaPropertiesTypes) {
 
     McpSchema.Tool tool =
         tools.stream().filter(t -> t.name().equals(toolName)).findAny().orElse(null);
@@ -341,7 +415,18 @@ class McpServersTest {
     assertEquals(toolName, tool.name());
     assertEquals(toolTitle, tool.title());
     assertEquals(toolDescription, tool.description());
-    assertEquals(inputSchemaPropertiesSize, tool.inputSchema().properties().size());
+    assertEquals(inputSchemaPropertiesTypes.size(), tool.inputSchema().properties().size());
+
+    // verify input schema properties types
+    tool.inputSchema()
+        .properties()
+        .forEach(
+            (name, property) -> {
+              Map<String, String> props = (Map<String, String>) property;
+              Class<?> javaClass = inputSchemaPropertiesTypes.get(name);
+              final String jsonSchemaType = JavaTypeToJsonSchemaMapper.getJsonSchemaType(javaClass);
+              assertEquals(jsonSchemaType, props.get("type"));
+            });
   }
 
   private void verifyToolsCalled(McpSyncClient client) {
@@ -382,6 +467,11 @@ class McpServersTest {
         "The method call succeeded but the return value is null");
     verifyToolCalled(
         client,
+        "toolWithIntParam",
+        Map.of("param", 123),
+        "toolWithIntParam is called with param: 123");
+    verifyToolCalled(
+        client,
         "toolWithIntegerParam",
         Map.of("param", 123),
         "toolWithIntegerParam is called with param: 123");
@@ -392,14 +482,29 @@ class McpServersTest {
         "toolWithLongParam is called with param: 123");
     verifyToolCalled(
         client,
+        "toolWithLongClassParam",
+        Map.of("param", 123L),
+        "toolWithLongClassParam is called with param: 123");
+    verifyToolCalled(
+        client,
         "toolWithFloatParam",
         Map.of("param", 123.0F),
         "toolWithFloatParam is called with param: 123.0");
     verifyToolCalled(
         client,
+        "toolWithFloatClassParam",
+        Map.of("param", 123.0F),
+        "toolWithFloatClassParam is called with param: 123.0");
+    verifyToolCalled(
+        client,
         "toolWithDoubleParam",
         Map.of("param", 123.0),
         "toolWithDoubleParam is called with param: 123.0");
+    verifyToolCalled(
+        client,
+        "toolWithDoubleClassParam",
+        Map.of("param", 123.0),
+        "toolWithDoubleClassParam is called with param: 123.0");
     verifyToolCalled(
         client,
         "toolWithNumberParam",
@@ -410,6 +515,11 @@ class McpServersTest {
         "toolWithBooleanParam",
         Map.of("param", true),
         "toolWithBooleanParam is called with param: true");
+    verifyToolCalled(
+        client,
+        "toolWithBooleanClassParam",
+        Map.of("param", true),
+        "toolWithBooleanClassParam is called with param: true");
   }
 
   private void verifyToolCalled(

@@ -4,7 +4,7 @@ import com.github.codeboyzhou.mcp.declarative.annotation.McpJsonSchemaDefinition
 import com.github.codeboyzhou.mcp.declarative.annotation.McpJsonSchemaDefinitionProperty;
 import com.github.codeboyzhou.mcp.declarative.annotation.McpTool;
 import com.github.codeboyzhou.mcp.declarative.annotation.McpToolParam;
-import com.github.codeboyzhou.mcp.declarative.enums.JsonSchemaDataType;
+import com.github.codeboyzhou.mcp.declarative.enums.JavaTypeToJsonSchemaMapper;
 import com.github.codeboyzhou.mcp.declarative.reflect.InvocationResult;
 import com.github.codeboyzhou.mcp.declarative.reflect.MethodCache;
 import com.github.codeboyzhou.mcp.declarative.server.converter.McpToolParameterConverter;
@@ -116,7 +116,7 @@ public class McpServerTool
           Map<String, Object> definition = createJsonSchemaDefinition(definitionClass);
           definitions.put(definitionClassName, definition);
         } else {
-          property.put("type", definitionClass.getSimpleName().toLowerCase());
+          property.put("type", JavaTypeToJsonSchemaMapper.getJsonSchemaType(definitionClass));
           property.put("description", resolveComponentAttributeValue(toolParam.description()));
         }
         properties.put(parameterName, property);
@@ -129,7 +129,7 @@ public class McpServerTool
 
     final boolean hasAdditionalProperties = false;
     return new McpSchema.JsonSchema(
-        JsonSchemaDataType.OBJECT.getType(),
+        JavaTypeToJsonSchemaMapper.OBJECT.getJsonSchemaType(),
         properties,
         required,
         hasAdditionalProperties,
@@ -145,7 +145,7 @@ public class McpServerTool
    */
   private Map<String, Object> createJsonSchemaDefinition(Class<?> definitionClass) {
     Map<String, Object> definitionJsonSchema = new HashMap<>();
-    definitionJsonSchema.put("type", JsonSchemaDataType.OBJECT.getType());
+    definitionJsonSchema.put("type", JavaTypeToJsonSchemaMapper.OBJECT.getJsonSchemaType());
 
     Map<String, Object> properties = new LinkedHashMap<>();
     List<String> required = new ArrayList<>();
@@ -164,7 +164,7 @@ public class McpServerTool
       }
 
       Map<String, Object> fieldProperties = new HashMap<>();
-      fieldProperties.put("type", JsonSchemaDataType.fromJavaType(field.getType()).getType());
+      fieldProperties.put("type", JavaTypeToJsonSchemaMapper.getJsonSchemaType(field.getType()));
       fieldProperties.put("description", resolveComponentAttributeValue(property.description()));
 
       final String fieldName = StringHelper.defaultIfBlank(property.name(), field.getName());
