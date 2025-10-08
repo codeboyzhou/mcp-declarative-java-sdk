@@ -28,6 +28,9 @@ public final class MethodCache {
   /** The parameters of the cached method. */
   private final Parameter[] parameters;
 
+  /** The return type of the cached method. */
+  private final Class<?> returnType;
+
   /** The signature of the cached method. */
   private final String methodSignature;
 
@@ -50,6 +53,7 @@ public final class MethodCache {
     this.methodName = method.getName();
     this.declaringClass = method.getDeclaringClass();
     this.parameters = method.getParameters();
+    this.returnType = method.getReturnType();
     this.methodSignature = method.toGenericString();
     this.mcpResourceAnnotation = method.getAnnotation(McpResource.class);
     this.mcpPromptAnnotation = method.getAnnotation(McpPrompt.class);
@@ -100,6 +104,15 @@ public final class MethodCache {
    */
   public Parameter[] getParameters() {
     return parameters.clone();
+  }
+
+  /**
+   * Returns the return type of the cached method.
+   *
+   * @return the return type of the cached method
+   */
+  public Class<?> getReturnType() {
+    return returnType;
   }
 
   /**

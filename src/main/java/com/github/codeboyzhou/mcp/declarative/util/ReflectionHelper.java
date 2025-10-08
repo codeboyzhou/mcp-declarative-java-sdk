@@ -56,19 +56,19 @@ public enum ReflectionHelper {
     InvocationResult.Builder builder = InvocationResult.builder();
     try {
       Object result = method.invoke(instance, params.toArray());
-      if (method.getReturnType() == void.class) {
-        builder.result("The method call succeeded but has a void return type");
-      } else {
-        final String resultIfNull = "The method call succeeded but the return value is null";
-        builder.result(Objects.requireNonNullElse(result, resultIfNull));
+
+      Class<?> returnType = method.getReturnType();
+      if (returnType == void.class || returnType == Void.class) {
+        return builder.result("The method call succeeded but has a void return type").build();
       }
+
+      final String resultIfNull = "The method call succeeded but the return value is null";
+      return builder.result(Objects.requireNonNullElse(result, resultIfNull)).build();
     } catch (Exception e) {
       final String errorMessage = "Error invoking method: " + methodCache.getMethodSignature();
       log.error(errorMessage, e);
-      builder.result(errorMessage);
-      builder.exception(e);
+      return builder.result(errorMessage).exception(e).build();
     }
-    return builder.build();
   }
 
   /**

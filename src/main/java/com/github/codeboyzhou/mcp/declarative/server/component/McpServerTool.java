@@ -1,12 +1,13 @@
 package com.github.codeboyzhou.mcp.declarative.server.component;
 
 import com.github.codeboyzhou.mcp.declarative.annotation.McpJsonSchemaDefinition;
-import com.github.codeboyzhou.mcp.declarative.annotation.McpJsonSchemaDefinitionProperty;
+import com.github.codeboyzhou.mcp.declarative.annotation.McpJsonSchemaProperty;
 import com.github.codeboyzhou.mcp.declarative.annotation.McpTool;
 import com.github.codeboyzhou.mcp.declarative.annotation.McpToolParam;
 import com.github.codeboyzhou.mcp.declarative.enums.JavaTypeToJsonSchemaMapper;
 import com.github.codeboyzhou.mcp.declarative.reflect.InvocationResult;
 import com.github.codeboyzhou.mcp.declarative.reflect.MethodCache;
+import com.github.codeboyzhou.mcp.declarative.server.McpStructuredContent;
 import com.github.codeboyzhou.mcp.declarative.server.converter.McpToolParameterConverter;
 import com.github.codeboyzhou.mcp.declarative.util.JacksonHelper;
 import com.github.codeboyzhou.mcp.declarative.util.ReflectionHelper;
@@ -55,13 +56,15 @@ public class McpServerTool
     final String title = resolveComponentAttributeValue(toolMethod.title());
     final String description = resolveComponentAttributeValue(toolMethod.description());
 
-    McpSchema.JsonSchema paramSchema = createJsonSchema(methodCache.getParameters());
+    McpSchema.JsonSchema inputSchema = createJsonSchema(methodCache.getParameters());
+    Map<String, Object> outputSchema = createJsonSchemaDefinition(methodCache.getReturnType());
     McpSchema.Tool tool =
         McpSchema.Tool.builder()
             .name(name)
             .title(title)
             .description(description)
-            .inputSchema(paramSchema)
+            .inputSchema(inputSchema)
+            .outputSchema(outputSchema)
             .build();
 
     log.debug("Registering tool: {}", JacksonHelper.toJsonString(tool));
@@ -87,9 +90,20 @@ public class McpServerTool
     List<Object> params = parameterConverter.convertAll(methodCache.getParameters(), arguments);
     InvocationResult invocation = ReflectionHelper.INSTANCE.invoke(instance, methodCache, params);
 
-    final boolean isError = invocation.isError();
-    McpSchema.Content content = new McpSchema.TextContent(invocation.result().toString());
-    return McpSchema.CallToolResult.builder().content(List.of(content)).isError(isError).build();
+    Object result = invocation.result();
+    String textContent = result.toString();
+    Object structuredContent = Map.of();
+
+    if (result instanceof McpStructuredContent mcpStructuredContent) {
+      textContent = mcpStructuredContent.asTextContent();
+      structuredContent = mcpStructuredContent;
+    }
+
+    return McpSchema.CallToolResult.builder()
+        .content(List.of(new McpSchema.TextContent(textContent)))
+        .structuredContent(structuredContent)
+        .isError(invocation.isError())
+        .build();
   }
 
   /**
@@ -151,14 +165,12 @@ public class McpServerTool
     List<String> required = new ArrayList<>();
 
     Reflections reflections = injector.getInstance(Reflections.class);
-    Set<Field> definitionFields =
-        reflections.getFieldsAnnotatedWith(McpJsonSchemaDefinitionProperty.class);
+    Set<Field> definitionFields = reflections.getFieldsAnnotatedWith(McpJsonSchemaProperty.class);
     List<Field> fields =
         definitionFields.stream().filter(f -> f.getDeclaringClass() == definitionClass).toList();
 
     for (Field field : fields) {
-      McpJsonSchemaDefinitionProperty property =
-          field.getAnnotation(McpJsonSchemaDefinitionProperty.class);
+      McpJsonSchemaProperty property = field.getAnnotation(McpJsonSchemaProperty.class);
       if (property == null) {
         continue;
       }

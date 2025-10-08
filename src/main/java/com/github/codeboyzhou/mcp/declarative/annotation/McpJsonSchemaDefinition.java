@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  * supported by the MCP protocol. This allows you to use more complex data models in your MCP
  * server.
  *
- * @see McpJsonSchemaDefinitionProperty
+ * @see McpJsonSchemaProperty
  * @author codeboyzhou
  */
 @Target(ElementType.TYPE)

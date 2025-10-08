@@ -14,6 +14,8 @@ import com.github.codeboyzhou.mcp.declarative.enums.ServerMode;
 import com.github.codeboyzhou.mcp.declarative.exception.McpServerConfigurationException;
 import com.github.codeboyzhou.mcp.declarative.server.McpSseServerInfo;
 import com.github.codeboyzhou.mcp.declarative.server.McpStreamableServerInfo;
+import com.github.codeboyzhou.mcp.declarative.server.McpStructuredContent;
+import com.github.codeboyzhou.mcp.declarative.test.TestMcpToolsStructuredContent;
 import com.github.codeboyzhou.mcp.declarative.test.TestSimpleMcpStdioServer;
 import com.github.codeboyzhou.mcp.declarative.util.StringHelper;
 import io.modelcontextprotocol.client.McpClient;
@@ -309,7 +311,7 @@ class McpServersTest {
 
   private void verifyToolsRegistered(McpSyncClient client) {
     List<McpSchema.Tool> tools = client.listTools().tools();
-    assertEquals(21, tools.size());
+    assertEquals(22, tools.size());
 
     verifyToolRegistered(tools, "toolWithDefaultName", "title", "description", Map.of());
     verifyToolRegistered(tools, "toolWithDefaultTitle", "Not specified", "description", Map.of());
@@ -399,6 +401,8 @@ class McpServersTest {
         "Not specified",
         "Not specified",
         Map.of("param", Boolean.class));
+    verifyToolRegistered(
+        tools, "toolWithReturnStructuredContent", "Not specified", "Not specified", Map.of());
   }
 
   @SuppressWarnings("unchecked")
@@ -520,6 +524,12 @@ class McpServersTest {
         "toolWithBooleanClassParam",
         Map.of("param", true),
         "toolWithBooleanClassParam is called with param: true");
+    verifyToolCalled(
+        client,
+        "toolWithReturnStructuredContent",
+        Map.of(),
+        new TestMcpToolsStructuredContent.TestStructuredContent(1, 2, 3L, 4L, 5.0F, 6.0F, 7.0, 8.0)
+            .asTextContent());
   }
 
   private void verifyToolCalled(
@@ -530,5 +540,9 @@ class McpServersTest {
     McpSchema.TextContent content = (McpSchema.TextContent) result.content().get(0);
     assertFalse(result.isError());
     assertEquals(expectedResult, content.text());
+
+    if (result.structuredContent() instanceof McpStructuredContent structuredContent) {
+      assertEquals(expectedResult, structuredContent.asTextContent());
+    }
   }
 }

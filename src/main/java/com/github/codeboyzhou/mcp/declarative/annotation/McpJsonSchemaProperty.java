@@ -19,7 +19,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface McpJsonSchemaDefinitionProperty {
+public @interface McpJsonSchemaProperty {
   /**
    * The name of the JSON schema property. If not specified, the field name will be used.
    *
