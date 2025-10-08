@@ -2,7 +2,6 @@ package com.github.codeboyzhou.mcp.declarative.util;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.github.codeboyzhou.mcp.declarative.enums.JsonSchemaDataType;
 import org.junit.jupiter.api.Test;
 
 class TypeConverterTest {
@@ -19,10 +18,11 @@ class TypeConverterTest {
     assertEquals(0, TypeConverter.convert(null, Integer.class));
     assertEquals(0L, TypeConverter.convert(null, long.class));
     assertEquals(0L, TypeConverter.convert(null, Long.class));
-    assertEquals(0.0f, TypeConverter.convert(null, float.class));
-    assertEquals(0.0f, TypeConverter.convert(null, Float.class));
+    assertEquals(0.0F, TypeConverter.convert(null, float.class));
+    assertEquals(0.0F, TypeConverter.convert(null, Float.class));
     assertEquals(0.0, TypeConverter.convert(null, double.class));
     assertEquals(0.0, TypeConverter.convert(null, Double.class));
+    assertEquals(0.0, TypeConverter.convert(null, Number.class));
     assertEquals(false, TypeConverter.convert(null, boolean.class));
     assertEquals(false, TypeConverter.convert(null, Boolean.class));
     assertNull(TypeConverter.convert(null, Object.class));
@@ -47,14 +47,21 @@ class TypeConverterTest {
 
   @Test
   void testConvertTargetType_shouldReturnFloatWhenTargetTypeIsFloat() {
-    assertEquals(1.0f, TypeConverter.convert("1", float.class));
-    assertEquals(1.0f, TypeConverter.convert("1", Float.class));
+    assertEquals(1.0F, TypeConverter.convert("1", float.class));
+    assertEquals(1.0F, TypeConverter.convert("1", Float.class));
   }
 
   @Test
   void testConvertTargetType_shouldReturnDoubleWhenTargetTypeIsDouble() {
     assertEquals(1.0, TypeConverter.convert("1", double.class));
     assertEquals(1.0, TypeConverter.convert("1", Double.class));
+  }
+
+  @Test
+  void testConvertTargetType_shouldReturnNumberWhenTargetTypeIsNumber() {
+    assertEquals(2147483647, TypeConverter.convert(Integer.MAX_VALUE, Number.class));
+    assertEquals(9223372036854775807L, TypeConverter.convert(Long.MAX_VALUE, Number.class));
+    assertEquals(1.0, TypeConverter.convert("1.0", Number.class));
   }
 
   @Test
@@ -66,40 +73,5 @@ class TypeConverterTest {
   @Test
   void testConvertTargetType_shouldReturnValueAsStringWhenTargetTypeIsNotSupported() {
     assertEquals("test", TypeConverter.convert("test", Object.class));
-  }
-
-  @Test
-  void testConvertJsonSchemaType_shouldReturnDefaultValueWhenValueIsNull() {
-    assertEquals(
-        StringHelper.EMPTY, TypeConverter.convert(null, JsonSchemaDataType.STRING.getType()));
-    assertEquals(0, TypeConverter.convert(null, JsonSchemaDataType.INTEGER.getType()));
-    assertEquals(0.0, TypeConverter.convert(null, JsonSchemaDataType.NUMBER.getType()));
-    assertEquals(false, TypeConverter.convert(null, JsonSchemaDataType.BOOLEAN.getType()));
-    assertNull(TypeConverter.convert(null, JsonSchemaDataType.OBJECT.getType()));
-  }
-
-  @Test
-  void testConvertJsonSchemaType_shouldReturnDefaultValueWhenJsonSchemaTypeIsString() {
-    assertEquals("test", TypeConverter.convert("test", JsonSchemaDataType.STRING.getType()));
-  }
-
-  @Test
-  void testConvertJsonSchemaType_shouldReturnDefaultValueWhenJsonSchemaTypeIsInteger() {
-    assertEquals(1, TypeConverter.convert("1", JsonSchemaDataType.INTEGER.getType()));
-  }
-
-  @Test
-  void testConvertJsonSchemaType_shouldReturnDefaultValueWhenJsonSchemaTypeIsNumber() {
-    assertEquals(1.0, TypeConverter.convert("1", JsonSchemaDataType.NUMBER.getType()));
-  }
-
-  @Test
-  void testConvertJsonSchemaType_shouldReturnDefaultValueWhenJsonSchemaTypeIsBoolean() {
-    assertEquals(true, TypeConverter.convert("true", JsonSchemaDataType.BOOLEAN.getType()));
-  }
-
-  @Test
-  void testConvertJsonSchemaType_shouldReturnValueAsStringWhenJsonSchemaTypeIsNotSupported() {
-    assertEquals("test", TypeConverter.convert("test", JsonSchemaDataType.OBJECT.getType()));
   }
 }

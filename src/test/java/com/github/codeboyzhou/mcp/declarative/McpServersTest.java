@@ -308,7 +308,7 @@ class McpServersTest {
 
   private void verifyToolsRegistered(McpSyncClient client) {
     List<McpSchema.Tool> tools = client.listTools().tools();
-    assertEquals(10, tools.size());
+    assertEquals(16, tools.size());
 
     verifyToolRegistered(tools, "toolWithDefaultName", "title", "description", 0);
     verifyToolRegistered(tools, "toolWithDefaultTitle", "Not specified", "description", 0);
@@ -320,6 +320,12 @@ class McpServersTest {
     verifyToolRegistered(tools, "toolWithMixedParams", "Not specified", "Not specified", 1);
     verifyToolRegistered(tools, "toolWithVoidReturn", "Not specified", "Not specified", 0);
     verifyToolRegistered(tools, "toolWithReturnNull", "Not specified", "Not specified", 0);
+    verifyToolRegistered(tools, "toolWithIntegerParam", "Not specified", "Not specified", 1);
+    verifyToolRegistered(tools, "toolWithLongParam", "Not specified", "Not specified", 1);
+    verifyToolRegistered(tools, "toolWithFloatParam", "Not specified", "Not specified", 1);
+    verifyToolRegistered(tools, "toolWithDoubleParam", "Not specified", "Not specified", 1);
+    verifyToolRegistered(tools, "toolWithNumberParam", "Not specified", "Not specified", 1);
+    verifyToolRegistered(tools, "toolWithBooleanParam", "Not specified", "Not specified", 1);
   }
 
   private void verifyToolRegistered(
@@ -374,6 +380,36 @@ class McpServersTest {
         "toolWithReturnNull",
         Map.of(),
         "The method call succeeded but the return value is null");
+    verifyToolCalled(
+        client,
+        "toolWithIntegerParam",
+        Map.of("param", 123),
+        "toolWithIntegerParam is called with param: 123");
+    verifyToolCalled(
+        client,
+        "toolWithLongParam",
+        Map.of("param", 123L),
+        "toolWithLongParam is called with param: 123");
+    verifyToolCalled(
+        client,
+        "toolWithFloatParam",
+        Map.of("param", 123.0F),
+        "toolWithFloatParam is called with param: 123.0");
+    verifyToolCalled(
+        client,
+        "toolWithDoubleParam",
+        Map.of("param", 123.0),
+        "toolWithDoubleParam is called with param: 123.0");
+    verifyToolCalled(
+        client,
+        "toolWithNumberParam",
+        Map.of("param", 123),
+        "toolWithNumberParam is called with param: 123");
+    verifyToolCalled(
+        client,
+        "toolWithBooleanParam",
+        Map.of("param", true),
+        "toolWithBooleanParam is called with param: true");
   }
 
   private void verifyToolCalled(

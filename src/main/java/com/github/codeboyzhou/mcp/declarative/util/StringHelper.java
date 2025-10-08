@@ -12,6 +12,9 @@ public final class StringHelper {
   /** The empty string constant. */
   public static final String EMPTY = "";
 
+  /** The dot character constant. */
+  public static final String DOT = ".";
+
   /** The space character constant. */
   public static final String SPACE = " ";
 
