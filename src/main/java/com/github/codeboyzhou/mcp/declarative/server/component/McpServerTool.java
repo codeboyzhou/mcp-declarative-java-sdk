@@ -53,8 +53,8 @@ public class McpServerTool
 
     McpTool toolMethod = methodCache.getMcpToolAnnotation();
     final String name = StringHelper.defaultIfBlank(toolMethod.name(), methodCache.getMethodName());
-    final String title = resolveComponentAttributeValue(toolMethod.title());
-    final String description = resolveComponentAttributeValue(toolMethod.description());
+    final String title = localizeAttribute(toolMethod.title(), name);
+    final String description = localizeAttribute(toolMethod.description(), name);
 
     McpSchema.JsonSchema inputSchema = createJsonSchema(methodCache.getParameters());
     Map<String, Object> outputSchema = createJsonSchemaDefinition(methodCache.getReturnType());
@@ -131,7 +131,7 @@ public class McpServerTool
           definitions.put(definitionClassName, definition);
         } else {
           property.put("type", JavaTypeToJsonSchemaMapper.getJsonSchemaType(definitionClass));
-          property.put("description", resolveComponentAttributeValue(toolParam.description()));
+          property.put("description", localizeAttribute(toolParam.description(), parameterName));
         }
         properties.put(parameterName, property);
 
@@ -176,10 +176,10 @@ public class McpServerTool
       }
 
       Map<String, Object> fieldProperties = new HashMap<>();
-      fieldProperties.put("type", JavaTypeToJsonSchemaMapper.getJsonSchemaType(field.getType()));
-      fieldProperties.put("description", resolveComponentAttributeValue(property.description()));
-
       final String fieldName = StringHelper.defaultIfBlank(property.name(), field.getName());
+      fieldProperties.put("type", JavaTypeToJsonSchemaMapper.getJsonSchemaType(field.getType()));
+      fieldProperties.put("description", localizeAttribute(property.description(), fieldName));
+
       properties.put(fieldName, fieldProperties);
 
       if (property.required()) {

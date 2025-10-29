@@ -14,9 +14,6 @@ import java.util.ResourceBundle;
  * @author codeboyzhou
  */
 public abstract class AbstractMcpServerComponent<T> implements McpServerComponent<T> {
-  /** The default value to use when a component attribute is not specified. */
-  protected static final String NOT_SPECIFIED = "Not specified";
-
   /** The dependency injector to use for injecting component attributes. */
   protected final DependencyInjector injector;
 
@@ -30,16 +27,19 @@ public abstract class AbstractMcpServerComponent<T> implements McpServerComponen
   }
 
   /**
-   * Resolves the value of a component attribute, using the resource bundle for localization if i18n
-   * is enabled.
+   * Localizes the attribute with the specified i18n key using the resource bundle, or returns the
+   * default value if the key is not found in the bundle.
    *
-   * @param attributeLiteralValue the literal value of the component attribute
-   * @return the resolved value of the component attribute
+   * @param i18nKey the i18n key of the attribute to localize
+   * @param defaultValue the default value to return if the i18n key is not found in the bundle
+   * @return the localized value of the attribute, or the default value if the i18n key is not found
+   *     in the bundle
    */
-  protected String resolveComponentAttributeValue(String attributeLiteralValue) {
-    if (bundle != null && bundle.containsKey(attributeLiteralValue)) {
-      return bundle.getString(attributeLiteralValue);
+  protected String localizeAttribute(String i18nKey, String defaultValue) {
+    if (bundle != null && bundle.containsKey(i18nKey)) {
+      return bundle.getString(i18nKey);
     }
-    return StringHelper.defaultIfBlank(attributeLiteralValue, NOT_SPECIFIED);
+    // If we don't need to localize, just return the literal value or default value
+    return StringHelper.defaultIfBlank(i18nKey, defaultValue);
   }
 }

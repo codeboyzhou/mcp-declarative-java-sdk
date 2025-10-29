@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  *
  * <p>The tool's name defaults to the name of the annotated method. Tool metadata such as title and
  * description can be specified via the corresponding attributes. If omitted, these metadata fields
- * will default to the literal string "Not specified".
+ * will default to the value of the {@code name} attribute.
  *
  * <p>Example usage:
  *
@@ -38,14 +38,14 @@ public @interface McpTool {
   String name() default StringHelper.EMPTY;
 
   /**
-   * The title of the tool. Defaults to the literal string "Not specified".
+   * The title of the tool. Defaults to the value of the {@code name} attribute.
    *
    * @return the title of the tool
    */
   String title() default StringHelper.EMPTY;
 
   /**
-   * The description of the tool. Defaults to the literal string "Not specified".
+   * The description of the tool. Defaults to the value of the {@code name} attribute.
    *
    * @return the description of the tool
    */

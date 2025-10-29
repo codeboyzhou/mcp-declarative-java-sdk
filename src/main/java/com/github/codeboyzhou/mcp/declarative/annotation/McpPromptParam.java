@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  *
  * <p>The parameter's name must be specified explicitly. Parameter metadata such as title,
  * description, and required can be specified via the corresponding attributes. If omitted, these
- * metadata fields will default to the literal string "Not specified" and {@code false}.
+ * metadata fields will default to the value of the {@code name} attribute and {@code false}.
  *
  * <p>Example usage:
  *
@@ -39,14 +39,14 @@ public @interface McpPromptParam {
   String name();
 
   /**
-   * The title of the prompt parameter. Defaults to the literal string "Not specified".
+   * The title of the prompt parameter. Defaults to the value of the {@code name} attribute.
    *
    * @return the title of the prompt parameter
    */
   String title() default StringHelper.EMPTY;
 
   /**
-   * The description of the prompt parameter. Defaults to the literal string "Not specified".
+   * The description of the prompt parameter. Defaults to the value of the {@code name} attribute.
    *
    * @return the description of the prompt parameter
    */

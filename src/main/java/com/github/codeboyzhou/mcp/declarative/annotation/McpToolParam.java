@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  *
  * <p>The parameter's name must be specified explicitly. Parameter metadata such as description and
  * required status can be specified via the corresponding attributes. If omitted, these metadata
- * fields will default to the literal string "Not specified" and {@code false}.
+ * fields will default to the value of the {@code name} attribute and {@code false}.
  *
  * <p>Example usage:
  *
@@ -36,7 +36,7 @@ public @interface McpToolParam {
   String name();
 
   /**
-   * The description of the tool parameter. Defaults to the literal string "Not specified".
+   * The description of the tool parameter. Defaults to the value of the {@code name} attribute.
    *
    * @return the description of the tool parameter
    */

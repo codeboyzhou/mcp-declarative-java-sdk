@@ -233,15 +233,32 @@ class McpServersTest {
     assertEquals(10, prompts.size());
 
     verifyPromptRegistered(prompts, "promptWithDefaultName", "title", "description", 0);
-    verifyPromptRegistered(prompts, "promptWithDefaultTitle", "Not specified", "description", 0);
-    verifyPromptRegistered(prompts, "promptWithDefaultDescription", "title", "Not specified", 0);
-    verifyPromptRegistered(prompts, "promptWithAllDefault", "Not specified", "Not specified", 0);
-    verifyPromptRegistered(prompts, "promptWithOptionalParam", "Not specified", "Not specified", 1);
-    verifyPromptRegistered(prompts, "promptWithRequiredParam", "Not specified", "Not specified", 1);
-    verifyPromptRegistered(prompts, "promptWithMultiParams", "Not specified", "Not specified", 2);
-    verifyPromptRegistered(prompts, "promptWithMixedParams", "Not specified", "Not specified", 1);
-    verifyPromptRegistered(prompts, "promptWithVoidReturn", "Not specified", "Not specified", 0);
-    verifyPromptRegistered(prompts, "promptWithReturnNull", "Not specified", "Not specified", 0);
+    verifyPromptRegistered(
+        prompts, "promptWithDefaultTitle", "promptWithDefaultTitle", "description", 0);
+    verifyPromptRegistered(
+        prompts, "promptWithDefaultDescription", "title", "promptWithDefaultDescription", 0);
+    verifyPromptRegistered(
+        prompts, "promptWithAllDefault", "promptWithAllDefault", "promptWithAllDefault", 0);
+    verifyPromptRegistered(
+        prompts,
+        "promptWithOptionalParam",
+        "promptWithOptionalParam",
+        "promptWithOptionalParam",
+        1);
+    verifyPromptRegistered(
+        prompts,
+        "promptWithRequiredParam",
+        "promptWithRequiredParam",
+        "promptWithRequiredParam",
+        1);
+    verifyPromptRegistered(
+        prompts, "promptWithMultiParams", "promptWithMultiParams", "promptWithMultiParams", 2);
+    verifyPromptRegistered(
+        prompts, "promptWithMixedParams", "promptWithMixedParams", "promptWithMixedParams", 1);
+    verifyPromptRegistered(
+        prompts, "promptWithVoidReturn", "promptWithVoidReturn", "promptWithVoidReturn", 0);
+    verifyPromptRegistered(
+        prompts, "promptWithReturnNull", "promptWithReturnNull", "promptWithReturnNull", 0);
   }
 
   private void verifyPromptRegistered(
@@ -314,95 +331,112 @@ class McpServersTest {
     assertEquals(22, tools.size());
 
     verifyToolRegistered(tools, "toolWithDefaultName", "title", "description", Map.of());
-    verifyToolRegistered(tools, "toolWithDefaultTitle", "Not specified", "description", Map.of());
-    verifyToolRegistered(tools, "toolWithDefaultDescription", "title", "Not specified", Map.of());
-    verifyToolRegistered(tools, "toolWithAllDefault", "Not specified", "Not specified", Map.of());
+    verifyToolRegistered(
+        tools, "toolWithDefaultTitle", "toolWithDefaultTitle", "description", Map.of());
+    verifyToolRegistered(
+        tools, "toolWithDefaultDescription", "title", "toolWithDefaultDescription", Map.of());
+    verifyToolRegistered(
+        tools, "toolWithAllDefault", "toolWithAllDefault", "toolWithAllDefault", Map.of());
     verifyToolRegistered(
         tools,
         "toolWithOptionalParam",
-        "Not specified",
-        "Not specified",
+        "toolWithOptionalParam",
+        "toolWithOptionalParam",
         Map.of("param", String.class));
     verifyToolRegistered(
         tools,
         "toolWithRequiredParam",
-        "Not specified",
-        "Not specified",
+        "toolWithRequiredParam",
+        "toolWithRequiredParam",
         Map.of("param", String.class));
     verifyToolRegistered(
         tools,
         "toolWithMultiParams",
-        "Not specified",
-        "Not specified",
+        "toolWithMultiParams",
+        "toolWithMultiParams",
         Map.of("param1", String.class, "param2", String.class));
     verifyToolRegistered(
         tools,
         "toolWithMixedParams",
-        "Not specified",
-        "Not specified",
+        "toolWithMixedParams",
+        "toolWithMixedParams",
         Map.of("mcpParam", String.class));
-    verifyToolRegistered(tools, "toolWithVoidReturn", "Not specified", "Not specified", Map.of());
-    verifyToolRegistered(tools, "toolWithReturnNull", "Not specified", "Not specified", Map.of());
     verifyToolRegistered(
-        tools, "toolWithIntParam", "Not specified", "Not specified", Map.of("param", int.class));
+        tools, "toolWithVoidReturn", "toolWithVoidReturn", "toolWithVoidReturn", Map.of());
+    verifyToolRegistered(
+        tools, "toolWithReturnNull", "toolWithReturnNull", "toolWithReturnNull", Map.of());
+    verifyToolRegistered(
+        tools,
+        "toolWithIntParam",
+        "toolWithIntParam",
+        "toolWithIntParam",
+        Map.of("param", int.class));
     verifyToolRegistered(
         tools,
         "toolWithIntegerParam",
-        "Not specified",
-        "Not specified",
+        "toolWithIntegerParam",
+        "toolWithIntegerParam",
         Map.of("param", Integer.class));
     verifyToolRegistered(
-        tools, "toolWithLongParam", "Not specified", "Not specified", Map.of("param", long.class));
+        tools,
+        "toolWithLongParam",
+        "toolWithLongParam",
+        "toolWithLongParam",
+        Map.of("param", long.class));
     verifyToolRegistered(
         tools,
         "toolWithLongClassParam",
-        "Not specified",
-        "Not specified",
+        "toolWithLongClassParam",
+        "toolWithLongClassParam",
         Map.of("param", Long.class));
     verifyToolRegistered(
         tools,
         "toolWithFloatParam",
-        "Not specified",
-        "Not specified",
+        "toolWithFloatParam",
+        "toolWithFloatParam",
         Map.of("param", float.class));
     verifyToolRegistered(
         tools,
         "toolWithFloatClassParam",
-        "Not specified",
-        "Not specified",
+        "toolWithFloatClassParam",
+        "toolWithFloatClassParam",
         Map.of("param", Float.class));
     verifyToolRegistered(
         tools,
         "toolWithDoubleParam",
-        "Not specified",
-        "Not specified",
+        "toolWithDoubleParam",
+        "toolWithDoubleParam",
         Map.of("param", double.class));
     verifyToolRegistered(
         tools,
         "toolWithDoubleClassParam",
-        "Not specified",
-        "Not specified",
+        "toolWithDoubleClassParam",
+        "toolWithDoubleClassParam",
         Map.of("param", Double.class));
     verifyToolRegistered(
         tools,
         "toolWithNumberParam",
-        "Not specified",
-        "Not specified",
+        "toolWithNumberParam",
+        "toolWithNumberParam",
         Map.of("param", Number.class));
     verifyToolRegistered(
         tools,
         "toolWithBooleanParam",
-        "Not specified",
-        "Not specified",
+        "toolWithBooleanParam",
+        "toolWithBooleanParam",
         Map.of("param", boolean.class));
     verifyToolRegistered(
         tools,
         "toolWithBooleanClassParam",
-        "Not specified",
-        "Not specified",
+        "toolWithBooleanClassParam",
+        "toolWithBooleanClassParam",
         Map.of("param", Boolean.class));
     verifyToolRegistered(
-        tools, "toolWithReturnStructuredContent", "Not specified", "Not specified", Map.of());
+        tools,
+        "toolWithReturnStructuredContent",
+        "toolWithReturnStructuredContent",
+        "toolWithReturnStructuredContent",
+        Map.of());
   }
 
   @SuppressWarnings("unchecked")

@@ -31,8 +31,8 @@ public class McpServerResource
 
     McpResource res = methodCache.getMcpResourceAnnotation();
     final String name = StringHelper.defaultIfBlank(res.name(), methodCache.getMethodName());
-    final String title = resolveComponentAttributeValue(res.title());
-    final String description = resolveComponentAttributeValue(res.description());
+    final String title = localizeAttribute(res.title(), name);
+    final String description = localizeAttribute(res.description(), name);
 
     McpSchema.Resource resource =
         McpSchema.Resource.builder()

@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  *
  * <p>The resource's URI must be specified explicitly. Resource metadata such as name, title,
  * description, and MIME type can be specified via the corresponding attributes. If omitted, these
- * metadata fields will default to the literal string "Not specified" and "text/plain".
+ * metadata fields will default to the value of the {@code name} attribute and "text/plain".
  *
  * <p>Example usage:
  *
@@ -46,14 +46,14 @@ public @interface McpResource {
   String name() default StringHelper.EMPTY;
 
   /**
-   * The title of the resource. Defaults to the literal string "Not specified".
+   * The title of the resource. Defaults to the value of the {@code name} attribute.
    *
    * @return the title of the resource
    */
   String title() default StringHelper.EMPTY;
 
   /**
-   * The description of the resource. Defaults to the literal string "Not specified".
+   * The description of the resource. Defaults to the value of the {@code name} attribute.
    *
    * @return the description of the resource
    */

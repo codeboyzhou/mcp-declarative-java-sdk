@@ -45,8 +45,8 @@ public class McpServerPrompt
     McpPrompt promptMethod = methodCache.getMcpPromptAnnotation();
     final String name =
         StringHelper.defaultIfBlank(promptMethod.name(), methodCache.getMethodName());
-    final String title = resolveComponentAttributeValue(promptMethod.title());
-    final String description = resolveComponentAttributeValue(promptMethod.description());
+    final String title = localizeAttribute(promptMethod.title(), name);
+    final String description = localizeAttribute(promptMethod.description(), name);
 
     List<McpSchema.PromptArgument> promptArgs = createPromptArguments(methodCache.getParameters());
     McpSchema.Prompt prompt = new McpSchema.Prompt(name, title, description, promptArgs);
@@ -94,8 +94,8 @@ public class McpServerPrompt
       if (param.isAnnotationPresent(McpPromptParam.class)) {
         McpPromptParam promptParam = param.getAnnotation(McpPromptParam.class);
         final String name = promptParam.name();
-        final String title = resolveComponentAttributeValue(promptParam.title());
-        final String description = resolveComponentAttributeValue(promptParam.description());
+        final String title = localizeAttribute(promptParam.title(), name);
+        final String description = localizeAttribute(promptParam.description(), name);
         final boolean required = promptParam.required();
         promptArguments.add(new McpSchema.PromptArgument(name, title, description, required));
       }
