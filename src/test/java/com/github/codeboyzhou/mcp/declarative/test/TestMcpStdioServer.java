@@ -4,7 +4,7 @@ import com.github.codeboyzhou.mcp.declarative.McpServers;
 import com.github.codeboyzhou.mcp.declarative.server.McpServerInfo;
 import java.time.Duration;
 
-public class TestSimpleMcpStdioServer {
+public class TestMcpStdioServer {
 
   public static void main(String[] args) {
     McpServerInfo info =
@@ -12,8 +12,8 @@ public class TestSimpleMcpStdioServer {
             .name("mcp-server")
             .version("1.0.0")
             .instructions("test")
-            .requestTimeout(Duration.ofSeconds(10))
+            .requestTimeout(Duration.ofSeconds(30))
             .build();
-    McpServers.run(TestSimpleMcpStdioServer.class, args).startStdioServer(info);
+    McpServers.run(TestMcpStdioServer.class, args).startStdioServer(info);
   }
 }

@@ -3,7 +3,7 @@ mode: UNKNOWN
 name: mcp-server
 version: 1.0.0
 type: SYNC
-request-timeout: 20000
+request-timeout: 30000
 capabilities:
   resource: true
   prompt: true

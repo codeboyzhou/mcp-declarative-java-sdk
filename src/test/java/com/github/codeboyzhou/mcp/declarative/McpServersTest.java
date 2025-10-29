@@ -15,8 +15,8 @@ import com.github.codeboyzhou.mcp.declarative.exception.McpServerConfigurationEx
 import com.github.codeboyzhou.mcp.declarative.server.McpSseServerInfo;
 import com.github.codeboyzhou.mcp.declarative.server.McpStreamableServerInfo;
 import com.github.codeboyzhou.mcp.declarative.server.McpStructuredContent;
+import com.github.codeboyzhou.mcp.declarative.test.TestMcpStdioServer;
 import com.github.codeboyzhou.mcp.declarative.test.TestMcpToolsStructuredContent;
-import com.github.codeboyzhou.mcp.declarative.test.TestSimpleMcpStdioServer;
 import com.github.codeboyzhou.mcp.declarative.util.StringHelper;
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.McpSyncClient;
@@ -38,13 +38,13 @@ class McpServersTest {
 
   @Test
   void testStartStdioServer_shouldSucceed() {
-    TestSimpleMcpStdioServer.main(new String[] {}); // just for jacoco coverage report
+    TestMcpStdioServer.main(new String[] {}); // just for jacoco coverage report
 
     String classpath = System.getProperty("java.class.path");
 
     ServerParameters serverParameters =
         ServerParameters.builder("java")
-            .args("-cp", classpath, TestSimpleMcpStdioServer.class.getName())
+            .args("-cp", classpath, TestMcpStdioServer.class.getName())
             .build();
 
     StdioClientTransport stdioClientTransport =
