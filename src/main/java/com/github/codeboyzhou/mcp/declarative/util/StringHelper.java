@@ -46,6 +46,6 @@ public final class StringHelper {
    * @return the original string if it is not blank, otherwise the default value
    */
   public static String defaultIfBlank(String str, String defaultValue) {
-    return str == null || str.isBlank() ? defaultValue : str;
+    return isBlank(str) ? defaultValue : str;
   }
 }

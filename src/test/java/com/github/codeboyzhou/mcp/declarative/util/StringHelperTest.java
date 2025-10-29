@@ -12,6 +12,17 @@ class StringHelperTest {
   }
 
   @Test
+  void testIsBlank_shouldReturnTrueWhenStrIsBlank() {
+    assertTrue(StringHelper.isBlank(StringHelper.EMPTY));
+    assertTrue(StringHelper.isBlank(StringHelper.SPACE));
+  }
+
+  @Test
+  void testIsBlank_shouldReturnFalseWhenStrIsNotBlank() {
+    assertFalse(StringHelper.isBlank("test"));
+  }
+
+  @Test
   void testDefaultIfBlank_shouldReturnDefaultValueWhenStrIsNull() {
     assertEquals("default", StringHelper.defaultIfBlank(null, "default"));
   }

@@ -34,9 +34,25 @@ class JacksonHelperTest {
 
   @Test
   void testToJsonString_shouldThrowException() {
-    CircularReference circularRef = new CircularReference();
     assertThrows(
-        McpServerJsonProcessingException.class, () -> JacksonHelper.toJsonString(circularRef));
+        McpServerJsonProcessingException.class,
+        () -> JacksonHelper.toJsonString(new CircularReference()));
+  }
+
+  @Test
+  void testFromJson_shouldSucceed() {
+    String json = "{\"name\":\"test\",\"age\":25}";
+    Person person = JacksonHelper.fromJson(json, Person.class);
+    assertEquals("test", person.name);
+    assertEquals(25, person.age);
+  }
+
+  @Test
+  void testFromJson_shouldThrowException() {
+    String json = "{\"name\":\"test\",\"age\":25}";
+    assertThrows(
+        McpServerJsonProcessingException.class,
+        () -> JacksonHelper.fromJson(json, CircularReference.class));
   }
 
   @Test
