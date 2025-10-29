@@ -18,14 +18,18 @@ import com.github.codeboyzhou.mcp.declarative.server.component.McpServerResource
 import com.github.codeboyzhou.mcp.declarative.server.component.McpServerTool;
 import com.github.codeboyzhou.mcp.declarative.server.converter.McpPromptParameterConverter;
 import com.github.codeboyzhou.mcp.declarative.server.converter.McpToolParameterConverter;
+import com.github.codeboyzhou.mcp.declarative.util.StringHelper;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.google.inject.name.Names;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.Set;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is a Guice module that configures bindings for classes annotated with {@link
@@ -35,8 +39,7 @@ import org.reflections.Reflections;
  */
 public final class GuiceInjectorModule extends AbstractModule {
 
-  /** The name of the injected variable for i18n enabled. */
-  public static final String INJECTED_VARIABLE_NAME_I18N_ENABLED = "i18nEnabled";
+  private static final Logger log = LoggerFactory.getLogger(GuiceInjectorModule.class);
 
   /** The main class to use for configuration. */
   private final Class<?> mainClass;
@@ -70,12 +73,6 @@ public final class GuiceInjectorModule extends AbstractModule {
     bind(McpStdioServer.class).in(SINGLETON);
     bind(McpSseServer.class).in(SINGLETON);
     bind(McpStreamableServer.class).in(SINGLETON);
-
-    // Bind for boolean variable: i18nEnabled
-    final boolean i18nEnabled = mainClass.isAnnotationPresent(McpI18nEnabled.class);
-    bind(Boolean.class)
-        .annotatedWith(Names.named(INJECTED_VARIABLE_NAME_I18N_ENABLED))
-        .toInstance(i18nEnabled);
   }
 
   /**
@@ -89,6 +86,28 @@ public final class GuiceInjectorModule extends AbstractModule {
     McpServerApplication application = mainClass.getAnnotation(McpServerApplication.class);
     final String basePackage = determineBasePackage(application);
     return new Reflections(basePackage, MethodsAnnotated, FieldsAnnotated);
+  }
+
+  /**
+   * Provides a {@link ResourceBundle} instance for the main class.
+   *
+   * @return a {@link ResourceBundle} instance for the main class
+   */
+  @Provides
+  @Singleton
+  public ResourceBundle provideResourceBundle() {
+    McpI18nEnabled mcpI18nEnabled = mainClass.getAnnotation(McpI18nEnabled.class);
+    if (mcpI18nEnabled == null) {
+      log.info("McpI18nEnabled annotation is not present on the main class, skip i18n support.");
+      return null;
+    }
+
+    final String baseName = mcpI18nEnabled.resourceBundleBaseName();
+    if (StringHelper.isBlank(baseName)) {
+      throw new IllegalArgumentException("resourceBundleBaseName must not be blank.");
+    }
+
+    return ResourceBundle.getBundle(baseName, Locale.getDefault());
   }
 
   /**

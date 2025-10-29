@@ -29,6 +29,16 @@ public final class StringHelper {
   }
 
   /**
+   * Checks if the given string is blank.
+   *
+   * @param str the string to check
+   * @return {@code true} if the string is blank, {@code false} otherwise
+   */
+  public static boolean isBlank(String str) {
+    return str == null || str.isBlank();
+  }
+
+  /**
    * Returns the default value if the given string is blank, otherwise returns the original string.
    *
    * @param str the string to check

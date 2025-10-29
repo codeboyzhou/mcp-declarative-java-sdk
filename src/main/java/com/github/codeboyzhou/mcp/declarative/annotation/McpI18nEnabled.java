@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
  * <p>Example usage:
  *
  * <pre>{@code
- * @McpI18nEnabled
+ * @McpI18nEnabled(resourceBundleBaseName = "mcp_server_component_i18n")
  * public class MyMcpServerApplication {
  *     // Application logic...
  * }
@@ -28,4 +28,16 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface McpI18nEnabled {}
+public @interface McpI18nEnabled {
+  /**
+   * Specifies the base name of the resource bundle to be used for i18n.
+   *
+   * <p>The resource bundle base name should follow the standard Java resource bundle naming
+   * convention. For example, if the resource bundle base name is "messages", the corresponding
+   * resource bundle files should be named "messages.properties", "messages_en_US.properties",
+   * "messages_zh_CN.properties", etc.
+   *
+   * @return the base name of the resource bundle
+   */
+  String resourceBundleBaseName();
+}
