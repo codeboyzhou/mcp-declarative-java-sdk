@@ -14,7 +14,7 @@ hide:
 Add the following Maven dependency to your project:
 
 ```xml
-<!-- Internally relies on native MCP Java SDK 0.14.1 -->
+<!-- Internally relies on native MCP Java SDK 0.15.0 -->
 <dependency>
     <groupId>io.github.codeboyzhou</groupId>
     <artifactId>mcp-declarative-java-sdk</artifactId>
