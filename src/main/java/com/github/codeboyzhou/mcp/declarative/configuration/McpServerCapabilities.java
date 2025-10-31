@@ -11,9 +11,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author codeboyzhou
  */
 public record McpServerCapabilities(
-    @JsonProperty("resource") boolean resource,
-    @JsonProperty("prompt") boolean prompt,
-    @JsonProperty("tool") boolean tool) {
+    @JsonProperty("resource") Boolean resource,
+    @JsonProperty("prompt") Boolean prompt,
+    @JsonProperty("tool") Boolean tool) {
 
   /**
    * Creates a new instance of {@code McpServerCapabilities} with default values.

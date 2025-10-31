@@ -1,0 +1,9 @@
+name: mcp-server-dev
+version: 1.0.0-dev
+request-timeout: 60000
+capabilities:
+  resource: false
+change-notification:
+  resource: false
+streamable:
+  mcp-endpoint: /mcp/message/dev

@@ -1,0 +1,17 @@
+profile: dev
+enabled: true
+mode: STREAMABLE
+name: mcp-server
+version: 1.0.0
+type: SYNC
+request-timeout: 30000
+capabilities:
+  prompt: true
+  tool: true
+change-notification:
+  prompt: true
+  tool: true
+streamable:
+  disallow-delete: true
+  keep-alive-interval: 30000
+  port: 9000

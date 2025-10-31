@@ -16,4 +16,4 @@ public record McpServerSSE(
     @JsonProperty("message-endpoint") String messageEndpoint,
     @JsonProperty("endpoint") String endpoint,
     @JsonProperty("base-url") String baseUrl,
-    @JsonProperty("port") int port) {}
+    @JsonProperty("port") Integer port) {}

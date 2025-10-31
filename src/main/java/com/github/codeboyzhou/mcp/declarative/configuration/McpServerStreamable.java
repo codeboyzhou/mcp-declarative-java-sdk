@@ -15,6 +15,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public record McpServerStreamable(
     @JsonProperty("mcp-endpoint") String mcpEndpoint,
-    @JsonProperty("disallow-delete") boolean disallowDelete,
-    @JsonProperty("keep-alive-interval") long keepAliveInterval,
-    @JsonProperty("port") int port) {}
+    @JsonProperty("disallow-delete") Boolean disallowDelete,
+    @JsonProperty("keep-alive-interval") Long keepAliveInterval,
+    @JsonProperty("port") Integer port) {}

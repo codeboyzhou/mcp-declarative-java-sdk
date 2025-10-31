@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.github.codeboyzhou.mcp.declarative.configuration.McpServerConfiguration;
@@ -124,7 +123,7 @@ class McpServersTest {
     YAMLConfigurationLoader configLoader = new YAMLConfigurationLoader(configFileName);
     McpServerConfiguration configuration = configLoader.loadConfig();
     assertDoesNotThrow(() -> servers.startServer(configFileName));
-    assertSame(ServerMode.STDIO, configuration.mode());
+    assertEquals(ServerMode.STDIO, configuration.mode());
   }
 
   @Test
@@ -133,7 +132,7 @@ class McpServersTest {
     YAMLConfigurationLoader configLoader = new YAMLConfigurationLoader(configFileName);
     McpServerConfiguration configuration = configLoader.loadConfig();
     assertDoesNotThrow(() -> servers.startServer(configFileName));
-    assertSame(ServerMode.SSE, configuration.mode());
+    assertEquals(ServerMode.SSE, configuration.mode());
   }
 
   @Test
@@ -142,7 +141,7 @@ class McpServersTest {
     YAMLConfigurationLoader configLoader = new YAMLConfigurationLoader(configFileName);
     McpServerConfiguration configuration = configLoader.loadConfig();
     assertDoesNotThrow(() -> servers.startServer(configFileName));
-    assertSame(ServerMode.STREAMABLE, configuration.mode());
+    assertEquals(ServerMode.STREAMABLE, configuration.mode());
   }
 
   @Test
@@ -156,7 +155,7 @@ class McpServersTest {
     String configFileName = "mcp-server.yml";
     YAMLConfigurationLoader configLoader = new YAMLConfigurationLoader(configFileName);
     McpServerConfiguration configuration = configLoader.loadConfig();
-    assertSame(ServerMode.STREAMABLE, configuration.mode());
+    assertEquals(ServerMode.STREAMABLE, configuration.mode());
     assertDoesNotThrow(() -> servers.startServer());
   }
 
