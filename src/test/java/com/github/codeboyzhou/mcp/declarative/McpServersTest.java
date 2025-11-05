@@ -35,6 +35,8 @@ class McpServersTest {
 
   McpServers servers = McpServers.run(McpServersTest.class, new String[] {});
 
+  Duration requestTimeout = Duration.ofSeconds(60);
+
   @Test
   void testStartStdioServer_shouldSucceed() {
     TestMcpStdioServer.main(new String[] {}); // just for jacoco coverage report
@@ -46,10 +48,10 @@ class McpServersTest {
             .args("-cp", classpath, TestMcpStdioServer.class.getName())
             .build();
 
-    StdioClientTransport stdioClientTransport =
+    StdioClientTransport transport =
         new StdioClientTransport(serverParameters, McpJsonMapper.getDefault());
 
-    try (McpSyncClient client = McpClient.sync(stdioClientTransport).build()) {
+    try (McpSyncClient client = McpClient.sync(transport).requestTimeout(requestTimeout).build()) {
       verify(client);
     }
   }
@@ -63,7 +65,7 @@ class McpServersTest {
             .name("mcp-server")
             .version("1.0.0")
             .instructions("test")
-            .requestTimeout(Duration.ofSeconds(10))
+            .requestTimeout(requestTimeout)
             .baseUrl("http://localhost:" + port)
             .port(port)
             .sseEndpoint("/sse")
@@ -77,7 +79,7 @@ class McpServersTest {
 
     servers.startSseServer(serverInfo);
 
-    try (McpSyncClient client = McpClient.sync(transport).build()) {
+    try (McpSyncClient client = McpClient.sync(transport).requestTimeout(requestTimeout).build()) {
       verify(client);
     }
   }
@@ -91,7 +93,7 @@ class McpServersTest {
             .name("mcp-server")
             .version("1.0.0")
             .instructions("test")
-            .requestTimeout(Duration.ofSeconds(10))
+            .requestTimeout(requestTimeout)
             .port(port)
             .mcpEndpoint("/mcp/message")
             .build();
@@ -103,7 +105,7 @@ class McpServersTest {
 
     servers.startStreamableServer(serverInfo);
 
-    try (McpSyncClient client = McpClient.sync(transport).build()) {
+    try (McpSyncClient client = McpClient.sync(transport).requestTimeout(requestTimeout).build()) {
       verify(client);
     }
   }

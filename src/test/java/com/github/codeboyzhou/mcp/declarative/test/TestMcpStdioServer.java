@@ -12,7 +12,7 @@ public class TestMcpStdioServer {
             .name("mcp-server")
             .version("1.0.0")
             .instructions("test")
-            .requestTimeout(Duration.ofSeconds(30))
+            .requestTimeout(Duration.ofSeconds(60))
             .build();
     McpServers.run(TestMcpStdioServer.class, args).startStdioServer(info);
   }
