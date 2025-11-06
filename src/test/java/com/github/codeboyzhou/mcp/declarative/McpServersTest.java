@@ -29,6 +29,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.Executors;
 import org.junit.jupiter.api.Test;
 
 class McpServersTest {
@@ -52,7 +53,7 @@ class McpServersTest {
         new StdioClientTransport(serverParameters, McpJsonMapper.getDefault());
 
     try (McpSyncClient client = McpClient.sync(transport).requestTimeout(requestTimeout).build()) {
-      verify(client);
+      Executors.newSingleThreadExecutor().execute(() -> verify(client));
     }
   }
 
