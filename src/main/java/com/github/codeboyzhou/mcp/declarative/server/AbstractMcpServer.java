@@ -40,7 +40,9 @@ public abstract class AbstractMcpServer<S extends McpServerInfo> implements McpS
     McpServerCapabilities capabilitiesConfig = serverInfo.capabilities();
     McpServerChangeNotification serverChangeNotification = serverInfo.changeNotification();
     if (capabilitiesConfig.resource()) {
-      capabilities.resources(true, serverChangeNotification.resource());
+      final Boolean subscribe = capabilitiesConfig.subscribeResource();
+      final Boolean changeNotification = serverChangeNotification.resource();
+      capabilities.resources(subscribe, changeNotification);
     }
     if (capabilitiesConfig.prompt()) {
       capabilities.prompts(serverChangeNotification.prompt());

@@ -58,7 +58,9 @@ public abstract class AbstractConfigurableMcpServer implements ConfigurableMcpSe
     McpServerCapabilities capabilitiesConfig = configuration.capabilities();
     McpServerChangeNotification serverChangeNotification = configuration.changeNotification();
     if (capabilitiesConfig.resource()) {
-      capabilities.resources(true, serverChangeNotification.resource());
+      final Boolean subscribe = capabilitiesConfig.subscribeResource();
+      final Boolean changeNotification = serverChangeNotification.resource();
+      capabilities.resources(subscribe, changeNotification);
     }
     if (capabilitiesConfig.prompt()) {
       capabilities.prompts(serverChangeNotification.prompt());

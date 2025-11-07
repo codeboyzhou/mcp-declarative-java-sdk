@@ -119,6 +119,7 @@ public final class McpConfigurationMerger {
     McpConfigurationChecker.checkNull("capabilities", base, profile);
 
     Boolean resource = null;
+    Boolean subscribeResource = null;
     Boolean prompt = null;
     Boolean tool = null;
     Boolean completion = null;
@@ -126,6 +127,9 @@ public final class McpConfigurationMerger {
     if (base != null) {
       if (base.resource() != null) {
         resource = base.resource();
+      }
+      if (resource != null && resource && base.subscribeResource() != null) {
+        subscribeResource = base.subscribeResource();
       }
       if (base.prompt() != null) {
         prompt = base.prompt();
@@ -141,6 +145,9 @@ public final class McpConfigurationMerger {
     if (profile != null) {
       if (profile.resource() != null) {
         resource = profile.resource();
+      }
+      if (resource != null && resource && profile.subscribeResource() != null) {
+        subscribeResource = profile.subscribeResource();
       }
       if (profile.prompt() != null) {
         prompt = profile.prompt();
@@ -158,7 +165,7 @@ public final class McpConfigurationMerger {
     McpConfigurationChecker.checkNull("capabilities.tool", tool);
     McpConfigurationChecker.checkNull("capabilities.completion", completion);
 
-    return new McpServerCapabilities(resource, prompt, tool, completion);
+    return new McpServerCapabilities(resource, subscribeResource, prompt, tool, completion);
   }
 
   /**

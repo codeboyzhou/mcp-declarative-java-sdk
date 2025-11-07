@@ -50,6 +50,9 @@ public final class McpConfigurationChecker {
     checkNull("request-timeout", configuration.requestTimeout());
     checkNull("capabilities", configuration.capabilities());
     checkNull("resource", configuration.capabilities().resource());
+    if (configuration.capabilities().resource()) {
+      checkNull("subscribe-resource", configuration.capabilities().subscribeResource());
+    }
     checkNull("prompt", configuration.capabilities().prompt());
     checkNull("tool", configuration.capabilities().tool());
     checkNull("completion", configuration.capabilities().completion());

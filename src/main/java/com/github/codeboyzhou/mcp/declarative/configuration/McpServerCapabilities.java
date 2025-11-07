@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public record McpServerCapabilities(
     @JsonProperty("resource") Boolean resource,
+    @JsonProperty("subscribe-resource") Boolean subscribeResource,
     @JsonProperty("prompt") Boolean prompt,
     @JsonProperty("tool") Boolean tool,
     @JsonProperty("completion") Boolean completion) {
@@ -20,7 +21,7 @@ public record McpServerCapabilities(
    */
   @Deprecated
   public McpServerCapabilities() {
-    this(true, true, true, true);
+    this(true, true, true, true, true);
   }
 
   /**
@@ -36,6 +37,9 @@ public record McpServerCapabilities(
   public static class Builder {
     /** The resource capability. */
     private Boolean resource;
+
+    /** The subscribe-resource capability. */
+    private Boolean subscribeResource;
 
     /** The prompt capability. */
     private Boolean prompt;
@@ -54,6 +58,17 @@ public record McpServerCapabilities(
      */
     public Builder resource(Boolean resource) {
       this.resource = resource;
+      return this;
+    }
+
+    /**
+     * Sets the subscribe-resource capability.
+     *
+     * @param subscribeResource The subscribe-resource capability.
+     * @return This builder instance.
+     */
+    public Builder subscribeResource(Boolean subscribeResource) {
+      this.subscribeResource = subscribeResource;
       return this;
     }
 
@@ -96,7 +111,7 @@ public record McpServerCapabilities(
      * @return A new instance of {@code McpServerCapabilities}.
      */
     public McpServerCapabilities build() {
-      return new McpServerCapabilities(resource, prompt, tool, completion);
+      return new McpServerCapabilities(resource, subscribeResource, prompt, tool, completion);
     }
   }
 }
