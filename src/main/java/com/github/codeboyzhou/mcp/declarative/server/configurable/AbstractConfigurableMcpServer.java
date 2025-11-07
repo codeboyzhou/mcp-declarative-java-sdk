@@ -1,9 +1,9 @@
 package com.github.codeboyzhou.mcp.declarative.server.configurable;
 
+import com.github.codeboyzhou.mcp.declarative.configuration.McpConfigurationLoader;
 import com.github.codeboyzhou.mcp.declarative.configuration.McpServerCapabilities;
 import com.github.codeboyzhou.mcp.declarative.configuration.McpServerChangeNotification;
 import com.github.codeboyzhou.mcp.declarative.configuration.McpServerConfiguration;
-import com.github.codeboyzhou.mcp.declarative.configuration.YAMLConfigurationLoader;
 import com.github.codeboyzhou.mcp.declarative.server.component.McpServerComponentRegister;
 import io.modelcontextprotocol.server.McpSyncServer;
 import io.modelcontextprotocol.spec.McpSchema;
@@ -12,8 +12,8 @@ import java.time.Duration;
 /**
  * This abstract class represents a configurable MCP (Model Context Protocol) server.
  *
- * <p>A configurable MCP server can use the {@link YAMLConfigurationLoader} to load its
- * configuration from a YAML file.
+ * <p>A configurable MCP server can use the {@link McpConfigurationLoader} to load its configuration
+ * from a YAML file.
  *
  * @author codeboyzhou
  */
@@ -65,6 +65,9 @@ public abstract class AbstractConfigurableMcpServer implements ConfigurableMcpSe
     }
     if (capabilitiesConfig.tool()) {
       capabilities.tools(serverChangeNotification.tool());
+    }
+    if (capabilitiesConfig.completion()) {
+      capabilities.completions();
     }
     return capabilities.build();
   }

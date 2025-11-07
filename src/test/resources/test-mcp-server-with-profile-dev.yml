@@ -1,5 +1,6 @@
 name: mcp-server-dev
 version: 1.0.0-dev
+instructions: You are a helpful AI assistant (dev profile)
 request-timeout: 60000
 capabilities:
   resource: false

@@ -4,14 +4,16 @@ mode: STREAMABLE
 name: mcp-server
 version: 1.0.0
 type: SYNC
+instructions: You are a helpful AI assistant
 request-timeout: 60000
 capabilities:
   prompt: true
   tool: true
+  completion: true
 change-notification:
   prompt: true
   tool: true
 streamable:
   disallow-delete: true
   keep-alive-interval: 30000
-  port: 9000
+  port: 9004

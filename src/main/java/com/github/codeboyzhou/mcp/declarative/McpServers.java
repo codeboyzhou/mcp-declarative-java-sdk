@@ -1,7 +1,7 @@
 package com.github.codeboyzhou.mcp.declarative;
 
+import com.github.codeboyzhou.mcp.declarative.configuration.McpConfigurationLoader;
 import com.github.codeboyzhou.mcp.declarative.configuration.McpServerConfiguration;
-import com.github.codeboyzhou.mcp.declarative.configuration.YAMLConfigurationLoader;
 import com.github.codeboyzhou.mcp.declarative.di.DependencyInjector;
 import com.github.codeboyzhou.mcp.declarative.di.DependencyInjectorProvider;
 import com.github.codeboyzhou.mcp.declarative.di.GuiceDependencyInjector;
@@ -106,13 +106,13 @@ public final class McpServers {
    */
   public void startServer(String configFileName) {
     Assert.notNull(configFileName, "configFileName must not be null");
-    YAMLConfigurationLoader configLoader = new YAMLConfigurationLoader(configFileName);
+    McpConfigurationLoader configLoader = new McpConfigurationLoader(configFileName);
     doStartServer(configLoader.loadConfig());
   }
 
   /** Starts a server with the default configuration file name. */
   public void startServer() {
-    YAMLConfigurationLoader configLoader = new YAMLConfigurationLoader();
+    McpConfigurationLoader configLoader = new McpConfigurationLoader();
     doStartServer(configLoader.loadConfig());
   }
 

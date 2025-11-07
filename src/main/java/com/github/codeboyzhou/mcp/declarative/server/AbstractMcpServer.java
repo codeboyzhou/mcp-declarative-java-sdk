@@ -48,6 +48,9 @@ public abstract class AbstractMcpServer<S extends McpServerInfo> implements McpS
     if (capabilitiesConfig.tool()) {
       capabilities.tools(serverChangeNotification.tool());
     }
+    if (capabilitiesConfig.completion()) {
+      capabilities.completions();
+    }
     return capabilities.build();
   }
 }

@@ -9,12 +9,12 @@ import com.github.codeboyzhou.mcp.declarative.enums.ServerMode;
 import com.github.codeboyzhou.mcp.declarative.enums.ServerType;
 import org.junit.jupiter.api.Test;
 
-class YAMLConfigurationLoaderTest {
+class McpConfigurationLoaderTest {
 
   @Test
   void testLoadConfig_withProfile() {
     final String configFileName = "test-mcp-server-with-profile.yml";
-    YAMLConfigurationLoader loader = new YAMLConfigurationLoader(configFileName);
+    McpConfigurationLoader loader = new McpConfigurationLoader(configFileName);
     McpServerConfiguration configuration = loader.loadConfig();
     assertNotNull(configuration);
     assertEquals("dev", configuration.profile());
