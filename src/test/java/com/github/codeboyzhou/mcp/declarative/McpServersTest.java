@@ -112,6 +112,15 @@ class McpServersTest {
   }
 
   @Test
+  void testStartServer_useDefaultConfigFileName_shouldSucceed() {
+    String configFileName = "mcp-server.yml";
+    McpConfigurationLoader configLoader = new McpConfigurationLoader(configFileName);
+    McpServerConfiguration configuration = configLoader.loadConfig();
+    assertEquals(ServerMode.STREAMABLE, configuration.mode());
+    assertDoesNotThrow(() -> servers.startServer());
+  }
+
+  @Test
   void testStartServer_disabledMCP_shouldSucceed() {
     String configFileName = "test-mcp-server-disabled.yml";
     McpConfigurationLoader configLoader = new McpConfigurationLoader(configFileName);
@@ -151,15 +160,6 @@ class McpServersTest {
   void testStartServer_enableUnknownMode_shouldThrowException() {
     String configFileName = "test-mcp-server-enable-unknown-mode.yml";
     assertThrows(McpServerConfigurationException.class, () -> servers.startServer(configFileName));
-  }
-
-  @Test
-  void testStartServer_useDefaultConfigFileName_shouldSucceed() {
-    String configFileName = "mcp-server.yml";
-    McpConfigurationLoader configLoader = new McpConfigurationLoader(configFileName);
-    McpServerConfiguration configuration = configLoader.loadConfig();
-    assertEquals(ServerMode.STREAMABLE, configuration.mode());
-    assertDoesNotThrow(() -> servers.startServer());
   }
 
   private void verify(McpSyncClient client) {

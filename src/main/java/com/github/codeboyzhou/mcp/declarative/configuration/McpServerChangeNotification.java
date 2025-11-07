@@ -17,22 +17,23 @@ public record McpServerChangeNotification(
     @JsonProperty("tool") Boolean tool) {
 
   /**
-   * Creates a new instance of {@code McpServerChangeNotification} with default values.
-   *
-   * <p>By default, all change notification flags are set to {@code true}.
-   */
-  @Deprecated
-  public McpServerChangeNotification() {
-    this(true, true, true);
-  }
-
-  /**
    * Creates a new instance of {@code Builder} to build {@code McpServerChangeNotification}.
    *
    * @return A new instance of {@code Builder}.
    */
   public static Builder builder() {
     return new Builder();
+  }
+
+  /**
+   * Returns the default change notification of the MCP server.
+   *
+   * <p>By default, all change notification flags are set to {@code true}.
+   *
+   * @return The default change notification of the MCP server.
+   */
+  public static McpServerChangeNotification getDefault() {
+    return builder().resource(true).prompt(true).tool(true).build();
   }
 
   /** Builder class for {@code McpServerChangeNotification}. */

@@ -15,22 +15,29 @@ public record McpServerCapabilities(
     @JsonProperty("completion") Boolean completion) {
 
   /**
-   * Creates a new instance of {@code McpServerCapabilities} with default values.
-   *
-   * <p>By default, all capabilities are set to {@code true}.
-   */
-  @Deprecated
-  public McpServerCapabilities() {
-    this(true, true, true, true, true);
-  }
-
-  /**
    * Creates a new instance of {@code Builder} to build {@code McpServerCapabilities}.
    *
    * @return A new instance of {@code Builder}.
    */
   public static Builder builder() {
     return new Builder();
+  }
+
+  /**
+   * Returns the default capabilities of the MCP server.
+   *
+   * <p>By default, all capabilities are set to {@code true}.
+   *
+   * @return The default capabilities of the MCP server.
+   */
+  public static McpServerCapabilities getDefault() {
+    return builder()
+        .resource(true)
+        .subscribeResource(true)
+        .prompt(true)
+        .tool(true)
+        .completion(true)
+        .build();
   }
 
   /** Builder class for {@code McpServerCapabilities}. */

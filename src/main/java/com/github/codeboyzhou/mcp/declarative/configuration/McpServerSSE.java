@@ -1,6 +1,7 @@
 package com.github.codeboyzhou.mcp.declarative.configuration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.codeboyzhou.mcp.declarative.util.StringHelper;
 
 /**
  * This record represents the Server-Sent Events (SSE) configuration for an MCP (Model Context
@@ -25,6 +26,23 @@ public record McpServerSSE(
    */
   public static Builder builder() {
     return new Builder();
+  }
+
+  /**
+   * Returns the default SSE configuration of the MCP server.
+   *
+   * <p>By default, the message endpoint is "/mcp/message", the endpoint is "/sse", the base URL is
+   * {@link StringHelper#EMPTY}, and the port is 8080.
+   *
+   * @return The default SSE configuration of the MCP server.
+   */
+  public static McpServerSSE getDefault() {
+    return builder()
+        .messageEndpoint("/mcp/message")
+        .endpoint("/sse")
+        .baseUrl(StringHelper.EMPTY)
+        .port(8080)
+        .build();
   }
 
   /** Builder class for {@code McpServerSSE}. */

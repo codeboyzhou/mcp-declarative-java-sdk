@@ -121,20 +121,24 @@ public class McpServerInfo {
     /** The version of the MCP server. Default value is {@code "1.0.0"}. */
     protected String version = "1.0.0";
 
-    /** The instructions of the MCP server. Default value is {@code ""}. */
+    /** The instructions of the MCP server. Default value is {@link StringHelper#EMPTY}. */
     protected String instructions = StringHelper.EMPTY;
 
     /** The request timeout of the MCP server. Default value is {@code 20} seconds. */
     protected Duration requestTimeout = Duration.ofSeconds(20);
 
-    /** The capabilities of the MCP server. Default value is {@code new McpServerCapabilities()}. */
-    protected McpServerCapabilities capabilities = new McpServerCapabilities();
+    /**
+     * The capabilities of the MCP server. Default value is {@link
+     * McpServerCapabilities#getDefault()}.
+     */
+    protected McpServerCapabilities capabilities = McpServerCapabilities.getDefault();
 
     /**
-     * The change notification of the MCP server. Default value is {@code new
-     * McpServerChangeNotification()}.
+     * The change notification of the MCP server. Default value is {@link
+     * McpServerChangeNotification#getDefault()}.
      */
-    protected McpServerChangeNotification changeNotification = new McpServerChangeNotification();
+    protected McpServerChangeNotification changeNotification =
+        McpServerChangeNotification.getDefault();
 
     /**
      * Returns the self reference of the builder, which is used to chain the method calls and ensure

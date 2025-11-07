@@ -3,6 +3,7 @@ package com.github.codeboyzhou.mcp.declarative.configuration;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.codeboyzhou.mcp.declarative.enums.ServerMode;
 import com.github.codeboyzhou.mcp.declarative.enums.ServerType;
+import com.github.codeboyzhou.mcp.declarative.util.StringHelper;
 
 /**
  * This record represents the configuration of an MCP (Model Context Protocol) server.
@@ -36,6 +37,35 @@ public record McpServerConfiguration(
    */
   public static Builder builder() {
     return new Builder();
+  }
+
+  /**
+   * Returns the default configuration of the MCP server.
+   *
+   * <p>By default, the enabled status is {@code true}, the server mode is {@link
+   * ServerMode#STREAMABLE}, the server name is "mcp-server", the server version is "1.0.0", the
+   * server type is {@link ServerType#SYNC}, the server instructions is {@link StringHelper#EMPTY},
+   * the request timeout is 20000 milliseconds, the capabilities is {@link
+   * McpServerCapabilities#getDefault()}, the change notification is {@link
+   * McpServerChangeNotification#getDefault()}, the SSE is {@link McpServerSSE#getDefault()}, and
+   * the streamable is {@link McpServerStreamable#getDefault()}.
+   *
+   * @return The default configuration of the MCP server.
+   */
+  public static McpServerConfiguration getDefault() {
+    return builder()
+        .enabled(true)
+        .mode(ServerMode.STREAMABLE)
+        .name("mcp-server")
+        .version("1.0.0")
+        .type(ServerType.SYNC)
+        .instructions(StringHelper.EMPTY)
+        .requestTimeout(20000L)
+        .capabilities(McpServerCapabilities.getDefault())
+        .changeNotification(McpServerChangeNotification.getDefault())
+        .sse(McpServerSSE.getDefault())
+        .streamable(McpServerStreamable.getDefault())
+        .build();
   }
 
   /** Builder class for {@code McpServerConfiguration}. */

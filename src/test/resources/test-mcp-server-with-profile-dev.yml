@@ -4,6 +4,7 @@ instructions: You are a helpful AI assistant (dev profile)
 request-timeout: 60000
 capabilities:
   resource: false
+  subscribe-resource: false
 change-notification:
   resource: false
 streamable:
