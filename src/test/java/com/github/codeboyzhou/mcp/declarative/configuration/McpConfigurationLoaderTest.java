@@ -33,6 +33,6 @@ class McpConfigurationLoaderTest {
     assertEquals("/mcp/message/dev", configuration.streamable().mcpEndpoint());
     assertTrue(configuration.streamable().disallowDelete());
     assertEquals(30000L, configuration.streamable().keepAliveInterval());
-    assertEquals(9000, configuration.streamable().port());
+    assertEquals(9004, configuration.streamable().port());
   }
 }

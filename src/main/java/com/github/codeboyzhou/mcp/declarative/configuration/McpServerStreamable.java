@@ -17,4 +17,82 @@ public record McpServerStreamable(
     @JsonProperty("mcp-endpoint") String mcpEndpoint,
     @JsonProperty("disallow-delete") Boolean disallowDelete,
     @JsonProperty("keep-alive-interval") Long keepAliveInterval,
-    @JsonProperty("port") Integer port) {}
+    @JsonProperty("port") Integer port) {
+
+  /**
+   * Creates a new instance of {@code Builder} to build {@code McpServerStreamable}.
+   *
+   * @return A new instance of {@code Builder}.
+   */
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  /** Builder class for {@code McpServerStreamable}. */
+  public static class Builder {
+    /** The MCP endpoint. */
+    private String mcpEndpoint;
+
+    /** The disallow delete flag. */
+    private Boolean disallowDelete;
+
+    /** The keep-alive interval. */
+    private Long keepAliveInterval;
+
+    /** The port. */
+    private Integer port;
+
+    /**
+     * Sets the MCP endpoint.
+     *
+     * @param mcpEndpoint The MCP endpoint.
+     * @return This builder instance.
+     */
+    public Builder mcpEndpoint(String mcpEndpoint) {
+      this.mcpEndpoint = mcpEndpoint;
+      return this;
+    }
+
+    /**
+     * Sets the disallow delete flag.
+     *
+     * @param disallowDelete The disallow delete flag.
+     * @return This builder instance.
+     */
+    public Builder disallowDelete(Boolean disallowDelete) {
+      this.disallowDelete = disallowDelete;
+      return this;
+    }
+
+    /**
+     * Sets the keep-alive interval.
+     *
+     * @param keepAliveInterval The keep-alive interval.
+     * @return This builder instance.
+     */
+    public Builder keepAliveInterval(Long keepAliveInterval) {
+      this.keepAliveInterval = keepAliveInterval;
+      return this;
+    }
+
+    /**
+     * Sets the port.
+     *
+     * @param port The port.
+     * @return This builder instance.
+     */
+    public Builder port(Integer port) {
+      this.port = port;
+      return this;
+    }
+
+    /**
+     * Builds an instance of {@code McpServerStreamable} with the configured values.
+     *
+     * @return A new instance of {@code McpServerStreamable}.
+     */
+    public McpServerStreamable build() {
+      return new McpServerStreamable(mcpEndpoint, disallowDelete, keepAliveInterval, port);
+    }
+  }
+}

@@ -21,7 +21,71 @@ public record McpServerChangeNotification(
    *
    * <p>By default, all change notification flags are set to {@code true}.
    */
+  @Deprecated
   public McpServerChangeNotification() {
     this(true, true, true);
+  }
+
+  /**
+   * Creates a new instance of {@code Builder} to build {@code McpServerChangeNotification}.
+   *
+   * @return A new instance of {@code Builder}.
+   */
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  /** Builder class for {@code McpServerChangeNotification}. */
+  public static class Builder {
+    /** The resource change notification flag. */
+    private Boolean resource;
+
+    /** The prompt change notification flag. */
+    private Boolean prompt;
+
+    /** The tool change notification flag. */
+    private Boolean tool;
+
+    /**
+     * Sets the resource change notification flag.
+     *
+     * @param resource The resource change notification flag.
+     * @return This builder instance.
+     */
+    public Builder resource(Boolean resource) {
+      this.resource = resource;
+      return this;
+    }
+
+    /**
+     * Sets the prompt change notification flag.
+     *
+     * @param prompt The prompt change notification flag.
+     * @return This builder instance.
+     */
+    public Builder prompt(Boolean prompt) {
+      this.prompt = prompt;
+      return this;
+    }
+
+    /**
+     * Sets the tool change notification flag.
+     *
+     * @param tool The tool change notification flag.
+     * @return This builder instance.
+     */
+    public Builder tool(Boolean tool) {
+      this.tool = tool;
+      return this;
+    }
+
+    /**
+     * Builds an instance of {@code McpServerChangeNotification} with the configured values.
+     *
+     * @return A new instance of {@code McpServerChangeNotification}.
+     */
+    public McpServerChangeNotification build() {
+      return new McpServerChangeNotification(resource, prompt, tool);
+    }
   }
 }

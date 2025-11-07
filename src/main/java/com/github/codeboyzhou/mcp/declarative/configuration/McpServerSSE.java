@@ -16,4 +16,82 @@ public record McpServerSSE(
     @JsonProperty("message-endpoint") String messageEndpoint,
     @JsonProperty("endpoint") String endpoint,
     @JsonProperty("base-url") String baseUrl,
-    @JsonProperty("port") Integer port) {}
+    @JsonProperty("port") Integer port) {
+
+  /**
+   * Creates a new instance of {@code Builder} to build {@code McpServerSSE}.
+   *
+   * @return A new instance of {@code Builder}.
+   */
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  /** Builder class for {@code McpServerSSE}. */
+  public static class Builder {
+    /** The message endpoint. */
+    private String messageEndpoint;
+
+    /** The endpoint. */
+    private String endpoint;
+
+    /** The base URL. */
+    private String baseUrl;
+
+    /** The port. */
+    private Integer port;
+
+    /**
+     * Sets the message endpoint.
+     *
+     * @param messageEndpoint The message endpoint.
+     * @return This builder instance.
+     */
+    public Builder messageEndpoint(String messageEndpoint) {
+      this.messageEndpoint = messageEndpoint;
+      return this;
+    }
+
+    /**
+     * Sets the endpoint.
+     *
+     * @param endpoint The endpoint.
+     * @return This builder instance.
+     */
+    public Builder endpoint(String endpoint) {
+      this.endpoint = endpoint;
+      return this;
+    }
+
+    /**
+     * Sets the base URL.
+     *
+     * @param baseUrl The base URL.
+     * @return This builder instance.
+     */
+    public Builder baseUrl(String baseUrl) {
+      this.baseUrl = baseUrl;
+      return this;
+    }
+
+    /**
+     * Sets the port.
+     *
+     * @param port The port.
+     * @return This builder instance.
+     */
+    public Builder port(Integer port) {
+      this.port = port;
+      return this;
+    }
+
+    /**
+     * Builds an instance of {@code McpServerSSE} with the configured values.
+     *
+     * @return A new instance of {@code McpServerSSE}.
+     */
+    public McpServerSSE build() {
+      return new McpServerSSE(messageEndpoint, endpoint, baseUrl, port);
+    }
+  }
+}
