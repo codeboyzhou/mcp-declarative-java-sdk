@@ -2,6 +2,7 @@ package com.github.codeboyzhou.mcp.declarative.util;
 
 import com.github.codeboyzhou.mcp.declarative.reflect.InvocationResult;
 import com.github.codeboyzhou.mcp.declarative.reflect.MethodCache;
+import io.modelcontextprotocol.spec.McpSchema;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Objects;
@@ -81,5 +82,21 @@ public enum ReflectionHelper {
    */
   public InvocationResult invoke(Object instance, MethodCache methodCache) {
     return invoke(instance, methodCache, List.of());
+  }
+
+  /**
+   * Invoke the method represented by the specified method cache on the given instance with the
+   * provided argument.
+   *
+   * @param instance the instance on which to invoke the method
+   * @param methodCache the method cache containing the method metadata
+   * @param argument the argument to pass to the method
+   * @return the result of the method invocation
+   */
+  public InvocationResult invoke(
+      Object instance,
+      MethodCache methodCache,
+      McpSchema.CompleteRequest.CompleteArgument argument) {
+    return invoke(instance, methodCache, List.of(argument));
   }
 }

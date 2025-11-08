@@ -38,14 +38,16 @@ public abstract class AbstractConfigurableMcpServer implements ConfigurableMcpSe
    * <p>This method starts the MCP server using the sync specification provided by {@link #sync()}.
    */
   public void startServer() {
+    McpServerComponentRegister register = new McpServerComponentRegister();
     McpSyncServer server =
         sync()
             .serverInfo(configuration.name(), configuration.version())
             .capabilities(serverCapabilities())
             .instructions(configuration.instructions())
             .requestTimeout(Duration.ofMillis(configuration.requestTimeout()))
+            .completions(register.registerCompletions())
             .build();
-    McpServerComponentRegister.of(server).registerComponents();
+    register.registerComponents(server);
   }
 
   /**

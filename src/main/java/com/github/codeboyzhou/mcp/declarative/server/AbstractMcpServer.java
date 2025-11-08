@@ -19,14 +19,16 @@ public abstract class AbstractMcpServer<S extends McpServerInfo> implements McpS
    * @param serverInfo the server info
    */
   public void start(S serverInfo) {
+    McpServerComponentRegister register = new McpServerComponentRegister();
     McpSyncServer server =
         sync(serverInfo)
             .serverInfo(serverInfo.name(), serverInfo.version())
             .capabilities(serverCapabilities(serverInfo))
             .instructions(serverInfo.instructions())
             .requestTimeout(serverInfo.requestTimeout())
+            .completions(register.registerCompletions())
             .build();
-    McpServerComponentRegister.of(server).registerComponents();
+    register.registerComponents(server);
   }
 
   /**

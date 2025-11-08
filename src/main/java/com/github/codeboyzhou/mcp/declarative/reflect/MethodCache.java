@@ -1,7 +1,9 @@
 package com.github.codeboyzhou.mcp.declarative.reflect;
 
 import com.github.codeboyzhou.mcp.declarative.annotation.McpPrompt;
+import com.github.codeboyzhou.mcp.declarative.annotation.McpPromptCompletion;
 import com.github.codeboyzhou.mcp.declarative.annotation.McpResource;
+import com.github.codeboyzhou.mcp.declarative.annotation.McpResourceCompletion;
 import com.github.codeboyzhou.mcp.declarative.annotation.McpTool;
 import com.github.codeboyzhou.mcp.declarative.common.Immutable;
 import java.lang.reflect.Method;
@@ -43,6 +45,12 @@ public final class MethodCache {
   /** The annotation {@link McpTool} on the cached method. */
   private final McpTool mcpToolAnnotation;
 
+  /** The annotation {@link McpPromptCompletion} on the cached method. */
+  private final McpPromptCompletion mcpPromptCompletionAnnotation;
+
+  /** The annotation {@link McpResourceCompletion} on the cached method. */
+  private final McpResourceCompletion mcpResourceCompletionAnnotation;
+
   /**
    * Creates a new instance of {@code MethodCache} with the specified method.
    *
@@ -58,6 +66,8 @@ public final class MethodCache {
     this.mcpResourceAnnotation = method.getAnnotation(McpResource.class);
     this.mcpPromptAnnotation = method.getAnnotation(McpPrompt.class);
     this.mcpToolAnnotation = method.getAnnotation(McpTool.class);
+    this.mcpPromptCompletionAnnotation = method.getAnnotation(McpPromptCompletion.class);
+    this.mcpResourceCompletionAnnotation = method.getAnnotation(McpResourceCompletion.class);
   }
 
   /**
@@ -149,6 +159,24 @@ public final class MethodCache {
    */
   public McpTool getMcpToolAnnotation() {
     return mcpToolAnnotation;
+  }
+
+  /**
+   * Returns the annotation {@link McpPromptCompletion} on the cached method.
+   *
+   * @return the annotation {@link McpPromptCompletion} on the cached method
+   */
+  public McpPromptCompletion getMcpPromptCompletionAnnotation() {
+    return mcpPromptCompletionAnnotation;
+  }
+
+  /**
+   * Returns the annotation {@link McpResourceCompletion} on the cached method.
+   *
+   * @return the annotation {@link McpResourceCompletion} on the cached method
+   */
+  public McpResourceCompletion getMcpResourceCompletionAnnotation() {
+    return mcpResourceCompletionAnnotation;
   }
 
   @Override
