@@ -8,7 +8,7 @@
 
 > 🚀 Declarative [MCP Java SDK](https://github.com/modelcontextprotocol/java-sdk) Development with Java Annotations
 
-**Annotation-driven MCP Java SDK** is a lightweight, annotation-based framework that simplifies MCP server development in Java. Define, develop and integrate your MCP Resources / Prompts / Tools with minimal code - No Spring Framework Required.
+This SDK is a lightweight, annotation-based framework that simplifies MCP server development in Java. Define, develop and integrate your MCP Resources / Prompts / Tools with minimal code - No Spring Framework Required.
 
 [📖 Documentation](https://codeboyzhou.github.io/mcp-declarative-java-sdk) | [💡 Examples](https://github.com/codeboyzhou/mcp-java-sdk-examples/tree/main/mcp-server-filesystem/mcp-server-filesystem-declarative-sdk-implementation) | [🐛 Report Issues](https://github.com/codeboyzhou/mcp-declarative-java-sdk/issues)
 
