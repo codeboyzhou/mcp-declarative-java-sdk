@@ -4,66 +4,164 @@
 [![maven-central](https://img.shields.io/maven-central/v/io.github.codeboyzhou/mcp-declarative-java-sdk?color=blue)](https://mvnrepository.com/artifact/io.github.codeboyzhou/mcp-declarative-java-sdk)
 [![coverage](https://img.shields.io/codecov/c/github/codeboyzhou/mcp-declarative-java-sdk?logo=codecov&color=brightgreen)](https://app.codecov.io/github/codeboyzhou/mcp-declarative-java-sdk)
 [![GitHub Action](https://github.com/codeboyzhou/mcp-declarative-java-sdk/actions/workflows/maven-build.yml/badge.svg)](https://github.com/codeboyzhou/mcp-declarative-java-sdk/actions/workflows/maven-build.yml)
+[![License](https://img.shields.io/github/license/codeboyzhou/mcp-declarative-java-sdk)](LICENSE)
 
-Declarative [MCP Java SDK](https://github.com/modelcontextprotocol/java-sdk) Development with Java Annotations.
+> 🚀 Declarative [MCP Java SDK](https://github.com/modelcontextprotocol/java-sdk) Development with Java Annotations
 
-Easily and Quickly Define, Develop and Integrate your MCP Resources/Prompts/Tools, but no Spring required.
+**Annotation-driven MCP Java SDK** is a lightweight, annotation-based framework that simplifies MCP server development in Java. Define, develop and integrate your MCP Resources / Prompts / Tools with minimal code - No Spring Framework Required.
 
-Documentation site is here: https://codeboyzhou.github.io/mcp-declarative-java-sdk.
+[📖 Documentation](https://codeboyzhou.github.io/mcp-declarative-java-sdk) | [💡 Examples](https://github.com/codeboyzhou/mcp-java-sdk-examples/tree/main/mcp-server-filesystem/mcp-server-filesystem-declarative-sdk-implementation) | [🐛 Report Issues](https://github.com/codeboyzhou/mcp-declarative-java-sdk/issues)
 
-Please feel free to feed back what's helpful and what's not.
+## ✨ Why Choose This SDK?
 
-## Advantages
+### Key Advantages
 
-- 🚫 No Spring Framework Required.
-- ⚡  Instant MCP Java server in 1 LOC.
-- 🎉 No need to write more SDK low-level code.
-- 👏 Get rid of complex and lengthy JSON schema definitions.
-- 🎯 Just focus on your core logic (resources/prompts/tools).
-- 🔌 Configuration file compatible with the Spring AI Framework.
-- 🌍 Built-in multi-languages support for MCP components (resources/prompts/tools).
+- 🚫 **No Spring Framework Required** - Pure Java, lightweight and fast
+- ⚡ **Instant MCP Server** - Get your server running with just 1 line of code
+- 🎉 **Zero Boilerplate** - No need to write low-level MCP SDK code
+- 👏 **No JSON Schema** - Forget about complex and lengthy JSON definitions
+- 🎯 **Focus on Logic** - Concentrate on your core business logic
+- 🔌 **Spring AI Compatible** - Configuration file compatible with Spring AI Framework
+- 🌍 **Multilingual Support** - Built-in i18n support for MCP components
+- 📦 **Type-Safe** - Leverage Java's type system for compile-time safety
 
-## Showcase
+### Comparison with [Official MCP Java SDK](https://github.com/modelcontextprotocol/java-sdk)
 
-Just put this one line code in your `main` method:
+| Feature        | Official MCP SDK | This SDK        |
+|----------------|------------------|-----------------|
+| Code Required  | ~50-100 lines    | ~5-10 lines     |
+| JSON Schema    | Hand-coded JSON  | No need to care |
+| Type Safety    | Limited          | Full            |
+| Learning Curve | Steep            | Gentle          |
+| Multilingual   | Unsupported      | Supported       |
+
+## 🎯 Quick Start
+
+### Prerequisites
+
+- **Java 17 or later** (required by official MCP Java SDK)
+- **Maven 3.6+** or **Gradle 7+**
+
+### 5-Minutes Tutorial
+
+#### Step 1: Add Dependency
+
+**Maven:**
+```xml
+<dependency>
+    <groupId>io.github.codeboyzhou</groupId>
+    <artifactId>mcp-declarative-java-sdk</artifactId>
+    <version>0.9.0</version>
+</dependency>
+```
+
+**Gradle:**
+```gradle
+implementation 'io.github.codeboyzhou:mcp-declarative-java-sdk:0.9.0'
+```
+
+#### Step 2: Create Your First MCP Server
 
 ```java
-// You can use this annotation to specify the base package
-// to scan for MCP resources, prompts, tools, but it's optional.
-// If not specified, it will scan the package where the main method is located.
-@McpServerApplication(basePackage = "com.github.codeboyzhou.mcp.server.examples")
-// Use this annotation to enable multi-languages support for MCP server components.
-@McpI18nEnabled
-public class MyMcpServer {
-
-  public static void main(String[] args) {
-    McpServers servers = McpServers.run(MyMcpServer.class, args);
-
-    // Start a STDIO MCP server
-    servers.startStdioServer(McpServerInfo.builder().name("mcp-server").version("1.0.0").build());
-
-    // or a HTTP SSE MCP server
-    servers.startSseServer(McpSseServerInfo.builder().name("mcp-server").version("1.0.0").port(8080).build());
-
-    // or a Streamable HTTP MCP server
-    servers.startStreamableServer(McpStreamableServerInfo.builder().name("mcp-server").version("1.0.0").port(8080).build());
-
-    // or start with yaml config file (compatible with Spring AI)
-    servers.startServer();
-
-    // or start with a custom config file (compatible with Spring AI)
-    servers.startServer("my-mcp-server.yml");
-  }
-
+@McpServerApplication
+// If your MCP server components don't need to be multilingual, you can remove this annotation.
+@McpI18nEnabled(resourceBundleBaseName = "i18n/mcp_server_components_info")
+public class MyFirstMcpServer {
+    public static void main(String[] args) {
+        McpServers.run(MyFirstMcpServer.class, args)
+            .startStdioServer(McpServerInfo.builder()
+                .name("my-first-mcp-server")
+                .version("1.0.0")
+                .build());
+    }
 }
 ```
 
-This is a yaml configuration file example (named `mcp-server.yml` by default) only if you are using `startServer()` method:
+#### Step 3: Define MCP Resources (if needed)
+
+```java
+public class MyResources {
+    @McpResource(uri = "system://info", description = "System information")
+    public Map<String, String> getSystemInfo() {
+        Map<String, String> info = new HashMap<>();
+        info.put("os", System.getProperty("os.name"));
+        info.put("java", System.getProperty("java.version"));
+        info.put("cores", String.valueOf(Runtime.getRuntime().availableProcessors()));
+        return info;
+    }
+}
+```
+
+#### Step 4: Define MCP Tools
+
+```java
+public class MyTools {
+    @McpTool(description = "Calculate the sum of two numbers")
+    public int add(
+        @McpToolParam(name = "a", description = "First number", required = true) int a,
+        @McpToolParam(name = "b", description = "Second number", required = true) int b
+    ) {
+        return a + b;
+    }
+}
+```
+
+#### Step 5: Define MCP Prompts (if needed)
+
+```java
+public class MyPrompts {
+    @McpPrompt(description = "Generate code for a given task")
+    public String generateCode(
+        @McpPromptParam(name = "language", description = "Programming language", required = true) String language,
+        @McpPromptParam(name = "task", description = "Task description", required = true) String task
+    ) {
+        return String.format("Write %s code to: %s", language, task);
+    }
+}
+```
+
+#### Step 6: Run Your Server
+
+```bash
+# Compile and run
+mvn clean package
+java -jar target/your-app.jar
+```
+
+That's it! Your MCP server is now ready to serve resources, tools, and prompts!
+
+## 📚 Core Concepts
+
+### What is MCP?
+
+The [Model Context Protocol (MCP)](https://modelcontextprotocol.io) is a standardized protocol for building servers that expose data and functionality to LLM applications. Think of it like a web API, but specifically designed for LLM interactions.
+
+### MCP Components
+
+| Component     | Purpose            | Analogy        |
+|---------------|--------------------|----------------|
+| **Resources** | Expose data to LLM | GET endpoints  |
+| **Tools**     | Execute actions    | POST endpoints |
+| **Prompts**   | Reusable templates | Form templates |
+
+### Supported Server Modes
+
+This SDK supports three MCP server modes:
+
+1. **STDIO** - Standard input/output communication (default for CLI tools)
+2. **SSE (Server-Sent Events)** - HTTP-based real-time communication
+3. **Streamable HTTP** - HTTP streaming for web applications
+
+## 🔧 Advanced Usage
+
+### Configuration File
+
+Create `mcp-server.yml` in your classpath:
 
 ```yaml
 enabled: true
 mode: STREAMABLE
-name: mcp-server
+name: my-mcp-server
 version: 1.0.0
 type: SYNC
 request-timeout: 20000
@@ -82,84 +180,151 @@ streamable:
   port: 8080
 ```
 
-No need to care about the low-level details of native MCP Java SDK and how to create the MCP resources, prompts, and tools. Just annotate them like this:
+Then start your server:
 
 ```java
-public class McpResources {
+McpServers servers = McpServers.run(MyMcpServer.class, args);
+servers.startServer();  // Uses default mcp-server.yml
+// or
+servers.startServer("custom-config.yml");
+```
 
-  // This method defines a MCP resource to expose the OS env variables
-  @McpResource(uri = "env://variables", description = "OS env variables")
-  public String getSystemEnv() {
-    // Just put your logic code here, forget about the MCP SDK details.
-    return System.getenv().toString();
-  }
+### Multilingual Support
 
-  // Your other MCP resources here...
+Enable i18n for your MCP components:
+
+```java
+@McpServerApplication
+@McpI18nEnabled(resourceBundleBaseName = "messages")
+public class I18nMcpServer {
+    public static void main(String[] args) {
+        McpServers.run(I18nMcpServer.class, args)
+            .startStdioServer(McpServerInfo.builder()
+                .name("i18n-server")
+                .version("1.0.0")
+                .build());
+    }
+}
+
+// Create messages.properties
+# messages.properties
+tool.calculate.description=Calculate the sum of two numbers
+tool.calculate.param.a.description=First number
+tool.calculate.param.b.description=Second number
+
+// Create messages_zh_CN.properties
+# messages_zh_CN.properties
+tool.calculate.description=计算两个数字的和
+tool.calculate.param.a.description=第一个数字
+tool.calculate.param.b.description=第二个数字
+
+// Then use the i18n messages in your MCP components, like this:
+@McpTool(description = "tool.calculate.description")
+public int add(
+    @McpToolParam(name = "a", description = "tool.calculate.param.a.description") int a,
+    @McpToolParam(name = "b", description = "tool.calculate.param.b.description") int b
+) {
+    return a + b;
 }
 ```
 
-```java
-public class McpPrompts {
+## 🏗️ Project Structure
 
-  // This method defines a MCP prompt to read a file
-  @McpPrompt(description = "A simple prompt to read a file")
-  public String readFile(@McpPromptParam(name = "path", description = "filepath", required = true) String path) {
-    // Just put your logic code here, forget about the MCP SDK details.
-    return String.format("What is the complete contents of the file: %s", path);
-  }
+A typical project structure:
 
-}
+```
+your-mcp-project/
+├── pom.xml
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/
+│   │   │       └── example/
+│   │   │           ├── MyMcpServer.java          # Main entry point
+│   │   │           ├── components/
+│   │   │           │   ├── MyResources.java     # MCP Resources
+│   │   │           │   ├── MyTools.java         # MCP Tools
+│   │   │           │   └── MyPrompts.java       # MCP Prompts
+│   │   │           └── service/
+│   │   │               └── BusinessLogic.java    # Your business logic
+│   │   └── resources/
+│   │       ├── mcp-server.yml                    # MCP configuration
+│   │       └── messages.properties               # i18n messages
+│   └── test/
+│       └── java/
+│           └── com/
+│               └── example/
+│                   └── McpServerTest.java         # Unit tests
 ```
 
-```java
-public class McpTools {
+## 🧪 Testing
 
-  // This method defines a MCP tool to read a file
-  @McpTool(description = "Read complete file contents with UTF-8 encoding")
-  public String readFile(@McpToolParam(name = "path", description = "filepath", required = true) String path) {
-    // Just put your logic code here, forget about the MCP SDK details.
-    return Files.readString(Path.of(path));
-  }
+Run the test suite:
 
-  // Your other MCP tools here...
-}
+```bash
+mvn test
 ```
 
-Now it's all set, run your MCP server, choose one MCP client you like and start your MCP exploration journey.
+Run tests with coverage:
 
-> [!WARNING]
-> Please note that this project is under development and is not ready for production use.
-
-## Getting Started
-
-### Requirements
-
-- Java 17 or later (Restricted by MCP Java SDK)
-
-### Installation
-
-Add the following Maven dependency to your project:
-
-```xml
-<!-- Internally relies on native MCP Java SDK 0.16.0 -->
-<dependency>
-    <groupId>io.github.codeboyzhou</groupId>
-    <artifactId>mcp-declarative-java-sdk</artifactId>
-    <version>0.9.0</version>
-</dependency>
+```bash
+mvn clean test jacoco:report
 ```
 
-### Examples
+## ❓ FAQ
 
-You can find more examples and usages in this [repository](https://github.com/codeboyzhou/mcp-java-sdk-examples).
+### Q: Do I need Spring Framework?
 
-## What is MCP?
+**A:** No! This SDK is completely independent of Spring Framework. However, the configuration file format is compatible with Spring AI if you want to migrate.
 
-The [Model Context Protocol (MCP)](https://modelcontextprotocol.io) lets you build servers that expose data and functionality to LLM applications in a secure, standardized way. Think of it like a web API, but specifically designed for LLM interactions. MCP servers can:
+### Q: Can I use this in production?
 
-- Expose data through **Resources** (think of these sort of like GET endpoints; they are used to load information into the LLM's context)
-- Provide functionality through **Tools** (sort of like POST endpoints; they are used to execute code or otherwise produce a side effect)
-- Define interaction patterns through **Prompts** (reusable templates for LLM interactions)
-- And more!
+**A:** This project is currently in active development. While it's stable for development and testing, we recommend thorough testing before production use.
 
-You can start exploring everything about **MCP** from [here](https://modelcontextprotocol.io).
+### Q: What Java version is required?
+
+**A:** Java 17 or later is required, as this is a constraint of the underlying MCP Java SDK.
+
+### Q: How do I debug my MCP server?
+
+**A:** You can use the [inspector](https://github.com/modelcontextprotocol/inspector) and set Java breakpoint to debug your MCP server.
+
+## 🤝 Contributing
+
+We welcome and appreciate contributions! Please follow these steps to contribute:
+
+1. **Fork the repository**
+2. **Create a new branch** for your feature or bug fix
+3. **Submit a pull request** with a clear description of your changes
+
+### Development Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/codeboyzhou/mcp-declarative-java-sdk.git
+cd mcp-declarative-java-sdk
+
+# Build the project
+mvn clean install
+
+# Run tests
+mvn test
+```
+
+## 📖 Documentation
+
+- [Official Documentation](https://codeboyzhou.github.io/mcp-declarative-java-sdk)
+- [Examples Repository](https://github.com/codeboyzhou/mcp-java-sdk-examples/tree/main/mcp-server-filesystem/mcp-server-filesystem-declarative-sdk-implementation)
+- [MCP Official Site](https://modelcontextprotocol.io)
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+## 🙏 Acknowledgments
+
+- [MCP Java SDK](https://github.com/modelcontextprotocol/java-sdk) - The underlying MCP implementation
+- [Model Context Protocol](https://modelcontextprotocol.io) - The protocol specification
+
+> [!NOTE]
+> This project is under active development. We appreciate your feedback and contributions!
