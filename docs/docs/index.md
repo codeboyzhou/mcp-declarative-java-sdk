@@ -4,31 +4,57 @@ hide:
     - toc
 ---
 
-# Welcome to mcp-declarative-java-sdk
+# mcp-declarative-java-sdk
 
-`mcp-declarative-java-sdk` is an annotation-driven MCP (Model Context Protocol) Java SDK, which is based on the native
-[MCP Java SDK](https://github.com/modelcontextprotocol/java-sdk) from official team. It provides an easier way to define
-MCP resources, prompts, and tools using Java annotations if you don't want to use the heavyweight Spring AI Framework.
+Annotation-driven [MCP (Model Context Protocol)](https://modelcontextprotocol.io) SDK for Java that simplifies MCP server development.
 
-# Why was it born?
+## 🎯 What is MCP?
 
-MCP helps you build agents and complex workflows on top of LLMs. However, the official Java SDK is harder to use because
-its underlying implementation is more focused on the protocol's core layer. Creating your MCP server requires writing more
-repetitive low-level code unless you use the Spring AI Framework. But sometimes, we may simply need a lightweight development
-solution, that's why this project was born.
+Model Context Protocol (MCP) is a standardized protocol for building servers that expose data and functionality to LLM applications. Similar to Web API, but specifically designed for LLM interactions.
 
-# What it can bring?
+## ✨ Why this SDK?
 
-🚫 No Spring Framework Required.
+MCP helps you build agents and complex workflows on top of LLMs. However, the official Java SDK is harder to use because its underlying implementation is more focused on the protocol's core layer. Creating your MCP server requires writing more repetitive low-level code unless you use the Spring AI Framework. But sometimes, we may simply need a lightweight development solution, that's why this project was born.
 
-⚡  Instant MCP Java server in 1 LOC.
+## Key Advantages
 
-🎉 No need to write more SDK low-level code.
+- **🚫 No Spring Framework Required** - Pure Java, lightweight and fast
+- **⚡ Instant MCP Server** - Start server with just 1 line of code
+- **🎉 Zero Boilerplate** - No need to write low-level MCP SDK code
+- **👏 No JSON Schema** - No need to care about complex JSON definitions
+- **🎯 Focus on Logic** - Concentrate on core business logic
+- **🔌 Spring AI Compatible** - Configuration files compatible with Spring AI Framework
+- **🌍 Multilingual Support** - Built-in internationalization support for MCP components
+- **📦 Type-Safe** - Leverage Java's type system for compile-time safety checks
 
-👏 Get rid of complex and lengthy JSON schema definitions.
+## Comparison with Official MCP Java SDK
 
-🎯 Just focus on your core logic (resources/prompts/tools).
+| Feature              | Official MCP SDK | This SDK        |
+|----------------------|------------------|-----------------|
+| Code Required        | ~50-100 lines    | ~5-10 lines     |
+| JSON Schema          | Hand-coded JSON  | No need to care |
+| Type Safety          | Limited          | Full support    |
+| Learning Curve       | Steep            | Gentle          |
+| Multilingual Support | Unsupported      | Supported       |
 
-🔌 Configuration file compatible with the Spring AI Framework.
+## Use Cases
 
-🌍 Built-in multi-languages support for MCP server (resources/prompts/tools).
+This SDK is especially suitable for the following scenarios:
+
+1. **Rapid Prototyping** - Quickly validate MCP concepts and functionality
+2. **Lightweight Applications** - Simple MCP services without Spring Framework
+3. **Teaching Demonstrations** - Easy to understand and learn MCP protocol
+4. **Microservice Components** - MCP functionality modules within systems
+5. **Standalone Tools** - Running as independent MCP servers
+
+## Supported Server Modes
+
+| Mode                | Purpose                             | Use Cases                            |
+|---------------------|-------------------------------------|--------------------------------------|
+| **STDIO**           | Standard input/output communication | CLI tools, terminal applications     |
+| **SSE**             | HTTP-based server-sent events       | Real-time communication (deprecated) |
+| **Streamable HTTP** | HTTP streaming                      | Web applications                     |
+
+## 📖 Getting Started
+
+Want to get started quickly? Check out the [Getting Started Guide](./getting-started.md) to learn how to build your first MCP server in 5 minutes.

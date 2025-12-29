@@ -3,15 +3,18 @@ hide:
     - navigation
 ---
 
-# Getting Started
+# Getting Started Guide
+
+This guide will help you build your first MCP server in 5 minutes.
 
 ## Requirements
 
-🔒 Java 17 or later (Restricted by MCP Java SDK)
+- **Java 17 or later** (restricted by official MCP Java SDK)
+- **Maven 3.6+** or **Gradle 7+**
 
 ## Installation
 
-Add the following Maven dependency to your project:
+### Maven Dependency
 
 ```xml
 <dependency>
@@ -21,243 +24,131 @@ Add the following Maven dependency to your project:
 </dependency>
 ```
 
-## MCP Server
+### Gradle Dependency
 
-Now you can create a simple MCP server with just one line of core code.
+```gradle
+implementation 'io.github.codeboyzhou:mcp-declarative-java-sdk:0.9.0'
+```
 
-### Stdio Server
+## 5-Minute Tutorial
 
-#### Quick Start
+### Step 1: Create MCP Server Main Class
 
 ```java
-import com.github.codeboyzhou.mcp.declarative.McpServers;
-import com.github.codeboyzhou.mcp.declarative.annotation.McpI18nEnabled;
-import com.github.codeboyzhou.mcp.declarative.annotation.McpServerApplication;
-import com.github.codeboyzhou.mcp.declarative.server.McpServerInfo;
-
-@McpI18nEnabled
 @McpServerApplication
-public class McpStdioServer {
-
-  public static void main(String[] args) {
-    McpServers.run(McpStdioServer.class, args).startStdioServer(McpServerInfo.builder().build());
-  }
-
+// If your MCP server components don't need multilingual support, you can remove this annotation
+@McpI18nEnabled(resourceBundleBaseName = "i18n/mcp_server_components_info")
+public class MyFirstMcpServer {
+    public static void main(String[] args) {
+        McpServers.run(MyFirstMcpServer.class, args)
+            .startStdioServer(McpServerInfo.builder()
+                .name("my-first-mcp-server")
+                .version("1.0.0")
+                .build());
+    }
 }
 ```
 
-In the sample code above, we created a simple MCP server, which is based on the stdio transport mode.
-`@McpServerApplication`
-is a convenience annotation that helps to locate the package path of MCP server components, such as resources, prompts,
-and tools.
-
-You can also explicitly specify the package path to scan, either of the two ways below is sufficient:
+### Step 2: Define MCP Resources (Optional)
 
 ```java
-@McpServerApplication(basePackageClass = McpStdioServer.class)
-```
-
-```java
-@McpServerApplication(basePackage = "com.github.codeboyzhou.mcp.server.examples")
-```
-
-If you don't specify the package path, the annotation will scan the package where the main method is located.
-
-#### Server Info
-
-In addition, for the method `startStdioServer`, you need to provide a `McpServerInfo` object, which contains the basic
-information of the MCP server, such as name, version, and instructions, etc.
-
-The following is all the field information about class `McpServerInfo`:
-
-| Field            | Type     | Description                           | Default Value  |
-|------------------|----------|---------------------------------------|----------------|
-| `name`           | String   | The name of the MCP server            | `mcp-server`   |
-| `version`        | String   | The version of the MCP server         | `1.0.0`        |
-| `instructions`   | String   | The instructions of the MCP server    | (empty string) |
-| `requestTimeout` | Duration | The timeout of the MCP server request | `20` seconds   |
-
-#### How to run
-
-For a MCP stdio server to run, you need to package your project into an executable jar file.
-
-There is a Maven plugin that can handle this, just place the following configuration into your root `pom.xml`:
-
-```xml
-<plugins>
-  <!-- Your other plugins ... -->
-  <plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-shade-plugin</artifactId>
-    <version>${maven-shade-plugin.version}</version>
-    <executions>
-      <execution>
-        <goals>
-          <goal>shade</goal>
-        </goals>
-        <phase>package</phase>
-        <configuration>
-          <transformers>
-            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-              <mainClass>com.github.codeboyzhou.mcp.server.examples.McpStdioServer</mainClass>
-            </transformer>
-          </transformers>
-        </configuration>
-      </execution>
-    </executions>
-  </plugin>
-</plugins>
-```
-
-### HTTP SSE Server (Deprecated)
-
-#### Quick Start
-
-```java
-import com.github.codeboyzhou.mcp.declarative.McpServers;
-import com.github.codeboyzhou.mcp.declarative.annotation.McpI18nEnabled;
-import com.github.codeboyzhou.mcp.declarative.annotation.McpServerApplication;
-import com.github.codeboyzhou.mcp.declarative.server.McpSseServerInfo;
-
-@McpI18nEnabled
-@McpServerApplication
-public class McpSseServer {
-
-  public static void main(String[] args) {
-    McpServers.run(McpSseServer.class, args).startSseServer(McpSseServerInfo.builder().build());
-  }
-
+public class MyResources {
+    @McpResource(uri = "system://info", description = "System information")
+    public Map<String, String> getSystemInfo() {
+        Map<String, String> info = new HashMap<>();
+        info.put("os", System.getProperty("os.name"));
+        info.put("java", System.getProperty("java.version"));
+        info.put("cores", String.valueOf(Runtime.getRuntime().availableProcessors()));
+        return info;
+    }
 }
 ```
 
-#### Server Info
-
-For the method `startSseServer`, you can specify the server information by using `McpSseServerInfo`:
-
-| Field             | Type     | Description                            | Default Value  |
-|-------------------|----------|----------------------------------------|----------------|
-| `name`            | String   | The name of the MCP server             | `mcp-server`   |
-| `version`         | String   | The version of the MCP server          | `1.0.0`        |
-| `instructions`    | String   | The instructions of the MCP server     | (empty string) |
-| `requestTimeout`  | Duration | The timeout of the MCP server request  | `20` seconds   |
-| `baseUrl`         | String   | The base URL of the MCP server         | (empty string) |
-| `messageEndpoint` | String   | The endpoint of the MCP server message | `/mcp/message` |
-| `sseEndpoint`     | String   | The endpoint for HTTP SSE mode         | `/sse`         |
-| `port`            | int      | The port for HTTP Server               | `8080`         |
-
-#### How to run
-
-Just run the main class like you would launch a web application, and then it's all set.
-
-### Streamable HTTP Server
-
-#### Quick Start
+### Step 3: Define MCP Tools
 
 ```java
-import com.github.codeboyzhou.mcp.declarative.McpServers;
-import com.github.codeboyzhou.mcp.declarative.annotation.McpI18nEnabled;
-import com.github.codeboyzhou.mcp.declarative.annotation.McpServerApplication;
-import com.github.codeboyzhou.mcp.declarative.server.McpStreamableServerInfo;
-
-@McpI18nEnabled
-@McpServerApplication
-public class McpStreamableServer {
-
-  public static void main(String[] args) {
-    McpStreamableServerInfo serverInfo = McpStreamableServerInfo.builder().build();
-    McpServers.run(McpStreamableServer.class, args).startStreamableServer(serverInfo);
-  }
-
+public class MyTools {
+    @McpTool(description = "Calculate the sum of two numbers")
+    public int add(
+        @McpToolParam(name = "a", description = "First number", required = true) int a,
+        @McpToolParam(name = "b", description = "Second number", required = true) int b
+    ) {
+        return a + b;
+    }
 }
 ```
 
-#### Server Info
-
-For the method `startStreamableServer`, you can specify the server information by using `McpStreamableServerInfo`:
-
-| Field               | Type     | Description                                                                  | Default Value  |
-|---------------------|----------|------------------------------------------------------------------------------|----------------|
-| `name`              | String   | The name of the MCP server                                                   | `mcp-server`   |
-| `version`           | String   | The version of the MCP server                                                | `1.0.0`        |
-| `instructions`      | String   | The instructions of the MCP server                                           | (empty string) |
-| `requestTimeout`    | Duration | The timeout of the MCP server request                                        | `20` seconds   |
-| `mcpEndpoint`       | String   | The endpoint of the MCP server message                                       | `/mcp`         |
-| `disallowDelete`    | boolean  | Whether to disable the DELETE method of HTTP                                 | `false`        |
-| `keepAliveInterval` | Duration | The interval for keep-alive pings. No keep-alive will be scheduled if `null` | `null`         |
-| `port`              | int      | The port for HTTP server                                                     | `8080`         |
-
-#### How to run
-
-Just run the main class like you would launch a web application, and then it's all set.
-
-## MCP Component
-
-In the previous section, we have learned how to create a MCP server, but the server still has no usable components, like
-MCP resources, prompts, and tools. In this section, we will learn how to create MCP components easily with the support
-of this high-level SDK. Refer to the following sample code, just focus on your core logic, forget about the low-level
-details of native MCP Java SDK.
-
-### Resource
+### Step 4: Define MCP Prompts (Optional)
 
 ```java
-import com.github.codeboyzhou.mcp.declarative.annotation.McpResource;
-
-public class McpResources {
-
-  /**
-   * This method defines a MCP resource to expose the OS env variables.
-   */
-  @McpResource(uri = "system://env", description = "OS env variables")
-  public String getSystemEnv() {
-    // Just put your logic code here, forget about the native MCP SDK details.
-    return System.getenv().toString();
-  }
-
-  // Your other MCP resources here...
+public class MyPrompts {
+    @McpPrompt(description = "Generate code for a given task")
+    public String generateCode(
+        @McpPromptParam(name = "language", description = "Programming language", required = true) String language,
+        @McpPromptParam(name = "task", description = "Task description", required = true) String task
+    ) {
+        return String.format("Write %s code to: %s", language, task);
+    }
 }
 ```
 
-### Prompt
+### Step 5: Run the Server
 
-```java
-import com.github.codeboyzhou.mcp.declarative.annotation.McpPrompt;
-import com.github.codeboyzhou.mcp.declarative.annotation.McpPromptParam;
-
-public class McpPrompts {
-
-  /**
-   * This method defines a MCP prompt to read a file.
-   */
-  @McpPrompt(description = "A simple prompt to read a file")
-  public String readFile(@McpPromptParam(name = "path", description = "filepath", required = true) String path) {
-    // Just put your logic code here, forget about the native MCP SDK details.
-    return String.format("What is the complete contents of the file: %s", path);
-  }
-
-  // Your other MCP prompts here...
-}
+```bash
+# Compile and run
+mvn clean package
+java -jar target/your-app.jar
 ```
 
-### Tool
+## Server Modes
+
+This SDK supports three MCP server modes:
+
+### 1. STDIO Mode (Default)
+Based on standard input/output communication, suitable for CLI tools.
 
 ```java
-import com.github.codeboyzhou.mcp.declarative.annotation.McpTool;
-import com.github.codeboyzhou.mcp.declarative.annotation.McpToolParam;
-
-public class McpTools {
-
-  /**
-   * This method defines a MCP tool to read a file.
-   */
-  @McpTool(description = "Read complete file contents with UTF-8 encoding")
-  public String readFile(@McpToolParam(name = "path", description = "filepath", required = true) String path) {
-    // Just put your logic code here, forget about the native MCP SDK details.
-    return Files.readString(Path.of(path));
-  }
-
-  // Your other MCP tools here...
-}
+// Start STDIO server
+McpServers.run(MyMcpServer.class, args).startStdioServer(serverInfo);
 ```
 
-Now it's all set, all you have to do is run your MCP server, and all the resources, prompts, and tools will be registered
-automatically.
+### 2. SSE (Server-Sent Events) Mode
+HTTP-based real-time communication (deprecated).
+
+### 3. Streamable HTTP Mode
+HTTP streaming for web applications.
+
+```java
+// Start Streamable HTTP server
+McpServers.run(MyMcpServer.class, args).startStreamableServer(serverInfo);
+```
+
+## Project Structure
+
+The typical project structure is as follows:
+
+```
+your-mcp-project/
+├── pom.xml
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/
+│   │   │       └── example/
+│   │   │           ├── MyMcpServer.java          # Main entry point
+│   │   │           ├── components/
+│   │   │           │   ├── MyResources.java     # MCP Resources
+│   │   │           │   ├── MyTools.java         # MCP Tools
+│   │   │           │   └── MyPrompts.java       # MCP Prompts
+│   │   │           └── service/
+│   │   │               └── BusinessLogic.java    # Business logic
+│   │   └── resources/
+│   │       ├── mcp-server.yml                    # MCP configuration
+│   │       └── messages.properties               # Internationalization messages
+└── target/
+    └── your-app.jar                              # Executable JAR
+```
+
+## Next Steps
+
+- Want to learn more about MCP components? Check [Core Components](./components.md)
