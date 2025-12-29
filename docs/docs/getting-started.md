@@ -20,14 +20,14 @@ This guide will help you build your first MCP server in 5 minutes.
 <dependency>
     <groupId>io.github.codeboyzhou</groupId>
     <artifactId>mcp-declarative-java-sdk</artifactId>
-    <version>0.9.0</version>
+    <version>0.9.1</version>
 </dependency>
 ```
 
 ### Gradle Dependency
 
 ```gradle
-implementation 'io.github.codeboyzhou:mcp-declarative-java-sdk:0.9.0'
+implementation 'io.github.codeboyzhou:mcp-declarative-java-sdk:0.9.1'
 ```
 
 ## 5-Minute Tutorial

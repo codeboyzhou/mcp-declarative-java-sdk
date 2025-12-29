@@ -1,6 +1,6 @@
 [project]
 name = "mcp-declarative-java-sdk-docs"
-version = "0.9.0"
+version = "0.9.1"
 description = "Documentation site for project https://github.com/codeboyzhou/mcp-declarative-java-sdk"
 authors = [
     { name = "codeboyzhou", email = "imzhouchen@gmail.com" },

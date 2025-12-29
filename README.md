@@ -51,13 +51,13 @@ This SDK is a lightweight, annotation-based framework that simplifies MCP server
 <dependency>
     <groupId>io.github.codeboyzhou</groupId>
     <artifactId>mcp-declarative-java-sdk</artifactId>
-    <version>0.9.0</version>
+    <version>0.9.1</version>
 </dependency>
 ```
 
 **Gradle:**
 ```gradle
-implementation 'io.github.codeboyzhou:mcp-declarative-java-sdk:0.9.0'
+implementation 'io.github.codeboyzhou:mcp-declarative-java-sdk:0.9.1'
 ```
 
 #### Step 2: Create Your First MCP Server
