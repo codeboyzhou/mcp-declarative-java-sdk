@@ -4,13 +4,13 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.github.codeboyzhou</groupId>
-    <artifactId>mcp-declarative-java-sdk</artifactId>
-    <version>0.9.1</version>
+    <groupId>io.github.thought2code</groupId>
+    <artifactId>mcp-annotated-java-sdk</artifactId>
+    <version>0.10.0</version>
 
-    <name>MCP Declarative Java SDK</name>
+    <name>MCP Annotated Java SDK</name>
     <description>Annotation-driven MCP (Model Context Protocol) Development with Java</description>
-    <url>https://github.com/codeboyzhou/mcp-declarative-java-sdk</url>
+    <url>https://github.com/thought2code/mcp-annotated-java-sdk</url>
 
     <licenses>
         <license>
@@ -28,12 +28,12 @@
     </developers>
 
     <scm>
-        <url>https://github.com/codeboyzhou/mcp-declarative-java-sdk</url>
+        <url>https://github.com/thought2code/mcp-annotated-java-sdk</url>
     </scm>
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/codeboyzhou/mcp-declarative-java-sdk/issues</url>
+        <url>https://github.com/thought2code/mcp-annotated-java-sdk/issues</url>
     </issueManagement>
 
     <properties>
@@ -67,7 +67,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- Note: local installation is required if the mcp-sdk.version is SNAPSHOT -->
             <dependency>
                 <groupId>io.modelcontextprotocol.sdk</groupId>
                 <artifactId>mcp-bom</artifactId>

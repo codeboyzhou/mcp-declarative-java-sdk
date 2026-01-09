@@ -1,16 +1,16 @@
 # Annotation-driven MCP Java SDK
 
 ![Java](https://img.shields.io/badge/Java-17+-blue)
-[![maven-central](https://img.shields.io/maven-central/v/io.github.codeboyzhou/mcp-declarative-java-sdk?color=blue)](https://mvnrepository.com/artifact/io.github.codeboyzhou/mcp-declarative-java-sdk)
-[![coverage](https://img.shields.io/codecov/c/github/codeboyzhou/mcp-declarative-java-sdk?logo=codecov&color=brightgreen)](https://app.codecov.io/github/codeboyzhou/mcp-declarative-java-sdk)
-[![GitHub Action](https://github.com/codeboyzhou/mcp-declarative-java-sdk/actions/workflows/maven-build.yml/badge.svg)](https://github.com/codeboyzhou/mcp-declarative-java-sdk/actions/workflows/maven-build.yml)
-[![License](https://img.shields.io/github/license/codeboyzhou/mcp-declarative-java-sdk)](LICENSE)
+[![maven-central](https://img.shields.io/maven-central/v/io.github.thought2code/mcp-annotated-java-sdk?color=blue)](https://mvnrepository.com/artifact/io.github.thought2code/mcp-annotated-java-sdk)
+[![coverage](https://img.shields.io/codecov/c/github/thought2code/mcp-annotated-java-sdk?logo=codecov&color=brightgreen)](https://app.codecov.io/github/thought2code/mcp-annotated-java-sdk)
+[![GitHub Action](https://github.com/thought2code/mcp-annotated-java-sdk/actions/workflows/maven-build.yml/badge.svg)](https://github.com/thought2code/mcp-annotated-java-sdk/actions/workflows/maven-build.yml)
+[![License](https://img.shields.io/github/license/thought2code/mcp-annotated-java-sdk)](LICENSE)
 
-> 🚀 Declarative [MCP Java SDK](https://github.com/modelcontextprotocol/java-sdk) Development with Java Annotations
+> Annotation-driven MCP dev 🚀 No Spring, Zero Boilerplate, Pure Java.
 
 This SDK is a lightweight, annotation-based framework that simplifies MCP server development in Java. Define, develop and integrate your MCP Resources / Prompts / Tools with minimal code - No Spring Framework Required.
 
-[📖 Documentation](https://codeboyzhou.github.io/mcp-declarative-java-sdk) | [💡 Examples](https://github.com/codeboyzhou/mcp-java-sdk-examples/tree/main/mcp-server-filesystem/mcp-server-filesystem-declarative-sdk-implementation) | [🐛 Report Issues](https://github.com/codeboyzhou/mcp-declarative-java-sdk/issues)
+[📖 Documentation](https://thought2code.github.io/mcp-annotated-java-sdk-docs) | [💡 Examples](https://github.com/thought2code/mcp-java-sdk-examples/tree/main/mcp-server-filesystem/mcp-server-filesystem-annotated-sdk-implementation) | [🐛 Report Issues](https://github.com/thought2code/mcp-annotated-java-sdk/issues)
 
 ## ✨ Why Choose This SDK?
 
@@ -49,15 +49,15 @@ This SDK is a lightweight, annotation-based framework that simplifies MCP server
 **Maven:**
 ```xml
 <dependency>
-    <groupId>io.github.codeboyzhou</groupId>
-    <artifactId>mcp-declarative-java-sdk</artifactId>
-    <version>0.9.1</version>
+    <groupId>io.github.thought2code</groupId>
+    <artifactId>mcp-annotated-java-sdk</artifactId>
+    <version>0.10.0</version>
 </dependency>
 ```
 
 **Gradle:**
 ```gradle
-implementation 'io.github.codeboyzhou:mcp-declarative-java-sdk:0.9.1'
+implementation 'io.github.thought2code:mcp-annotated-java-sdk:0.10.0'
 ```
 
 #### Step 2: Create Your First MCP Server
@@ -301,8 +301,8 @@ We welcome and appreciate contributions! Please follow these steps to contribute
 
 ```bash
 # Clone the repository
-git clone https://github.com/codeboyzhou/mcp-declarative-java-sdk.git
-cd mcp-declarative-java-sdk
+git clone https://github.com/thought2code/mcp-annotated-java-sdk.git
+cd mcp-annotated-java-sdk
 
 # Build the project
 mvn clean install
@@ -313,8 +313,8 @@ mvn test
 
 ## 📖 Documentation
 
-- [Official Documentation](https://codeboyzhou.github.io/mcp-declarative-java-sdk)
-- [Examples Repository](https://github.com/codeboyzhou/mcp-java-sdk-examples/tree/main/mcp-server-filesystem/mcp-server-filesystem-declarative-sdk-implementation)
+- [Official Documentation](https://thought2code.github.io/mcp-annotated-java-sdk-docs)
+- [Examples Repository](https://github.com/thought2code/mcp-java-sdk-examples/tree/main/mcp-server-filesystem/mcp-server-filesystem-annotated-sdk-implementation)
 - [MCP Official Site](https://modelcontextprotocol.io)
 
 ## 📄 License
