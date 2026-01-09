@@ -1,9 +1,9 @@
 name: Maven Deploy
 
 on:
-  release:
-    types:
-      - published
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   deploy:

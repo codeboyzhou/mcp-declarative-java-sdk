@@ -24,6 +24,8 @@ public record McpCompleteCompletion(List<String> values, Integer total, boolean 
    * it remains null to preserve the original intent.
    *
    * @param values the input list of completion values to be defensively copied
+   * @param total the total number of available completions, may be null
+   * @param hasMore true if more completions are available, false otherwise
    */
   public McpCompleteCompletion {
     values = values == null ? null : List.copyOf(values);
