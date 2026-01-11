@@ -6,7 +6,7 @@
 
     <groupId>io.github.thought2code</groupId>
     <artifactId>mcp-annotated-java-sdk</artifactId>
-    <version>0.10.0</version>
+    <version>0.11.0-SNAPSHOT</version>
 
     <name>MCP Annotated Java SDK</name>
     <description>Annotation-driven MCP (Model Context Protocol) Development with Java</description>
@@ -56,12 +56,12 @@
         <!--==================== dependency versions ======================-->
         <annotations.version>26.0.2-1</annotations.version>
         <guice.version>7.0.0</guice.version>
-        <jackson-dataformat-yaml.version>2.17.0</jackson-dataformat-yaml.version>
-        <jetty.version>12.1.1</jetty.version>
-        <junit.version>6.0.0</junit.version>
-        <logback.version>1.5.18</logback.version>
+        <jackson-dataformat-yaml.version>2.20.1</jackson-dataformat-yaml.version>
+        <jetty.version>12.1.5</jetty.version>
+        <junit.version>6.0.2</junit.version>
+        <logback.version>1.5.24</logback.version>
         <mcp-sdk.version>0.17.1</mcp-sdk.version>
-        <mockito.version>5.20.0</mockito.version>
+        <mockito.version>5.21.0</mockito.version>
         <reflections.version>0.10.2</reflections.version>
     </properties>
 
