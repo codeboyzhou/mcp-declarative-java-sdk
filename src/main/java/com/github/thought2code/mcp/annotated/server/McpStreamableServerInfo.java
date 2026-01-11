@@ -11,6 +11,7 @@ import java.time.Duration;
  * @see McpServerInfo
  * @author codeboyzhou
  */
+@Deprecated(since = "0.11.0", forRemoval = true)
 public class McpStreamableServerInfo extends McpServerInfo {
 
   /** The port of the MCP HTTP server. */
@@ -101,6 +102,7 @@ public class McpStreamableServerInfo extends McpServerInfo {
    *
    * @see McpStreamableServerInfo
    */
+  @Deprecated(since = "0.11.0", forRemoval = true)
   public static class Builder extends McpServerInfo.Builder<McpStreamableServerInfo.Builder> {
 
     /** The port of the MCP HTTP server. Default value is {@code 8080}. */

@@ -8,6 +8,7 @@ import com.github.thought2code.mcp.annotated.util.StringHelper;
  * @see McpServerInfo
  * @author codeboyzhou
  */
+@Deprecated(since = "0.11.0", forRemoval = true)
 public class McpSseServerInfo extends McpServerInfo {
 
   /** The base URL of the MCP server. */
@@ -81,6 +82,7 @@ public class McpSseServerInfo extends McpServerInfo {
   }
 
   /** The builder class for {@code McpSseServerInfo}. */
+  @Deprecated(since = "0.11.0", forRemoval = true)
   public static class Builder extends McpServerInfo.Builder<McpSseServerInfo.Builder> {
 
     /** The base URL of the MCP server. Default value is {@code ""}. */

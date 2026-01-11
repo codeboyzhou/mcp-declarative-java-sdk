@@ -10,6 +10,7 @@ import java.time.Duration;
  *
  * @author codeboyzhou
  */
+@Deprecated(since = "0.11.0", forRemoval = true)
 public class McpServerInfo {
 
   /** The name of the MCP server. */
@@ -113,6 +114,7 @@ public class McpServerInfo {
    * @param <T> the type of the builder
    */
   @SuppressWarnings("unchecked")
+  @Deprecated(since = "0.11.0", forRemoval = true)
   public static class Builder<T extends Builder<T>> {
 
     /** The name of the MCP server. Default value is {@code "mcp-server"}. */

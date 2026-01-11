@@ -6,6 +6,7 @@ import com.github.thought2code.mcp.annotated.di.DependencyInjector;
 import com.github.thought2code.mcp.annotated.di.DependencyInjectorProvider;
 import com.github.thought2code.mcp.annotated.di.GuiceDependencyInjector;
 import com.github.thought2code.mcp.annotated.di.GuiceInjectorModule;
+import com.github.thought2code.mcp.annotated.enums.ServerMode;
 import com.github.thought2code.mcp.annotated.server.McpServerInfo;
 import com.github.thought2code.mcp.annotated.server.McpSseServer;
 import com.github.thought2code.mcp.annotated.server.McpSseServerInfo;
@@ -77,17 +78,39 @@ public final class McpServers {
    *
    * @param serverInfo the server info for the stdio server
    */
+  @Deprecated(since = "0.11.0", forRemoval = true)
   public void startStdioServer(McpServerInfo serverInfo) {
     injector.getInstance(McpStdioServer.class).start(serverInfo);
   }
 
   /**
-   * Starts a http server-sent events (sse) server with the specified server info.
+   * Starts a standard input/output (stdio) server with the specified server configuration.
+   *
+   * @param configuration the server configuration builder for the stdio server
+   */
+  public void startStdioServer(McpServerConfiguration.Builder configuration) {
+    configuration.enabled(true).mode(ServerMode.STDIO);
+    doStartServer(configuration.build());
+  }
+
+  /**
+   * Starts an http server-sent events (sse) server with the specified server info.
    *
    * @param serverInfo the server info for the sse server
    */
+  @Deprecated(since = "0.11.0", forRemoval = true)
   public void startSseServer(McpSseServerInfo serverInfo) {
     injector.getInstance(McpSseServer.class).start(serverInfo);
+  }
+
+  /**
+   * Starts an http server-sent events (sse) server with the specified server configuration.
+   *
+   * @param configuration the server configuration builder for the sse server
+   */
+  public void startSseServer(McpServerConfiguration.Builder configuration) {
+    configuration.enabled(true).mode(ServerMode.SSE);
+    doStartServer(configuration.build());
   }
 
   /**
@@ -95,8 +118,19 @@ public final class McpServers {
    *
    * @param serverInfo the server info for the streamable server
    */
+  @Deprecated(since = "0.11.0", forRemoval = true)
   public void startStreamableServer(McpStreamableServerInfo serverInfo) {
     injector.getInstance(McpStreamableServer.class).start(serverInfo);
+  }
+
+  /**
+   * Starts a streamable http server with the specified server configuration.
+   *
+   * @param configuration the server configuration builder for the streamable server
+   */
+  public void startStreamableServer(McpServerConfiguration.Builder configuration) {
+    configuration.enabled(true).mode(ServerMode.STREAMABLE);
+    doStartServer(configuration.build());
   }
 
   /**
