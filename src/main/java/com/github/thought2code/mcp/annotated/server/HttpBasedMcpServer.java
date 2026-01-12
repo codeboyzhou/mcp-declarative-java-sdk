@@ -24,6 +24,6 @@ public abstract class HttpBasedMcpServer<S extends McpServerInfo, T extends Http
    */
   public void run() {
     JettyHttpServer jettyHttpServer = new JettyHttpServer();
-    jettyHttpServer.use(transportProvider).bind(port).start();
+    jettyHttpServer.withTransportProvider(transportProvider).bind(port).start();
   }
 }

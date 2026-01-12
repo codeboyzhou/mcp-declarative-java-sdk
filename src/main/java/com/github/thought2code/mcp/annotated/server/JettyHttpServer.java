@@ -4,6 +4,8 @@ import jakarta.servlet.http.HttpServlet;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,11 +18,11 @@ public class JettyHttpServer {
 
   private static final Logger log = LoggerFactory.getLogger(JettyHttpServer.class);
 
-  /** Jetty server name. */
-  private static final String JETTY_SERVER_NAME = "jetty-based-mcp-server";
+  /** Jetty thread pool name. */
+  private static final String JETTY_THREAD_POOL_NAME = "jetty-based-mcp-server-worker";
 
-  /** Default servlet context path. */
-  private static final String DEFAULT_SERVLET_CONTEXT_PATH = "/";
+  /** Default context path. */
+  private static final String DEFAULT_CONTEXT_PATH = "/";
 
   /** Default servlet path. */
   private static final String DEFAULT_SERVLET_PATH = "/*";
@@ -29,7 +31,10 @@ public class JettyHttpServer {
   private HttpServlet mcpTransportProvider;
 
   /** Port to bind Jetty HTTP server. */
-  private int port;
+  private int port = 8080;
+
+  /** Whether Jetty HTTP server is started. */
+  private boolean started = false;
 
   /**
    * Register a servlet to be handled by Jetty HTTP server.
@@ -37,7 +42,7 @@ public class JettyHttpServer {
    * @param mcpTransportProvider the MCP transport provider to be registered
    * @return this server instance
    */
-  public JettyHttpServer use(HttpServlet mcpTransportProvider) {
+  public JettyHttpServer withTransportProvider(HttpServlet mcpTransportProvider) {
     this.mcpTransportProvider = mcpTransportProvider;
     return this;
   }
@@ -49,26 +54,25 @@ public class JettyHttpServer {
    * @return this server instance
    */
   public JettyHttpServer bind(int port) {
+    if (port <= 0 || port > 65535) {
+      throw new IllegalArgumentException("Port must be between 1 and 65535");
+    }
     this.port = port;
     return this;
   }
 
   /** Start Jetty HTTP server and bind it to the specified port. */
   public void start() {
-    ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-    handler.setContextPath(DEFAULT_SERVLET_CONTEXT_PATH);
+    if (started) {
+      log.warn("Jetty HTTP server is already started");
+      return;
+    }
 
-    ServletHolder servletHolder = new ServletHolder(mcpTransportProvider);
-    handler.addServlet(servletHolder, DEFAULT_SERVLET_PATH);
-
-    Server server = new Server(port);
-    server.setHandler(handler);
-    server.setStopAtShutdown(true);
-    server.setName(JETTY_SERVER_NAME);
+    Server server = createServer();
 
     try {
       server.start();
-      addShutdownHook(server);
+      started = true;
       log.info("Jetty-based MCP server started on http://127.0.0.1:{}", port);
     } catch (Exception e) {
       log.error("Error starting Jetty-based MCP server on http://127.0.0.1:{}", port, e);
@@ -84,6 +88,32 @@ public class JettyHttpServer {
   }
 
   /**
+   * Create a Jetty HTTP server instance.
+   *
+   * @return the Jetty HTTP server instance
+   */
+  private Server createServer() {
+    QueuedThreadPool threadPool = new QueuedThreadPool();
+    threadPool.setName(JETTY_THREAD_POOL_NAME);
+
+    ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+    handler.setContextPath(DEFAULT_CONTEXT_PATH);
+
+    ServletHolder servletHolder = new ServletHolder(mcpTransportProvider);
+    handler.addServlet(servletHolder, DEFAULT_SERVLET_PATH);
+
+    Server server = new Server(threadPool);
+    server.setHandler(handler);
+    server.setStopAtShutdown(true);
+
+    ServerConnector connector = new ServerConnector(server);
+    connector.setPort(port);
+    server.addConnector(connector);
+
+    return server;
+  }
+
+  /**
    * Await for Jetty HTTP server to stop.
    *
    * @param server the Jetty HTTP server instance
@@ -93,31 +123,6 @@ public class JettyHttpServer {
       server.join();
     } catch (InterruptedException e) {
       log.error("Error joining Jetty-based MCP server", e);
-    }
-  }
-
-  /**
-   * Add a shutdown hook to Jetty HTTP server to stop it when the JVM is shutting down.
-   *
-   * @param server the Jetty HTTP server instance
-   */
-  private void addShutdownHook(Server server) {
-    Runnable runnable = () -> shutdown(server);
-    Thread shutdownHookThread = new Thread(runnable);
-    Runtime.getRuntime().addShutdownHook(shutdownHookThread);
-  }
-
-  /**
-   * Shutdown Jetty HTTP server and release resources.
-   *
-   * @param server the Jetty HTTP server instance
-   */
-  private void shutdown(Server server) {
-    try {
-      log.info("Shutting down Jetty-based MCP server");
-      server.stop();
-    } catch (Exception e) {
-      log.error("Error stopping Jetty-based MCP server", e);
     }
   }
 }
