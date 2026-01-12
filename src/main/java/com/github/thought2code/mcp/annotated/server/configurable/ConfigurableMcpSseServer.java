@@ -2,7 +2,6 @@ package com.github.thought2code.mcp.annotated.server.configurable;
 
 import com.github.thought2code.mcp.annotated.configuration.McpServerConfiguration;
 import com.github.thought2code.mcp.annotated.configuration.McpServerSSE;
-import com.github.thought2code.mcp.annotated.server.EmbeddedJettyServer;
 import io.modelcontextprotocol.server.McpServer;
 import io.modelcontextprotocol.server.transport.HttpServletSseServerTransportProvider;
 import org.slf4j.Logger;
@@ -14,7 +13,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author codeboyzhou
  */
-public class ConfigurableMcpSseServer extends AbstractConfigurableMcpServer {
+public class ConfigurableMcpSseServer
+    extends HttpBasedConfigurableMcpServer<HttpServletSseServerTransportProvider> {
 
   private static final Logger log = LoggerFactory.getLogger(ConfigurableMcpSseServer.class);
 
@@ -39,14 +39,13 @@ public class ConfigurableMcpSseServer extends AbstractConfigurableMcpServer {
   public McpServer.SyncSpecification<?> sync() {
     log.warn("HTTP SSE mode has been deprecated, recommend to use Stream HTTP server instead.");
     McpServerSSE sse = configuration.sse();
-    HttpServletSseServerTransportProvider transportProvider =
+    transportProvider =
         HttpServletSseServerTransportProvider.builder()
             .baseUrl(sse.baseUrl())
             .sseEndpoint(sse.endpoint())
             .messageEndpoint(sse.messageEndpoint())
             .build();
-    EmbeddedJettyServer httpserver = new EmbeddedJettyServer();
-    httpserver.use(transportProvider).bind(sse.port()).start();
+    port = sse.port();
     return McpServer.sync(transportProvider);
   }
 }

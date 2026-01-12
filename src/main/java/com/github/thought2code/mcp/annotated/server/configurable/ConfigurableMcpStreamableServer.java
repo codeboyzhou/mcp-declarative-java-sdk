@@ -2,7 +2,6 @@ package com.github.thought2code.mcp.annotated.server.configurable;
 
 import com.github.thought2code.mcp.annotated.configuration.McpServerConfiguration;
 import com.github.thought2code.mcp.annotated.configuration.McpServerStreamable;
-import com.github.thought2code.mcp.annotated.server.EmbeddedJettyServer;
 import io.modelcontextprotocol.json.McpJsonMapper;
 import io.modelcontextprotocol.server.McpServer;
 import io.modelcontextprotocol.server.transport.HttpServletStreamableServerTransportProvider;
@@ -14,7 +13,8 @@ import java.time.Duration;
  *
  * @author codeboyzhou
  */
-public class ConfigurableMcpStreamableServer extends AbstractConfigurableMcpServer {
+public class ConfigurableMcpStreamableServer
+    extends HttpBasedConfigurableMcpServer<HttpServletStreamableServerTransportProvider> {
 
   /**
    * Creates a new instance of {@link ConfigurableMcpStreamableServer} with the specified
@@ -37,15 +37,14 @@ public class ConfigurableMcpStreamableServer extends AbstractConfigurableMcpServ
   @Override
   public McpServer.SyncSpecification<?> sync() {
     McpServerStreamable streamable = configuration.streamable();
-    HttpServletStreamableServerTransportProvider transportProvider =
+    transportProvider =
         HttpServletStreamableServerTransportProvider.builder()
             .jsonMapper(McpJsonMapper.getDefault())
             .mcpEndpoint(streamable.mcpEndpoint())
             .disallowDelete(streamable.disallowDelete())
             .keepAliveInterval(Duration.ofMillis(streamable.keepAliveInterval()))
             .build();
-    EmbeddedJettyServer httpserver = new EmbeddedJettyServer();
-    httpserver.use(transportProvider).bind(streamable.port()).start();
+    port = streamable.port();
     return McpServer.sync(transportProvider);
   }
 }

@@ -13,7 +13,9 @@ import com.github.thought2code.mcp.annotated.server.McpSseServerInfo;
 import com.github.thought2code.mcp.annotated.server.McpStdioServer;
 import com.github.thought2code.mcp.annotated.server.McpStreamableServer;
 import com.github.thought2code.mcp.annotated.server.McpStreamableServerInfo;
-import com.github.thought2code.mcp.annotated.server.configurable.ConfigurableMcpServerFactory;
+import com.github.thought2code.mcp.annotated.server.configurable.ConfigurableMcpSseServer;
+import com.github.thought2code.mcp.annotated.server.configurable.ConfigurableMcpStdioServer;
+import com.github.thought2code.mcp.annotated.server.configurable.ConfigurableMcpStreamableServer;
 import com.google.inject.Guice;
 import io.modelcontextprotocol.util.Assert;
 import org.slf4j.Logger;
@@ -80,7 +82,8 @@ public final class McpServers {
    */
   @Deprecated(since = "0.11.0", forRemoval = true)
   public void startStdioServer(McpServerInfo serverInfo) {
-    injector.getInstance(McpStdioServer.class).start(serverInfo);
+    McpStdioServer server = injector.getInstance(McpStdioServer.class);
+    server.warmup(serverInfo);
   }
 
   /**
@@ -100,7 +103,9 @@ public final class McpServers {
    */
   @Deprecated(since = "0.11.0", forRemoval = true)
   public void startSseServer(McpSseServerInfo serverInfo) {
-    injector.getInstance(McpSseServer.class).start(serverInfo);
+    McpSseServer server = injector.getInstance(McpSseServer.class);
+    server.warmup(serverInfo);
+    server.run();
   }
 
   /**
@@ -120,7 +125,9 @@ public final class McpServers {
    */
   @Deprecated(since = "0.11.0", forRemoval = true)
   public void startStreamableServer(McpStreamableServerInfo serverInfo) {
-    injector.getInstance(McpStreamableServer.class).start(serverInfo);
+    McpStreamableServer server = injector.getInstance(McpStreamableServer.class);
+    server.warmup(serverInfo);
+    server.run();
   }
 
   /**
@@ -157,7 +164,23 @@ public final class McpServers {
    */
   private void doStartServer(McpServerConfiguration configuration) {
     if (configuration.enabled()) {
-      ConfigurableMcpServerFactory.getServer(configuration).startServer();
+      switch (configuration.mode()) {
+        case STDIO -> {
+          ConfigurableMcpStdioServer server = new ConfigurableMcpStdioServer(configuration);
+          server.warmup();
+        }
+        case SSE -> {
+          ConfigurableMcpSseServer server = new ConfigurableMcpSseServer(configuration);
+          server.warmup();
+          server.run();
+        }
+        case STREAMABLE -> {
+          ConfigurableMcpStreamableServer server =
+              new ConfigurableMcpStreamableServer(configuration);
+          server.warmup();
+          server.run();
+        }
+      }
     } else {
       log.warn("MCP server is disabled, please check your configuration file.");
     }

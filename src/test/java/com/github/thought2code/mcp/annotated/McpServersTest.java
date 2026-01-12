@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.Executors;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class McpServersTest {
@@ -37,6 +38,11 @@ class McpServersTest {
   McpServers servers = McpServers.run(McpServersTest.class, new String[] {});
 
   Duration requestTimeout = Duration.ofSeconds(60);
+
+  @BeforeAll
+  static void setup() {
+    System.setProperty("mcp.server.testing", "true");
+  }
 
   @Test
   void testStartStdioServer_shouldSucceed() {

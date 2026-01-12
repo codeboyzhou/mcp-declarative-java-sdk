@@ -11,7 +11,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author codeboyzhou
  */
-public class McpSseServer extends AbstractMcpServer<McpSseServerInfo> {
+public class McpSseServer
+    extends HttpBasedMcpServer<McpSseServerInfo, HttpServletSseServerTransportProvider> {
 
   private static final Logger log = LoggerFactory.getLogger(McpSseServer.class);
 
@@ -27,14 +28,13 @@ public class McpSseServer extends AbstractMcpServer<McpSseServerInfo> {
   @Override
   public McpServer.SyncSpecification<?> sync(McpSseServerInfo info) {
     log.warn("HTTP SSE mode has been deprecated, recommend to use Stream HTTP server instead.");
-    HttpServletSseServerTransportProvider transportProvider =
+    transportProvider =
         HttpServletSseServerTransportProvider.builder()
             .baseUrl(info.baseUrl())
             .sseEndpoint(info.sseEndpoint())
             .messageEndpoint(info.messageEndpoint())
             .build();
-    EmbeddedJettyServer httpserver = new EmbeddedJettyServer();
-    httpserver.use(transportProvider).bind(info.port()).start();
+    port = info.port();
     return McpServer.sync(transportProvider);
   }
 }

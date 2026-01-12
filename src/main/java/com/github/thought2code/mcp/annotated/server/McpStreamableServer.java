@@ -10,7 +10,9 @@ import io.modelcontextprotocol.server.transport.HttpServletStreamableServerTrans
  *
  * @author codeboyzhou
  */
-public class McpStreamableServer extends AbstractMcpServer<McpStreamableServerInfo> {
+public class McpStreamableServer
+    extends HttpBasedMcpServer<
+        McpStreamableServerInfo, HttpServletStreamableServerTransportProvider> {
   /**
    * Returns the sync specification for the MCP server in Streamable HTTP mode.
    *
@@ -22,7 +24,7 @@ public class McpStreamableServer extends AbstractMcpServer<McpStreamableServerIn
    */
   @Override
   public McpServer.SyncSpecification<?> sync(McpStreamableServerInfo info) {
-    HttpServletStreamableServerTransportProvider transportProvider =
+    transportProvider =
         HttpServletStreamableServerTransportProvider.builder()
             .jsonMapper(McpJsonMapper.getDefault())
             .mcpEndpoint(info.mcpEndpoint())
@@ -30,8 +32,7 @@ public class McpStreamableServer extends AbstractMcpServer<McpStreamableServerIn
             .contextExtractor(info.contextExtractor())
             .keepAliveInterval(info.keepAliveInterval())
             .build();
-    EmbeddedJettyServer httpserver = new EmbeddedJettyServer();
-    httpserver.use(transportProvider).bind(info.port()).start();
+    port = info.port();
     return McpServer.sync(transportProvider);
   }
 }

@@ -14,11 +14,11 @@ import io.modelcontextprotocol.spec.McpSchema;
 public abstract class AbstractMcpServer<S extends McpServerInfo> implements McpServer<S> {
 
   /**
-   * Starts the MCP server with the specified server info.
+   * Warms up the MCP server with the specified server info.
    *
    * @param serverInfo the server info
    */
-  public void start(S serverInfo) {
+  public void warmup(S serverInfo) {
     McpServerComponentRegister register = new McpServerComponentRegister();
     McpSyncServer server =
         sync(serverInfo)

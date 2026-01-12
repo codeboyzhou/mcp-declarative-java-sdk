@@ -33,11 +33,11 @@ public abstract class AbstractConfigurableMcpServer implements ConfigurableMcpSe
   }
 
   /**
-   * Starts the MCP server.
+   * Warms up the MCP server.
    *
    * <p>This method starts the MCP server using the sync specification provided by {@link #sync()}.
    */
-  public void startServer() {
+  public void warmup() {
     McpServerComponentRegister register = new McpServerComponentRegister();
     McpSyncServer server =
         sync()
