@@ -1,11 +1,13 @@
 package com.github.thought2code.mcp.annotated.server;
 
 import jakarta.servlet.http.HttpServlet;
+import java.util.Objects;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,8 +35,8 @@ public class JettyHttpServer {
   /** Port to bind Jetty HTTP server. */
   private int port = 8080;
 
-  /** Whether Jetty HTTP server is started. */
-  private boolean started = false;
+  /** Jetty server instance. */
+  private Server server;
 
   /**
    * Register a servlet to be handled by Jetty HTTP server.
@@ -42,7 +44,7 @@ public class JettyHttpServer {
    * @param mcpTransportProvider the MCP transport provider to be registered
    * @return this server instance
    */
-  public JettyHttpServer withTransportProvider(HttpServlet mcpTransportProvider) {
+  public JettyHttpServer withTransportProvider(@NotNull HttpServlet mcpTransportProvider) {
     this.mcpTransportProvider = mcpTransportProvider;
     return this;
   }
@@ -63,36 +65,33 @@ public class JettyHttpServer {
 
   /** Start Jetty HTTP server and bind it to the specified port. */
   public void start() {
-    if (started) {
+    if (server != null && server.isRunning()) {
       log.warn("Jetty HTTP server is already started");
       return;
     }
 
-    Server server = createServer();
+    initialize();
 
     try {
       server.start();
-      started = true;
       log.info("Jetty-based MCP server started on http://127.0.0.1:{}", port);
+
+      final boolean isTesting = Boolean.parseBoolean(System.getProperty("mcp.server.testing"));
+      if (isTesting) {
+        log.debug("Testing Jetty-based MCP server, not awaiting for server to stop");
+        return;
+      }
+
+      await(server);
     } catch (Exception e) {
       log.error("Error starting Jetty-based MCP server on http://127.0.0.1:{}", port, e);
     }
-
-    final boolean isTesting = Boolean.parseBoolean(System.getProperty("mcp.server.testing"));
-    if (isTesting) {
-      log.debug("Testing Jetty-based MCP server, not awaiting for server to stop");
-      return;
-    }
-
-    await(server);
   }
 
-  /**
-   * Create a Jetty HTTP server instance.
-   *
-   * @return the Jetty HTTP server instance
-   */
-  private Server createServer() {
+  /** Initialize Jetty HTTP server instance. */
+  private void initialize() {
+    Objects.requireNonNull(mcpTransportProvider, "mcpTransportProvider must not be null");
+
     QueuedThreadPool threadPool = new QueuedThreadPool();
     threadPool.setName(JETTY_THREAD_POOL_NAME);
 
@@ -102,15 +101,13 @@ public class JettyHttpServer {
     ServletHolder servletHolder = new ServletHolder(mcpTransportProvider);
     handler.addServlet(servletHolder, DEFAULT_SERVLET_PATH);
 
-    Server server = new Server(threadPool);
+    server = new Server(threadPool);
     server.setHandler(handler);
     server.setStopAtShutdown(true);
 
     ServerConnector connector = new ServerConnector(server);
     connector.setPort(port);
     server.addConnector(connector);
-
-    return server;
   }
 
   /**
