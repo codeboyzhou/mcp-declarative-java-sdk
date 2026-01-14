@@ -70,11 +70,10 @@ public class JettyHttpServer {
       return;
     }
 
-    initialize();
-
     try {
+      initServer();
       server.start();
-      log.info("Jetty-based MCP server started on http://127.0.0.1:{}", port);
+      log.info("Jetty-based MCP server started on port {}", port);
 
       final boolean isTesting = Boolean.parseBoolean(System.getProperty("mcp.server.testing"));
       if (isTesting) {
@@ -84,30 +83,28 @@ public class JettyHttpServer {
 
       await(server);
     } catch (Exception e) {
-      log.error("Error starting Jetty-based MCP server on http://127.0.0.1:{}", port, e);
+      log.error("Error starting Jetty-based MCP server on port {}", port, e);
+      stop();
     }
   }
 
   /** Initialize Jetty HTTP server instance. */
-  private void initialize() {
+  private void initServer() {
     Objects.requireNonNull(mcpTransportProvider, "mcpTransportProvider must not be null");
 
     QueuedThreadPool threadPool = new QueuedThreadPool();
     threadPool.setName(JETTY_THREAD_POOL_NAME);
-
-    ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-    handler.setContextPath(DEFAULT_CONTEXT_PATH);
-
-    ServletHolder servletHolder = new ServletHolder(mcpTransportProvider);
-    handler.addServlet(servletHolder, DEFAULT_SERVLET_PATH);
-
     server = new Server(threadPool);
-    server.setHandler(handler);
     server.setStopAtShutdown(true);
 
     ServerConnector connector = new ServerConnector(server);
     connector.setPort(port);
     server.addConnector(connector);
+
+    ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+    handler.setContextPath(DEFAULT_CONTEXT_PATH);
+    handler.addServlet(new ServletHolder(mcpTransportProvider), DEFAULT_SERVLET_PATH);
+    server.setHandler(handler);
   }
 
   /**
@@ -120,6 +117,21 @@ public class JettyHttpServer {
       server.join();
     } catch (InterruptedException e) {
       log.error("Error joining Jetty-based MCP server", e);
+    }
+  }
+
+  /** Stop Jetty HTTP server. */
+  public void stop() {
+    if (server != null && server.isRunning()) {
+      try {
+        server.stop();
+        log.info("Jetty-based MCP server stopped on port {}", port);
+      } catch (Exception e) {
+        log.error("Error stopping Jetty-based MCP server on port {}", port, e);
+      } finally {
+        server.destroy();
+        server = null;
+      }
     }
   }
 }
