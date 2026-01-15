@@ -7,15 +7,9 @@ import com.github.thought2code.mcp.annotated.di.DependencyInjectorProvider;
 import com.github.thought2code.mcp.annotated.di.GuiceDependencyInjector;
 import com.github.thought2code.mcp.annotated.di.GuiceInjectorModule;
 import com.github.thought2code.mcp.annotated.enums.ServerMode;
-import com.github.thought2code.mcp.annotated.server.McpServerInfo;
 import com.github.thought2code.mcp.annotated.server.McpSseServer;
-import com.github.thought2code.mcp.annotated.server.McpSseServerInfo;
 import com.github.thought2code.mcp.annotated.server.McpStdioServer;
 import com.github.thought2code.mcp.annotated.server.McpStreamableServer;
-import com.github.thought2code.mcp.annotated.server.McpStreamableServerInfo;
-import com.github.thought2code.mcp.annotated.server.configurable.ConfigurableMcpSseServer;
-import com.github.thought2code.mcp.annotated.server.configurable.ConfigurableMcpStdioServer;
-import com.github.thought2code.mcp.annotated.server.configurable.ConfigurableMcpStreamableServer;
 import com.google.inject.Guice;
 import io.modelcontextprotocol.util.Assert;
 import org.slf4j.Logger;
@@ -76,17 +70,6 @@ public final class McpServers {
   }
 
   /**
-   * Starts a standard input/output (stdio) server with the specified server info.
-   *
-   * @param serverInfo the server info for the stdio server
-   */
-  @Deprecated(since = "0.11.0", forRemoval = true)
-  public void startStdioServer(McpServerInfo serverInfo) {
-    McpStdioServer server = injector.getInstance(McpStdioServer.class);
-    server.warmup(serverInfo);
-  }
-
-  /**
    * Starts a standard input/output (stdio) server with the specified server configuration.
    *
    * @param configuration the server configuration builder for the stdio server
@@ -97,18 +80,6 @@ public final class McpServers {
   }
 
   /**
-   * Starts an http server-sent events (sse) server with the specified server info.
-   *
-   * @param serverInfo the server info for the sse server
-   */
-  @Deprecated(since = "0.11.0", forRemoval = true)
-  public void startSseServer(McpSseServerInfo serverInfo) {
-    McpSseServer server = injector.getInstance(McpSseServer.class);
-    server.warmup(serverInfo);
-    server.run();
-  }
-
-  /**
    * Starts an http server-sent events (sse) server with the specified server configuration.
    *
    * @param configuration the server configuration builder for the sse server
@@ -116,18 +87,6 @@ public final class McpServers {
   public void startSseServer(McpServerConfiguration.Builder configuration) {
     configuration.enabled(true).mode(ServerMode.SSE);
     doStartServer(configuration.build());
-  }
-
-  /**
-   * Starts a streamable http server with the specified server info.
-   *
-   * @param serverInfo the server info for the streamable server
-   */
-  @Deprecated(since = "0.11.0", forRemoval = true)
-  public void startStreamableServer(McpStreamableServerInfo serverInfo) {
-    McpStreamableServer server = injector.getInstance(McpStreamableServer.class);
-    server.warmup(serverInfo);
-    server.run();
   }
 
   /**
@@ -166,19 +125,16 @@ public final class McpServers {
     if (configuration.enabled()) {
       switch (configuration.mode()) {
         case STDIO -> {
-          ConfigurableMcpStdioServer server = new ConfigurableMcpStdioServer(configuration);
-          server.warmup();
+          McpStdioServer server = new McpStdioServer(configuration);
+          server.start();
         }
         case SSE -> {
-          ConfigurableMcpSseServer server = new ConfigurableMcpSseServer(configuration);
-          server.warmup();
-          server.run();
+          McpSseServer server = new McpSseServer(configuration);
+          server.start();
         }
         case STREAMABLE -> {
-          ConfigurableMcpStreamableServer server =
-              new ConfigurableMcpStreamableServer(configuration);
-          server.warmup();
-          server.run();
+          McpStreamableServer server = new McpStreamableServer(configuration);
+          server.start();
         }
       }
     } else {

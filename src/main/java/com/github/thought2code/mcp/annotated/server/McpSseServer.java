@@ -1,40 +1,56 @@
 package com.github.thought2code.mcp.annotated.server;
 
+import com.github.thought2code.mcp.annotated.configuration.McpServerConfiguration;
+import com.github.thought2code.mcp.annotated.configuration.McpServerSSE;
+import io.modelcontextprotocol.json.McpJsonMapper;
 import io.modelcontextprotocol.server.McpServer;
 import io.modelcontextprotocol.server.transport.HttpServletSseServerTransportProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is used to create a new instance of {@link McpSseServer} based on the specified {@link
- * McpSseServerInfo} in HTTP SSE mode.
+ * This class is used to create a new instance of {@link McpSseServer} in HTTP SSE mode.
  *
  * @author codeboyzhou
  */
-public class McpSseServer
-    extends HttpBasedMcpServer<McpSseServerInfo, HttpServletSseServerTransportProvider> {
+public class McpSseServer extends AbstractMcpServer {
 
   private static final Logger log = LoggerFactory.getLogger(McpSseServer.class);
 
+  /** The HTTP SSE server transport provider used by this MCP server. */
+  private HttpServletSseServerTransportProvider transportProvider;
+
+  /** The port number used by this MCP server. */
+  private int port;
+
   /**
-   * Returns the sync specification for the MCP server in HTTP SSE mode.
+   * Constructs a new {@link McpSseServer} with the specified configuration.
    *
-   * <p>This method returns the sync specification for the MCP server in SSE mode. The sync
-   * specification is used to start the MCP server in HTTP SSE mode.
-   *
-   * @param info the server info
-   * @return the sync specification for the MCP server in SSE mode
+   * @param configuration the server configuration
    */
+  public McpSseServer(McpServerConfiguration configuration) {
+    super(configuration);
+  }
+
   @Override
-  public McpServer.SyncSpecification<?> sync(McpSseServerInfo info) {
+  public McpServer.SyncSpecification<?> syncServer() {
     log.warn("HTTP SSE mode has been deprecated, recommend to use Stream HTTP server instead.");
+    McpServerSSE sse = configuration.sse();
+    port = sse.port();
     transportProvider =
         HttpServletSseServerTransportProvider.builder()
-            .baseUrl(info.baseUrl())
-            .sseEndpoint(info.sseEndpoint())
-            .messageEndpoint(info.messageEndpoint())
+            .jsonMapper(McpJsonMapper.getDefault())
+            .baseUrl(sse.baseUrl())
+            .sseEndpoint(sse.endpoint())
+            .messageEndpoint(sse.messageEndpoint())
             .build();
-    port = info.port();
     return McpServer.sync(transportProvider);
+  }
+
+  @Override
+  public void start() {
+    super.start();
+    JettyHttpServer httpServer = new JettyHttpServer();
+    httpServer.withTransportProvider(transportProvider).bind(port).start();
   }
 }

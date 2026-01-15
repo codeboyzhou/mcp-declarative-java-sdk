@@ -25,27 +25,16 @@ public record McpServerChangeNotification(
     return new Builder();
   }
 
-  /**
-   * Returns the default change notification of the MCP server.
-   *
-   * <p>By default, all change notification flags are set to {@code true}.
-   *
-   * @return The default change notification of the MCP server.
-   */
-  public static McpServerChangeNotification getDefault() {
-    return builder().resource(true).prompt(true).tool(true).build();
-  }
-
   /** Builder class for {@code McpServerChangeNotification}. */
   public static class Builder {
     /** The resource change notification flag. */
-    private Boolean resource;
+    private Boolean resource = true;
 
     /** The prompt change notification flag. */
-    private Boolean prompt;
+    private Boolean prompt = true;
 
     /** The tool change notification flag. */
-    private Boolean tool;
+    private Boolean tool = true;
 
     /**
      * Sets the resource change notification flag.

@@ -23,39 +23,22 @@ public record McpServerCapabilities(
     return new Builder();
   }
 
-  /**
-   * Returns the default capabilities of the MCP server.
-   *
-   * <p>By default, all capabilities are set to {@code true}.
-   *
-   * @return The default capabilities of the MCP server.
-   */
-  public static McpServerCapabilities getDefault() {
-    return builder()
-        .resource(true)
-        .subscribeResource(true)
-        .prompt(true)
-        .tool(true)
-        .completion(true)
-        .build();
-  }
-
   /** Builder class for {@code McpServerCapabilities}. */
   public static class Builder {
     /** The resource capability. */
-    private Boolean resource;
+    private Boolean resource = true;
 
     /** The subscribe-resource capability. */
-    private Boolean subscribeResource;
+    private Boolean subscribeResource = true;
 
     /** The prompt capability. */
-    private Boolean prompt;
+    private Boolean prompt = true;
 
     /** The tool capability. */
-    private Boolean tool;
+    private Boolean tool = true;
 
     /** The completion capability. */
-    private Boolean completion;
+    private Boolean completion = true;
 
     /**
      * Sets the resource capability.

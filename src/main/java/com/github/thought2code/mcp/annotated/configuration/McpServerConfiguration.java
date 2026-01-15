@@ -39,72 +39,44 @@ public record McpServerConfiguration(
     return new Builder();
   }
 
-  /**
-   * Returns the default configuration of the MCP server.
-   *
-   * <p>By default, the enabled status is {@code true}, the server mode is {@link
-   * ServerMode#STREAMABLE}, the server name is "mcp-server", the server version is "1.0.0", the
-   * server type is {@link ServerType#SYNC}, the server instructions is {@link StringHelper#EMPTY},
-   * the request timeout is 20000 milliseconds, the capabilities is {@link
-   * McpServerCapabilities#getDefault()}, the change notification is {@link
-   * McpServerChangeNotification#getDefault()}, the SSE is {@link McpServerSSE#getDefault()}, and
-   * the streamable is {@link McpServerStreamable#getDefault()}.
-   *
-   * @return The default configuration of the MCP server.
-   */
-  public static McpServerConfiguration getDefault() {
-    return builder()
-        .enabled(true)
-        .mode(ServerMode.STREAMABLE)
-        .name("mcp-server")
-        .version("1.0.0")
-        .type(ServerType.SYNC)
-        .instructions(StringHelper.EMPTY)
-        .requestTimeout(20000L)
-        .capabilities(McpServerCapabilities.getDefault())
-        .changeNotification(McpServerChangeNotification.getDefault())
-        .sse(McpServerSSE.getDefault())
-        .streamable(McpServerStreamable.getDefault())
-        .build();
-  }
-
   /** Builder class for {@code McpServerConfiguration}. */
   public static class Builder {
     /** The profile. */
-    private String profile;
+    private String profile = StringHelper.EMPTY;
 
     /** The enabled status. */
-    private Boolean enabled;
+    private Boolean enabled = true;
 
     /** The server mode. */
-    private ServerMode mode;
+    private ServerMode mode = ServerMode.STREAMABLE;
 
     /** The server name. */
-    private String name;
+    private String name = "mcp-server";
 
     /** The server version. */
-    private String version;
+    private String version = "1.0.0";
 
     /** The server type. */
-    private ServerType type;
+    private ServerType type = ServerType.SYNC;
 
     /** The server instructions. */
-    private String instructions;
+    private String instructions = StringHelper.EMPTY;
 
     /** The request timeout. */
-    private Long requestTimeout;
+    private Long requestTimeout = 20000L;
 
     /** The server capabilities. */
-    private McpServerCapabilities capabilities;
+    private McpServerCapabilities capabilities = McpServerCapabilities.builder().build();
 
     /** The change notification configuration. */
-    private McpServerChangeNotification changeNotification;
+    private McpServerChangeNotification changeNotification =
+        McpServerChangeNotification.builder().build();
 
     /** The SSE configuration. */
-    private McpServerSSE sse;
+    private McpServerSSE sse = McpServerSSE.builder().build();
 
     /** The streamable configuration. */
-    private McpServerStreamable streamable;
+    private McpServerStreamable streamable = McpServerStreamable.builder().build();
 
     /**
      * Sets the profile.

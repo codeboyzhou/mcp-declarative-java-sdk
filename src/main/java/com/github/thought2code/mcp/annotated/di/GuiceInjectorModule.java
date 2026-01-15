@@ -10,9 +10,6 @@ import com.github.thought2code.mcp.annotated.annotation.McpPrompt;
 import com.github.thought2code.mcp.annotated.annotation.McpResource;
 import com.github.thought2code.mcp.annotated.annotation.McpServerApplication;
 import com.github.thought2code.mcp.annotated.annotation.McpTool;
-import com.github.thought2code.mcp.annotated.server.McpSseServer;
-import com.github.thought2code.mcp.annotated.server.McpStdioServer;
-import com.github.thought2code.mcp.annotated.server.McpStreamableServer;
 import com.github.thought2code.mcp.annotated.server.component.McpServerPrompt;
 import com.github.thought2code.mcp.annotated.server.component.McpServerResource;
 import com.github.thought2code.mcp.annotated.server.component.McpServerTool;
@@ -68,11 +65,6 @@ public final class GuiceInjectorModule extends AbstractModule {
     // Bind all implementations of ParameterConverter
     bind(McpPromptParameterConverter.class).in(SINGLETON);
     bind(McpToolParameterConverter.class).in(SINGLETON);
-
-    // Bind all implementations of McpServer
-    bind(McpStdioServer.class).in(SINGLETON);
-    bind(McpSseServer.class).in(SINGLETON);
-    bind(McpStreamableServer.class).in(SINGLETON);
   }
 
   /**

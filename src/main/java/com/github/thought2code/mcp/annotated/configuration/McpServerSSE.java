@@ -28,36 +28,19 @@ public record McpServerSSE(
     return new Builder();
   }
 
-  /**
-   * Returns the default SSE configuration of the MCP server.
-   *
-   * <p>By default, the message endpoint is "/mcp/message", the endpoint is "/sse", the base URL is
-   * {@link StringHelper#EMPTY}, and the port is 8080.
-   *
-   * @return The default SSE configuration of the MCP server.
-   */
-  public static McpServerSSE getDefault() {
-    return builder()
-        .messageEndpoint("/mcp/message")
-        .endpoint("/sse")
-        .baseUrl(StringHelper.EMPTY)
-        .port(8080)
-        .build();
-  }
-
   /** Builder class for {@code McpServerSSE}. */
   public static class Builder {
     /** The message endpoint. */
-    private String messageEndpoint;
+    private String messageEndpoint = "/mcp/message";
 
     /** The endpoint. */
-    private String endpoint;
+    private String endpoint = "/sse";
 
     /** The base URL. */
-    private String baseUrl;
+    private String baseUrl = StringHelper.EMPTY;
 
     /** The port. */
-    private Integer port;
+    private Integer port = 8080;
 
     /**
      * Sets the message endpoint.

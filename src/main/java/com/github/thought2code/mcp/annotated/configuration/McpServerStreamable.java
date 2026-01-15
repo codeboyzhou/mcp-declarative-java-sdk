@@ -28,36 +28,19 @@ public record McpServerStreamable(
     return new Builder();
   }
 
-  /**
-   * Returns the default streamable http server configuration of the MCP server.
-   *
-   * <p>By default, the MCP endpoint is "/mcp/streamable", the disallow delete flag is {@code
-   * false}, the keep-alive interval is 10000 milliseconds, and the port is 8080.
-   *
-   * @return The default streamable http server configuration of the MCP server.
-   */
-  public static McpServerStreamable getDefault() {
-    return builder()
-        .mcpEndpoint("/mcp")
-        .disallowDelete(false)
-        .keepAliveInterval(0L)
-        .port(8080)
-        .build();
-  }
-
   /** Builder class for {@code McpServerStreamable}. */
   public static class Builder {
     /** The MCP endpoint. */
-    private String mcpEndpoint;
+    private String mcpEndpoint = "/mcp/message";
 
     /** The disallow delete flag. */
-    private Boolean disallowDelete;
+    private Boolean disallowDelete = false;
 
     /** The keep-alive interval. */
-    private Long keepAliveInterval;
+    private Long keepAliveInterval = 0L;
 
     /** The port. */
-    private Integer port;
+    private Integer port = 8080;
 
     /**
      * Sets the MCP endpoint.

@@ -8,11 +8,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.github.thought2code.mcp.annotated.configuration.McpConfigurationLoader;
 import com.github.thought2code.mcp.annotated.configuration.McpServerConfiguration;
+import com.github.thought2code.mcp.annotated.configuration.McpServerSSE;
+import com.github.thought2code.mcp.annotated.configuration.McpServerStreamable;
 import com.github.thought2code.mcp.annotated.enums.JavaTypeToJsonSchemaMapper;
 import com.github.thought2code.mcp.annotated.enums.ServerMode;
 import com.github.thought2code.mcp.annotated.exception.McpServerConfigurationException;
-import com.github.thought2code.mcp.annotated.server.McpSseServerInfo;
-import com.github.thought2code.mcp.annotated.server.McpStreamableServerInfo;
 import com.github.thought2code.mcp.annotated.server.McpStructuredContent;
 import com.github.thought2code.mcp.annotated.test.TestMcpStdioServer;
 import com.github.thought2code.mcp.annotated.test.TestMcpToolsStructuredContent;
@@ -67,24 +67,20 @@ class McpServersTest {
   void testStartSseServer_shouldSucceed() {
     final int port = new Random().nextInt(8000, 9000);
 
-    McpSseServerInfo serverInfo =
-        McpSseServerInfo.builder()
+    McpServerConfiguration.Builder configuration =
+        McpServerConfiguration.builder()
             .name("mcp-server")
             .version("1.0.0")
             .instructions("test")
-            .requestTimeout(requestTimeout)
-            .baseUrl("http://localhost:" + port)
-            .port(port)
-            .sseEndpoint("/sse")
-            .messageEndpoint("/mcp/message")
-            .build();
+            .requestTimeout(requestTimeout.toMillis())
+            .sse(McpServerSSE.builder().baseUrl("http://localhost:" + port).port(port).build());
 
     HttpClientSseClientTransport transport =
         HttpClientSseClientTransport.builder("http://localhost:" + port)
             .sseEndpoint("/sse")
             .build();
 
-    servers.startSseServer(serverInfo);
+    servers.startSseServer(configuration);
 
     try (McpSyncClient client = McpClient.sync(transport).requestTimeout(requestTimeout).build()) {
       verify(client);
@@ -95,22 +91,20 @@ class McpServersTest {
   void testStartStreamableServer_shouldSucceed() {
     final int port = new Random().nextInt(8000, 9000);
 
-    McpStreamableServerInfo serverInfo =
-        McpStreamableServerInfo.builder()
+    McpServerConfiguration.Builder configuration =
+        McpServerConfiguration.builder()
             .name("mcp-server")
             .version("1.0.0")
             .instructions("test")
-            .requestTimeout(requestTimeout)
-            .port(port)
-            .mcpEndpoint("/mcp/message")
-            .build();
+            .requestTimeout(requestTimeout.toMillis())
+            .streamable(McpServerStreamable.builder().port(port).build());
 
     HttpClientStreamableHttpTransport transport =
         HttpClientStreamableHttpTransport.builder("http://localhost:" + port)
             .endpoint("/mcp/message")
             .build();
 
-    servers.startStreamableServer(serverInfo);
+    servers.startStreamableServer(configuration);
 
     try (McpSyncClient client = McpClient.sync(transport).requestTimeout(requestTimeout).build()) {
       verify(client);
