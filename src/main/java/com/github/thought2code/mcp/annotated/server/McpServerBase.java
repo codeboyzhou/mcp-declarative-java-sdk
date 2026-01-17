@@ -11,6 +11,8 @@ import io.modelcontextprotocol.server.McpSyncServer;
 import io.modelcontextprotocol.spec.McpSchema;
 import java.time.Duration;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract base class that provides a common implementation for MCP (Model Context Protocol)
@@ -40,6 +42,9 @@ import org.jetbrains.annotations.NotNull;
  * @see McpServerConfiguration
  */
 public abstract class McpServerBase implements McpServer {
+
+  private static final Logger log = LoggerFactory.getLogger(McpServerBase.class);
+
   /** The server configuration used by this MCP server. */
   protected final McpServerConfiguration configuration;
 
@@ -106,9 +111,11 @@ public abstract class McpServerBase implements McpServer {
    */
   @Override
   public void registerComponents(McpSyncServer mcpSyncServer) {
+    log.info("Registering MCP server components");
     new McpServerResource(mcpSyncServer).register();
     new McpServerPrompt(mcpSyncServer).register();
     new McpServerTool(mcpSyncServer).register();
+    log.info("MCP server components registered successfully");
   }
 
   /**
@@ -132,13 +139,17 @@ public abstract class McpServerBase implements McpServer {
    */
   @Override
   public McpSyncServer createSyncServer() {
+    log.info("Creating McpSyncServer with configuration: {}", configuration);
     McpSchema.ServerCapabilities serverCapabilities = defineCapabilities();
-    return createSyncSpecification()
-        .capabilities(serverCapabilities)
-        .completions(McpServerCompletion.all())
-        .instructions(configuration.instructions())
-        .serverInfo(configuration.name(), configuration.version())
-        .requestTimeout(Duration.ofMillis(configuration.requestTimeout()))
-        .build();
+    McpSyncServer mcpSyncServer =
+        createSyncSpecification()
+            .capabilities(serverCapabilities)
+            .completions(McpServerCompletion.all())
+            .instructions(configuration.instructions())
+            .serverInfo(configuration.name(), configuration.version())
+            .requestTimeout(Duration.ofMillis(configuration.requestTimeout()))
+            .build();
+    log.info("Created McpSyncServer successfully with name: {}", configuration.name());
+    return mcpSyncServer;
   }
 }

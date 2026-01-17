@@ -74,8 +74,10 @@ public final class McpServers {
    * @see ResourceBundleProvider#loadResourceBundle(Class)
    */
   public static McpServers run(Class<?> mainClass, String[] args) {
+    log.info("Initializing McpServers with main class: {}, args: {}", mainClass.getName(), args);
     ReflectionsProvider.initializeReflectionsInstance(mainClass);
     ResourceBundleProvider.loadResourceBundle(mainClass);
+    log.info("McpServers initialized successfully");
     return INSTANCE;
   }
 
@@ -95,8 +97,10 @@ public final class McpServers {
    * @see McpServerConfiguration.Builder
    */
   public void startStdioServer(McpServerConfiguration.Builder configuration) {
+    log.info("Starting McpStdioServer with configuration: {}", configuration);
     configuration.enabled(true).mode(ServerMode.STDIO);
     doStartServer(configuration.build());
+    log.info("McpStdioServer started successfully");
   }
 
   /**
@@ -115,8 +119,10 @@ public final class McpServers {
    * @see McpServerConfiguration.Builder
    */
   public void startSseServer(McpServerConfiguration.Builder configuration) {
+    log.info("Starting McpSseServer with configuration: {}", configuration);
     configuration.enabled(true).mode(ServerMode.SSE);
     doStartServer(configuration.build());
+    log.info("McpSseServer started successfully");
   }
 
   /**
@@ -135,8 +141,10 @@ public final class McpServers {
    * @see McpServerConfiguration.Builder
    */
   public void startStreamableServer(McpServerConfiguration.Builder configuration) {
+    log.info("Starting McpStreamableServer with configuration: {}", configuration);
     configuration.enabled(true).mode(ServerMode.STREAMABLE);
     doStartServer(configuration.build());
+    log.info("McpStreamableServer started successfully");
   }
 
   /**
@@ -154,8 +162,10 @@ public final class McpServers {
    */
   public void startServer(String configFileName) {
     Assert.notNull(configFileName, "configFileName must not be null");
+    log.info("Starting McpServer with configuration file: {}", configFileName);
     McpConfigurationLoader configLoader = new McpConfigurationLoader(configFileName);
     doStartServer(configLoader.loadConfig());
+    log.info("McpServer started successfully with configuration file: {}", configFileName);
   }
 
   /**
@@ -170,8 +180,10 @@ public final class McpServers {
    * @see McpServerConfiguration
    */
   public void startServer() {
+    log.info("Starting McpServer with default configuration");
     McpConfigurationLoader configLoader = new McpConfigurationLoader();
     doStartServer(configLoader.loadConfig());
+    log.info("McpServer started successfully with default configuration");
   }
 
   /**

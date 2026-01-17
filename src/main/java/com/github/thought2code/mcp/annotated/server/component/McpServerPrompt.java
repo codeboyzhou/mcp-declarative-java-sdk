@@ -78,6 +78,8 @@ public class McpServerPrompt
    */
   @Override
   public McpServerFeatures.SyncPromptSpecification from(Method method) {
+    log.info("Creating prompt specification for method: {}", method.toGenericString());
+
     // Use reflection cache for performance optimization
     MethodCache methodCache = MethodCache.of(method);
     Object instance = MethodInvoker.createInstance(methodCache.getDeclaringClass());
@@ -91,7 +93,7 @@ public class McpServerPrompt
     List<McpSchema.PromptArgument> promptArgs = createPromptArguments(methodCache.getParameters());
     McpSchema.Prompt prompt = new McpSchema.Prompt(name, title, description, promptArgs);
 
-    log.debug("Registering prompt: {}", JacksonHelper.toJsonString(prompt));
+    log.info("Prompt specification created: {}", JacksonHelper.toJsonString(prompt));
 
     return new McpServerFeatures.SyncPromptSpecification(
         prompt, (exchange, request) -> invoke(instance, methodCache, description, request));
@@ -107,7 +109,13 @@ public class McpServerPrompt
   @Override
   public void register() {
     Set<Method> methods = ReflectionsProvider.getMethodsAnnotatedWith(McpPrompt.class);
-    methods.forEach(method -> mcpSyncServer.get().addPrompt(from(method)));
+    methods.forEach(
+        method -> {
+          log.debug("Registering prompt method: {}", method.toGenericString());
+          McpServerFeatures.SyncPromptSpecification prompt = from(method);
+          mcpSyncServer.get().addPrompt(prompt);
+          log.debug("Prompt {} registered successfully", prompt.prompt().name());
+        });
   }
 
   /**
@@ -132,13 +140,20 @@ public class McpServerPrompt
       String description,
       McpSchema.GetPromptRequest request) {
 
+    log.debug("Handling MCP GetPromptRequest: {}", JacksonHelper.toJsonString(request));
+
     Map<String, Object> arguments = request.arguments();
     List<Object> params = parameterConverter.convertAll(methodCache.getParameters(), arguments);
     InvocationResult invocation = MethodInvoker.invoke(instance, methodCache, params);
 
     McpSchema.Content content = new McpSchema.TextContent(invocation.result().toString());
     McpSchema.PromptMessage message = new McpSchema.PromptMessage(McpSchema.Role.USER, content);
-    return new McpSchema.GetPromptResult(description, List.of(message));
+    McpSchema.GetPromptResult getPromptResult =
+        new McpSchema.GetPromptResult(description, List.of(message));
+
+    log.debug("Returning MCP GetPromptResult: {}", JacksonHelper.toJsonString(getPromptResult));
+
+    return getPromptResult;
   }
 
   /**

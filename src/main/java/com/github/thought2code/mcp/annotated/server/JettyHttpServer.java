@@ -114,6 +114,7 @@ public class JettyHttpServer {
    */
   private void await(Server server) {
     try {
+      log.info("Jetty-based MCP server is running...");
       server.join();
     } catch (InterruptedException e) {
       log.error("Error joining Jetty-based MCP server", e);

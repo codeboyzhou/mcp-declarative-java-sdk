@@ -68,6 +68,8 @@ public class McpServerResource
    */
   @Override
   public McpServerFeatures.SyncResourceSpecification from(Method method) {
+    log.info("Creating resource specification for method: {}", method.toGenericString());
+
     // Use reflection cache for performance optimization
     MethodCache methodCache = MethodCache.of(method);
     Object instance = MethodInvoker.createInstance(methodCache.getDeclaringClass());
@@ -87,7 +89,7 @@ public class McpServerResource
             .annotations(new McpSchema.Annotations(List.of(res.roles()), res.priority()))
             .build();
 
-    log.debug("Registering resource: {}", JacksonHelper.toJsonString(resource));
+    log.info("Resource specification created: {}", JacksonHelper.toJsonString(resource));
 
     return new McpServerFeatures.SyncResourceSpecification(
         resource, (exchange, request) -> invoke(instance, methodCache, resource));
@@ -103,7 +105,13 @@ public class McpServerResource
   @Override
   public void register() {
     Set<Method> methods = ReflectionsProvider.getMethodsAnnotatedWith(McpResource.class);
-    methods.forEach(method -> mcpSyncServer.get().addResource(from(method)));
+    methods.forEach(
+        method -> {
+          log.debug("Registering resource method: {}", method.toGenericString());
+          McpServerFeatures.SyncResourceSpecification resource = from(method);
+          mcpSyncServer.get().addResource(resource);
+          log.debug("Resource {} registered successfully", resource.resource().name());
+        });
   }
 
   /**
@@ -124,11 +132,18 @@ public class McpServerResource
   private McpSchema.ReadResourceResult invoke(
       Object instance, MethodCache methodCache, McpSchema.Resource resource) {
 
+    log.debug("Handling ReadResourceResult request: {}", JacksonHelper.toJsonString(resource));
+
     InvocationResult invocation = MethodInvoker.invoke(instance, methodCache);
     final String uri = resource.uri();
     final String mimeType = resource.mimeType();
     final String text = invocation.result().toString();
     McpSchema.ResourceContents contents = new McpSchema.TextResourceContents(uri, mimeType, text);
-    return new McpSchema.ReadResourceResult(List.of(contents));
+    McpSchema.ReadResourceResult readResourceResult =
+        new McpSchema.ReadResourceResult(List.of(contents));
+
+    log.debug("Returning ReadResourceResult: {}", JacksonHelper.toJsonString(readResourceResult));
+
+    return readResourceResult;
   }
 }

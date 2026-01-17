@@ -89,6 +89,8 @@ public class McpServerTool extends McpServerComponentBase<McpServerFeatures.Sync
    */
   @Override
   public McpServerFeatures.SyncToolSpecification from(Method method) {
+    log.info("Creating tool specification for method: {}", method.toGenericString());
+
     // Use reflection cache for performance optimization
     MethodCache methodCache = MethodCache.of(method);
     Object instance = MethodInvoker.createInstance(methodCache.getDeclaringClass());
@@ -109,7 +111,7 @@ public class McpServerTool extends McpServerComponentBase<McpServerFeatures.Sync
             .outputSchema(outputSchema)
             .build();
 
-    log.debug("Registering tool: {}", JacksonHelper.toJsonString(tool));
+    log.info("Tool specification created: {}", JacksonHelper.toJsonString(tool));
 
     return McpServerFeatures.SyncToolSpecification.builder()
         .tool(tool)
@@ -127,7 +129,13 @@ public class McpServerTool extends McpServerComponentBase<McpServerFeatures.Sync
   @Override
   public void register() {
     Set<Method> methods = ReflectionsProvider.getMethodsAnnotatedWith(McpTool.class);
-    methods.forEach(method -> mcpSyncServer.get().addTool(from(method)));
+    methods.forEach(
+        method -> {
+          log.debug("Registering tool method: {}", method.toGenericString());
+          McpServerFeatures.SyncToolSpecification tool = from(method);
+          mcpSyncServer.get().addTool(tool);
+          log.debug("Tool {} registered successfully", tool.tool().name());
+        });
   }
 
   /**
@@ -149,6 +157,8 @@ public class McpServerTool extends McpServerComponentBase<McpServerFeatures.Sync
   private McpSchema.CallToolResult invoke(
       Object instance, MethodCache methodCache, McpSchema.CallToolRequest request) {
 
+    log.debug("Handling MCP CallToolRequest: {}", JacksonHelper.toJsonString(request));
+
     Map<String, Object> arguments = request.arguments();
     List<Object> params = parameterConverter.convertAll(methodCache.getParameters(), arguments);
     InvocationResult invocation = MethodInvoker.invoke(instance, methodCache, params);
@@ -162,11 +172,16 @@ public class McpServerTool extends McpServerComponentBase<McpServerFeatures.Sync
       structuredContent = mcpStructuredContent;
     }
 
-    return McpSchema.CallToolResult.builder()
-        .content(List.of(new McpSchema.TextContent(textContent)))
-        .structuredContent(structuredContent)
-        .isError(invocation.isError())
-        .build();
+    McpSchema.CallToolResult callToolResult =
+        McpSchema.CallToolResult.builder()
+            .content(List.of(new McpSchema.TextContent(textContent)))
+            .structuredContent(structuredContent)
+            .isError(invocation.isError())
+            .build();
+
+    log.debug("Returning MCP CallToolResult: {}", JacksonHelper.toJsonString(callToolResult));
+
+    return callToolResult;
   }
 
   /**

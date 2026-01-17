@@ -66,6 +66,7 @@ public final class ResourceBundleProvider {
    * @see Locale#getDefault()
    */
   public static void loadResourceBundle(Class<?> mainClass) {
+    log.info("Loading resource bundle for main class: {}", mainClass.getName());
     McpI18nEnabled mcpI18nEnabled = mainClass.getAnnotation(McpI18nEnabled.class);
     if (mcpI18nEnabled == null) {
       log.info("McpI18nEnabled annotation is not present on the main class, skip i18n support.");
@@ -78,6 +79,7 @@ public final class ResourceBundleProvider {
     }
 
     bundle = Immutable.of(ResourceBundle.getBundle(baseName, Locale.getDefault()));
+    log.info("Resource bundle loaded for base name: {}", baseName);
   }
 
   /**

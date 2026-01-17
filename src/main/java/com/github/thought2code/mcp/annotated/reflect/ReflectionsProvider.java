@@ -9,6 +9,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Set;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A provider class for reflection operations using the Reflections library.
@@ -40,6 +42,9 @@ import org.reflections.Reflections;
  * @see Field
  */
 public final class ReflectionsProvider {
+
+  private static final Logger log = LoggerFactory.getLogger(ReflectionsProvider.class);
+
   /** The singleton Reflections instance used for scanning and reflection operations. */
   private static Reflections reflections;
 
@@ -68,6 +73,7 @@ public final class ReflectionsProvider {
    * @see Reflections
    */
   public static void initializeReflectionsInstance(Class<?> mainClass) {
+    log.info("Initializing Reflections instance for main class: {}", mainClass.getName());
     String basePackage = mainClass.getPackageName();
     McpServerApplication application = mainClass.getAnnotation(McpServerApplication.class);
     if (application != null) {
@@ -79,6 +85,7 @@ public final class ReflectionsProvider {
       }
     }
     reflections = new Reflections(basePackage, MethodsAnnotated, FieldsAnnotated);
+    log.info("Reflections instance initialized for base package: {}", basePackage);
   }
 
   /**
