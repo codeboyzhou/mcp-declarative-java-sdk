@@ -6,19 +6,19 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A wrapper class that provides immutable access to a value through a supplier.
  *
- * <p>This class encapsulates a value and provides thread-safe, immutable access
- * to it through a {@link Supplier}. Once created, the value cannot be modified,
- * ensuring immutability and thread safety in concurrent environments.
+ * <p>This class encapsulates a value and provides thread-safe, immutable access to it through a
+ * {@link Supplier}. Once created, the value cannot be modified, ensuring immutability and thread
+ * safety in concurrent environments.
  *
- * <p>The class is generic and can wrap any type {@code T}. The value is stored
- * internally as a supplier that always returns the same value, providing a
- * consistent interface for value access.
+ * <p>The class is generic and can wrap any type {@code T}. The value is stored internally as a
+ * supplier that always returns the same value, providing a consistent interface for value access.
  *
  * <p>Use cases include:
+ *
  * <ul>
- *   <li>Ensuring thread-safe access to shared values</li>
- *   <li>Preventing modification of critical data</li>
- *   <li>Providing a consistent supplier interface for value access</li>
+ *   <li>Ensuring thread-safe access to shared values
+ *   <li>Preventing modification of critical data
+ *   <li>Providing a consistent supplier interface for value access
  * </ul>
  *
  * @param <T> the type of the wrapped value
@@ -32,8 +32,8 @@ public final class Immutable<T> {
   /**
    * Private constructor that wraps the value in a supplier.
    *
-   * <p>This constructor creates a supplier that always returns the provided value,
-   * ensuring that the value cannot be modified after construction.
+   * <p>This constructor creates a supplier that always returns the provided value, ensuring that
+   * the value cannot be modified after construction.
    *
    * @param value the value to wrap in an immutable container
    */
@@ -44,8 +44,8 @@ public final class Immutable<T> {
   /**
    * Creates a new {@code Immutable} instance wrapping the specified value.
    *
-   * <p>This static factory method creates an immutable wrapper around the provided value.
-   * The wrapped value cannot be modified after creation, ensuring thread-safe access.
+   * <p>This static factory method creates an immutable wrapper around the provided value. The
+   * wrapped value cannot be modified after creation, ensuring thread-safe access.
    *
    * <p>The method is annotated with {@code @NotNull} to indicate that it never returns null.
    *
@@ -62,12 +62,11 @@ public final class Immutable<T> {
   /**
    * Returns the wrapped value.
    *
-   * <p>This method retrieves the value stored in this immutable container.
-   * The value is returned through the internal supplier, ensuring consistent
-   * access semantics.
+   * <p>This method retrieves the value stored in this immutable container. The value is returned
+   * through the internal supplier, ensuring consistent access semantics.
    *
-   * <p>The returned value is the same object that was provided to the
-   * {@link #of(Object)} factory method.
+   * <p>The returned value is the same object that was provided to the {@link #of(Object)} factory
+   * method.
    *
    * @return the wrapped value
    * @see Supplier#get()
