@@ -12,6 +12,7 @@ import com.github.thought2code.mcp.annotated.server.McpStreamableServer;
 import com.github.thought2code.mcp.annotated.server.component.ResourceBundleProvider;
 import io.modelcontextprotocol.server.McpSyncServer;
 import io.modelcontextprotocol.util.Assert;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -218,14 +219,14 @@ public final class McpServers {
    */
   private void doStartServer(McpServerConfiguration configuration) {
     if (configuration.enabled()) {
-      McpServer mcpServer = new McpStreamableServer(configuration);
-
-      if (configuration.mode() == ServerMode.SSE) {
-        mcpServer = new McpSseServer(configuration);
-      } else if (configuration.mode() == ServerMode.STDIO) {
-        mcpServer = new McpStdioServer(configuration);
+      McpServer mcpServer = null;
+      switch (configuration.mode()) {
+        case STDIO -> mcpServer = new McpStdioServer(configuration);
+        case SSE -> mcpServer = new McpSseServer(configuration);
+        case STREAMABLE -> mcpServer = new McpStreamableServer(configuration);
       }
 
+      Objects.requireNonNull(mcpServer, "mcpServer must not be null");
       McpSyncServer mcpSyncServer = mcpServer.createSyncServer();
       mcpServer.registerComponents(mcpSyncServer);
 

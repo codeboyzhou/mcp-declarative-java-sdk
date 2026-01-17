@@ -1,5 +1,6 @@
 package com.github.thought2code.mcp.annotated.reflect;
 
+import com.github.thought2code.mcp.annotated.exception.McpServerException;
 import io.modelcontextprotocol.spec.McpSchema;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -45,7 +46,7 @@ public final class MethodInvoker {
    *
    * @param clazz the class to instantiate
    * @return a new instance of the specified class
-   * @throws IllegalStateException if the instance creation fails due to any reason
+   * @throws McpServerException if the instance creation fails due to any reason
    * @see Class#getDeclaredConstructor(Class[])
    * @see Constructor#newInstance(Object...)
    */
@@ -53,7 +54,7 @@ public final class MethodInvoker {
     try {
       return clazz.getDeclaredConstructor().newInstance();
     } catch (Exception e) {
-      throw new IllegalStateException("Failed to create instance of " + clazz.getName(), e);
+      throw new McpServerException("Failed to create instance of " + clazz.getName(), e);
     }
   }
 
