@@ -4,43 +4,83 @@ import com.github.thought2code.mcp.annotated.annotation.McpPrompt;
 import com.github.thought2code.mcp.annotated.annotation.McpPromptParam;
 import com.github.thought2code.mcp.annotated.reflect.InvocationResult;
 import com.github.thought2code.mcp.annotated.reflect.MethodCache;
+import com.github.thought2code.mcp.annotated.reflect.MethodInvoker;
+import com.github.thought2code.mcp.annotated.reflect.ReflectionsProvider;
 import com.github.thought2code.mcp.annotated.server.converter.McpPromptParameterConverter;
 import com.github.thought2code.mcp.annotated.util.JacksonHelper;
-import com.github.thought2code.mcp.annotated.util.ReflectionHelper;
 import com.github.thought2code.mcp.annotated.util.StringHelper;
 import io.modelcontextprotocol.server.McpServerFeatures;
+import io.modelcontextprotocol.server.McpSyncServer;
 import io.modelcontextprotocol.spec.McpSchema;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class represents an MCP server prompt component.
+ * MCP server component for handling prompt-related operations.
+ *
+ * <p>This class extends {@link McpServerComponentBase} and implements the functionality for
+ * creating and registering prompt components with an MCP server. It processes methods annotated
+ * with {@link McpPrompt} and creates appropriate prompt specifications that can be used to generate
+ * interactive prompts for LLM interactions.
+ *
+ * <p>The class handles:
+ *
+ * <ul>
+ *   <li>Creation of prompt specifications from annotated methods
+ *   <li>Registration of all prompt components with the server
+ *   <li>Invocation of prompt methods with proper argument conversion
+ *   <li>Localization of prompt attributes using resource bundles
+ * </ul>
  *
  * @author codeboyzhou
+ * @see McpPrompt
+ * @see McpPromptParam
+ * @see McpSchema.Prompt
+ * @see McpSchema.PromptArgument
  */
 public class McpServerPrompt
-    extends AbstractMcpServerComponent<McpServerFeatures.SyncPromptSpecification> {
+    extends McpServerComponentBase<McpServerFeatures.SyncPromptSpecification> {
 
   private static final Logger log = LoggerFactory.getLogger(McpServerPrompt.class);
 
   /** The converter for MCP prompt parameters. */
   private final McpPromptParameterConverter parameterConverter;
 
-  /** Creates a new instance of {@code McpServerPrompt}. */
-  public McpServerPrompt() {
-    this.parameterConverter = injector.getInstance(McpPromptParameterConverter.class);
+  /**
+   * Constructs a new {@link McpServerPrompt} with the specified MCP server.
+   *
+   * @param mcpSyncServer the MCP synchronous server to use for prompt registration
+   */
+  public McpServerPrompt(McpSyncServer mcpSyncServer) {
+    super(mcpSyncServer);
+    this.parameterConverter = new McpPromptParameterConverter();
   }
 
+  /**
+   * Creates a synchronous prompt specification from the specified method.
+   *
+   * <p>This method processes a method annotated with {@link McpPrompt} and creates a {@link
+   * McpServerFeatures.SyncPromptSpecification} that can be registered with the MCP server. The
+   * method extracts prompt information from annotations and method signature, and creates
+   * appropriate prompt arguments.
+   *
+   * @param method the method annotated with {@link McpPrompt} to create a specification from
+   * @return a synchronous prompt specification for the MCP server
+   * @see McpPrompt
+   * @see McpSchema.Prompt
+   * @see McpSchema.PromptArgument
+   */
   @Override
-  public McpServerFeatures.SyncPromptSpecification create(Method method) {
+  public McpServerFeatures.SyncPromptSpecification from(Method method) {
     // Use reflection cache for performance optimization
-    MethodCache methodCache = ReflectionHelper.INSTANCE.getOrCache(method);
-    Object instance = injector.getInstance(methodCache.getDeclaringClass());
+    MethodCache methodCache = MethodCache.of(method);
+    Object instance = MethodInvoker.createInstance(methodCache.getDeclaringClass());
 
     McpPrompt promptMethod = methodCache.getMcpPromptAnnotation();
     final String name =
@@ -58,13 +98,34 @@ public class McpServerPrompt
   }
 
   /**
-   * Invokes the prompt method with the specified arguments.
+   * Registers all prompt components with the MCP server.
    *
-   * @param instance the instance of the class that declares the prompt method
-   * @param methodCache the cached method information
+   * <p>This method scans for all methods annotated with {@link McpPrompt} and registers them as
+   * prompt components with the MCP server. It uses reflection to discover annotated methods and
+   * creates prompt specifications for each method.
+   */
+  @Override
+  public void register() {
+    Set<Method> methods = ReflectionsProvider.getMethodsAnnotatedWith(McpPrompt.class);
+    McpSyncServer mcpSyncServer = mcpSyncServerSupplier.get();
+    methods.forEach(method -> mcpSyncServer.addPrompt(from(method)));
+  }
+
+  /**
+   * Invokes the prompt method with the specified arguments and request.
+   *
+   * <p>This private method handles the actual invocation of the prompt method, converting request
+   * arguments to the appropriate parameter types and invoking the method using reflection. The
+   * result is then wrapped in a {@link McpSchema.GetPromptResult} with the prompt description.
+   *
+   * @param instance the object instance containing the prompt method
+   * @param methodCache the cached method information for efficient invocation
    * @param description the description of the prompt
-   * @param request the request for the prompt
+   * @param request the prompt request containing the arguments
    * @return the result of the prompt invocation
+   * @see McpSchema.GetPromptResult
+   * @see McpSchema.PromptMessage
+   * @see McpSchema.Content
    */
   private McpSchema.GetPromptResult invoke(
       Object instance,
@@ -74,7 +135,7 @@ public class McpServerPrompt
 
     Map<String, Object> arguments = request.arguments();
     List<Object> params = parameterConverter.convertAll(methodCache.getParameters(), arguments);
-    InvocationResult invocation = ReflectionHelper.INSTANCE.invoke(instance, methodCache, params);
+    InvocationResult invocation = MethodInvoker.invoke(instance, methodCache, params);
 
     McpSchema.Content content = new McpSchema.TextContent(invocation.result().toString());
     McpSchema.PromptMessage message = new McpSchema.PromptMessage(McpSchema.Role.USER, content);
@@ -84,8 +145,14 @@ public class McpServerPrompt
   /**
    * Creates a list of prompt arguments from the method parameters.
    *
-   * @param methodParams the method parameters
-   * @return the list of prompt arguments
+   * <p>This private method processes method parameters and creates a list of {@link
+   * McpSchema.PromptArgument} objects for parameters annotated with {@link McpPromptParam}. Each
+   * argument includes name, title, description, and required status.
+   *
+   * @param methodParams the array of method parameters to process
+   * @return a list of prompt arguments for the method
+   * @see McpPromptParam
+   * @see McpSchema.PromptArgument
    */
   private List<McpSchema.PromptArgument> createPromptArguments(Parameter[] methodParams) {
     List<McpSchema.PromptArgument> promptArguments = new ArrayList<>(methodParams.length);

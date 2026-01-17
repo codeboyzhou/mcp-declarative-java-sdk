@@ -8,29 +8,84 @@ import io.modelcontextprotocol.server.transport.HttpServletStreamableServerTrans
 import java.time.Duration;
 
 /**
- * This class is used to create a new instance of {@link McpStreamableServer} in Streamable HTTP
- * mode.
+ * An MCP server implementation that operates in Streamable HTTP mode.
+ *
+ * <p>This class extends {@link McpServerBase} and provides functionality for creating and managing
+ * MCP servers that use HTTP streaming for communication. The streamable mode is designed for web
+ * applications that require real-time, bidirectional communication with the MCP server.
+ *
+ * <p>The server uses Jetty as the underlying HTTP server and supports various configuration options
+ * including:
+ *
+ * <ul>
+ *   <li>Custom port binding
+ *   <li>Configurable MCP endpoint path
+ *   <li>Keep-alive interval management
+ *   <li>Delete operation control
+ * </ul>
+ *
+ * <p>This server mode is particularly suitable for:
+ *
+ * <ul>
+ *   <li>Web applications requiring real-time communication
+ *   <li>Browser-based MCP client integrations
+ *   <li>Scenarios needing HTTP-based streaming communication
+ * </ul>
  *
  * @author codeboyzhou
+ * @see McpServerBase
+ * @see McpServerConfiguration
+ * @see McpServerStreamable
+ * @see HttpServletStreamableServerTransportProvider
+ * @see JettyHttpServer
  */
-public class McpStreamableServer extends AbstractMcpServer {
+public class McpStreamableServer extends McpServerBase {
   /** The HTTP Streamable server transport provider used by this MCP server. */
   private HttpServletStreamableServerTransportProvider transportProvider;
 
-  /** The port number used by this MCP server. */
+  /** The port number on which this MCP server listens for incoming connections. */
   private int port;
 
   /**
    * Constructs a new {@link McpStreamableServer} with the specified configuration.
    *
-   * @param configuration the server configuration
+   * <p>The constructor initializes the server with the provided configuration, which contains all
+   * necessary settings for the streamable HTTP server including port number, endpoint path,
+   * keep-alive interval, and other transport options.
+   *
+   * @param configuration the server configuration containing streamable settings
+   * @throws NullPointerException if the configuration is null
+   * @see McpServerConfiguration
+   * @see McpServerStreamable
    */
   public McpStreamableServer(McpServerConfiguration configuration) {
     super(configuration);
   }
 
+  /**
+   * Creates and returns a synchronization specification for Streamable HTTP mode.
+   *
+   * <p>This method creates an {@link McpServer.SyncSpecification} that uses HTTP streaming
+   * transport provider for communication. The transport provider is configured with the following
+   * settings from the configuration:
+   *
+   * <ul>
+   *   <li>Port number for binding the HTTP server
+   *   <li>MCP endpoint path for the streaming API
+   *   <li>Whether to disallow delete operations
+   *   <li>Keep-alive interval for maintaining connections
+   * </ul>
+   *
+   * <p>The method also stores the port number and transport provider instance for later use when
+   * starting the HTTP server.
+   *
+   * @return a synchronization specification configured for HTTP streaming transport
+   * @see HttpServletStreamableServerTransportProvider
+   * @see McpServerStreamable
+   * @see McpJsonMapper
+   */
   @Override
-  public McpServer.SyncSpecification<?> syncServer() {
+  public McpServer.SyncSpecification<?> createSyncSpecification() {
     McpServerStreamable streamable = configuration.streamable();
     port = streamable.port();
     transportProvider =
@@ -43,9 +98,22 @@ public class McpStreamableServer extends AbstractMcpServer {
     return McpServer.sync(transportProvider);
   }
 
-  @Override
-  public void start() {
-    super.start();
+  /**
+   * Starts the Jetty HTTP server with the configured transport provider.
+   *
+   * <p>This method creates a new {@link JettyHttpServer} instance, configures it with the transport
+   * provider created by {@link #createSyncSpecification()}, binds it to the configured port, and
+   * starts the server. The server will begin accepting incoming HTTP connections for MCP streaming
+   * communication.
+   *
+   * <p>This method should be called after {@link #createSyncSpecification()} has been invoked to
+   * ensure the transport provider is properly initialized.
+   *
+   * @see JettyHttpServer
+   * @see HttpServletStreamableServerTransportProvider
+   * @see #createSyncSpecification()
+   */
+  public void startHttpServer() {
     JettyHttpServer httpServer = new JettyHttpServer();
     httpServer.withTransportProvider(transportProvider).bind(port).start();
   }

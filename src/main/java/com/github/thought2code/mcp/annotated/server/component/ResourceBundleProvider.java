@@ -1,0 +1,98 @@
+package com.github.thought2code.mcp.annotated.server.component;
+
+import com.github.thought2code.mcp.annotated.annotation.McpI18nEnabled;
+import com.github.thought2code.mcp.annotated.util.StringHelper;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+import java.util.function.Supplier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * A provider class for managing internationalization (i18n) resource bundles.
+ *
+ * <p>This class provides static methods for loading and accessing resource bundles to support
+ * internationalization in MCP server applications. It uses the {@link McpI18nEnabled} annotation to
+ * configure the resource bundle base name.
+ *
+ * <p>The class maintains a singleton {@link ResourceBundle} instance that is loaded from the
+ * specified base name using the default locale. The resource bundle can be accessed through a
+ * supplier for lazy evaluation and thread safety.
+ *
+ * <p>Key features:
+ *
+ * <ul>
+ *   <li>Loads resource bundles based on {@link McpI18nEnabled} annotation configuration
+ *   <li>Provides a supplier for accessing the loaded resource bundle
+ *   <li>Supports default locale for resource bundle resolution
+ *   <li>Follows the utility class pattern with a private constructor
+ * </ul>
+ *
+ * @author codeboyzhou
+ * @see ResourceBundle
+ * @see McpI18nEnabled
+ * @see Locale
+ */
+public final class ResourceBundleProvider {
+
+  public static final Logger log = LoggerFactory.getLogger(ResourceBundleProvider.class);
+
+  /** The singleton ResourceBundle instance loaded for internationalization support. */
+  private static ResourceBundle bundle;
+
+  /** Private constructor to prevent instantiation of this utility class. */
+  private ResourceBundleProvider() {}
+
+  /**
+   * Loads a resource bundle based on the {@link McpI18nEnabled} annotation on the main class.
+   *
+   * <p>This method checks if the main class is annotated with {@code @McpI18nEnabled}. If the
+   * annotation is present, it loads a resource bundle using the base name specified in the
+   * annotation's {@code resourceBundleBaseName} attribute. The resource bundle is loaded using the
+   * default locale.
+   *
+   * <p>If the annotation is not present, the method logs an info message and returns without
+   * loading any resource bundle, effectively disabling i18n support.
+   *
+   * @param mainClass the main application class to check for the McpI18nEnabled annotation
+   * @throws IllegalArgumentException if the resourceBundleBaseName is blank
+   * @throws MissingResourceException if no resource bundle is found for the specified base name
+   * @see McpI18nEnabled
+   * @see ResourceBundle#getBundle(String, Locale)
+   * @see Locale#getDefault()
+   */
+  public static void loadResourceBundle(Class<?> mainClass) {
+    McpI18nEnabled mcpI18nEnabled = mainClass.getAnnotation(McpI18nEnabled.class);
+    if (mcpI18nEnabled == null) {
+      log.info("McpI18nEnabled annotation is not present on the main class, skip i18n support.");
+      return;
+    }
+
+    final String baseName = mcpI18nEnabled.resourceBundleBaseName();
+    if (StringHelper.isBlank(baseName)) {
+      throw new IllegalArgumentException("resourceBundleBaseName must not be blank.");
+    }
+
+    bundle = ResourceBundle.getBundle(baseName, Locale.getDefault());
+  }
+
+  /**
+   * Returns a supplier that provides access to the loaded resource bundle.
+   *
+   * <p>This method returns a {@link Supplier} that, when called, returns the currently loaded
+   * {@link ResourceBundle} instance. The supplier pattern allows for lazy evaluation and provides a
+   * convenient way to access the resource bundle without exposing the static field directly.
+   *
+   * <p>The supplier will return null if {@link #loadResourceBundle(Class)} has not been called or
+   * if the main class was not annotated with {@link McpI18nEnabled}.
+   *
+   * @return a supplier that provides the loaded resource bundle, or null if not loaded
+   * @see Supplier
+   * @see ResourceBundle
+   * @see #loadResourceBundle(Class)
+   */
+  public static Supplier<ResourceBundle> supplyResourceBundle() {
+    return () -> bundle;
+  }
+}

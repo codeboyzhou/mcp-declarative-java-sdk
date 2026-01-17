@@ -7,12 +7,14 @@ import com.github.thought2code.mcp.annotated.annotation.McpToolParam;
 import com.github.thought2code.mcp.annotated.enums.JavaTypeToJsonSchemaMapper;
 import com.github.thought2code.mcp.annotated.reflect.InvocationResult;
 import com.github.thought2code.mcp.annotated.reflect.MethodCache;
+import com.github.thought2code.mcp.annotated.reflect.MethodInvoker;
+import com.github.thought2code.mcp.annotated.reflect.ReflectionsProvider;
 import com.github.thought2code.mcp.annotated.server.McpStructuredContent;
 import com.github.thought2code.mcp.annotated.server.converter.McpToolParameterConverter;
 import com.github.thought2code.mcp.annotated.util.JacksonHelper;
-import com.github.thought2code.mcp.annotated.util.ReflectionHelper;
 import com.github.thought2code.mcp.annotated.util.StringHelper;
 import io.modelcontextprotocol.server.McpServerFeatures;
+import io.modelcontextprotocol.server.McpSyncServer;
 import io.modelcontextprotocol.spec.McpSchema;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -23,33 +25,73 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class represents an MCP server tool component.
+ * MCP server component for handling tool-related operations.
+ *
+ * <p>This class extends {@link McpServerComponentBase} and implements the functionality for
+ * creating and registering tool components with an MCP server. It processes methods annotated with
+ * {@link McpTool} and creates appropriate tool specifications that can be used to execute
+ * operations for LLM interactions.
+ *
+ * <p>The class handles:
+ *
+ * <ul>
+ *   <li>Creation of tool specifications from annotated methods
+ *   <li>Registration of all tool components with the server
+ *   <li>Invocation of tool methods with proper argument conversion
+ *   <li>JSON schema generation for input parameters and output types
+ *   <li>Support for both text and structured content responses
+ *   <li>Localization of tool attributes using resource bundles
+ * </ul>
  *
  * @author codeboyzhou
+ * @see McpTool
+ * @see McpToolParam
+ * @see McpJsonSchemaDefinition
+ * @see McpJsonSchemaProperty
+ * @see McpSchema.Tool
+ * @see McpSchema.JsonSchema
+ * @see McpStructuredContent
  */
-public class McpServerTool
-    extends AbstractMcpServerComponent<McpServerFeatures.SyncToolSpecification> {
+public class McpServerTool extends McpServerComponentBase<McpServerFeatures.SyncToolSpecification> {
 
   private static final Logger log = LoggerFactory.getLogger(McpServerTool.class);
 
   /** The parameter converter for MCP tool parameters. */
   private final McpToolParameterConverter parameterConverter;
 
-  /** Creates a new instance of {@code McpServerTool}. */
-  public McpServerTool() {
-    this.parameterConverter = injector.getInstance(McpToolParameterConverter.class);
+  /**
+   * Constructs a new {@link McpServerTool} with the specified MCP server.
+   *
+   * @param mcpSyncServer the MCP synchronous server to use for tool registration
+   */
+  public McpServerTool(McpSyncServer mcpSyncServer) {
+    super(mcpSyncServer);
+    this.parameterConverter = new McpToolParameterConverter();
   }
 
+  /**
+   * Creates a synchronous tool specification from the specified method.
+   *
+   * <p>This method processes a method annotated with {@link McpTool} and creates a {@link
+   * McpServerFeatures.SyncToolSpecification} that can be registered with the MCP server. The method
+   * extracts tool information from annotations and method signature, generates JSON schemas for
+   * input parameters and output types, and creates a tool specification with appropriate metadata.
+   *
+   * @param method the method annotated with {@link McpTool} to create a specification from
+   * @return a synchronous tool specification for the MCP server
+   * @see McpTool
+   * @see McpSchema.Tool
+   * @see McpSchema.JsonSchema
+   */
   @Override
-  public McpServerFeatures.SyncToolSpecification create(Method method) {
+  public McpServerFeatures.SyncToolSpecification from(Method method) {
     // Use reflection cache for performance optimization
-    MethodCache methodCache = ReflectionHelper.INSTANCE.getOrCache(method);
-    Object instance = injector.getInstance(methodCache.getDeclaringClass());
+    MethodCache methodCache = MethodCache.of(method);
+    Object instance = MethodInvoker.createInstance(methodCache.getDeclaringClass());
 
     McpTool toolMethod = methodCache.getMcpToolAnnotation();
     final String name = StringHelper.defaultIfBlank(toolMethod.name(), methodCache.getMethodName());
@@ -76,19 +118,41 @@ public class McpServerTool
   }
 
   /**
-   * Invokes the tool method with the specified arguments.
+   * Registers all tool components with the MCP server.
    *
-   * @param instance the instance of the class that declares the tool method
-   * @param methodCache the cached method information
+   * <p>This method scans for all methods annotated with {@link McpTool} and registers them as tool
+   * components with the MCP server. It uses reflection to discover annotated methods and creates
+   * tool specifications for each method.
+   */
+  @Override
+  public void register() {
+    Set<Method> methods = ReflectionsProvider.getMethodsAnnotatedWith(McpTool.class);
+    McpSyncServer mcpSyncServer = mcpSyncServerSupplier.get();
+    methods.forEach(method -> mcpSyncServer.addTool(from(method)));
+  }
+
+  /**
+   * Invokes the tool method with the specified arguments and request.
+   *
+   * <p>This private method handles the actual invocation of the tool method, converting request
+   * arguments to the appropriate parameter types and invoking the method using reflection. The
+   * result is then wrapped in a {@link McpSchema.CallToolResult} with both text content and
+   * structured content support.
+   *
+   * @param instance the object instance containing the tool method
+   * @param methodCache the cached method information for efficient invocation
    * @param request the tool request containing the arguments
    * @return the result of the tool invocation
+   * @see McpSchema.CallToolResult
+   * @see McpSchema.TextContent
+   * @see McpStructuredContent
    */
   private McpSchema.CallToolResult invoke(
       Object instance, MethodCache methodCache, McpSchema.CallToolRequest request) {
 
     Map<String, Object> arguments = request.arguments();
     List<Object> params = parameterConverter.convertAll(methodCache.getParameters(), arguments);
-    InvocationResult invocation = ReflectionHelper.INSTANCE.invoke(instance, methodCache, params);
+    InvocationResult invocation = MethodInvoker.invoke(instance, methodCache, params);
 
     Object result = invocation.result();
     String textContent = result.toString();
@@ -109,8 +173,16 @@ public class McpServerTool
   /**
    * Creates a JSON schema for the tool method parameters.
    *
-   * @param methodParams the method parameters
-   * @return the JSON schema for the tool method parameters
+   * <p>This private method processes method parameters and creates a JSON schema that describes the
+   * input parameters for a tool. It handles both primitive types and complex types annotated with
+   * {@link McpJsonSchemaDefinition}.
+   *
+   * @param methodParams the array of method parameters to create a schema for
+   * @return a JSON schema describing the tool's input parameters
+   * @see McpToolParam
+   * @see McpJsonSchemaDefinition
+   * @see McpJsonSchemaProperty
+   * @see JavaTypeToJsonSchemaMapper
    */
   private McpSchema.JsonSchema createJsonSchema(Parameter[] methodParams) {
     Map<String, Object> properties = new LinkedHashMap<>();
@@ -154,8 +226,16 @@ public class McpServerTool
   /**
    * Creates a JSON schema definition for the specified class.
    *
-   * @param definitionClass the class to create the JSON schema definition for
-   * @return the JSON schema definition for the specified class
+   * <p>This private method processes a class annotated with {@link McpJsonSchemaDefinition} and
+   * creates a JSON schema definition that describes the class structure. It examines all fields
+   * annotated with {@link McpJsonSchemaProperty} and includes them in the schema with appropriate
+   * types and descriptions.
+   *
+   * @param definitionClass the class to create a JSON schema definition for
+   * @return a JSON schema definition describing the class structure
+   * @see McpJsonSchemaDefinition
+   * @see McpJsonSchemaProperty
+   * @see JavaTypeToJsonSchemaMapper
    */
   private Map<String, Object> createJsonSchemaDefinition(Class<?> definitionClass) {
     Map<String, Object> definitionJsonSchema = new HashMap<>();
@@ -164,8 +244,8 @@ public class McpServerTool
     Map<String, Object> properties = new LinkedHashMap<>();
     List<String> required = new ArrayList<>();
 
-    Reflections reflections = injector.getInstance(Reflections.class);
-    Set<Field> definitionFields = reflections.getFieldsAnnotatedWith(McpJsonSchemaProperty.class);
+    Set<Field> definitionFields =
+        ReflectionsProvider.getFieldsAnnotatedWith(McpJsonSchemaProperty.class);
     List<Field> fields =
         definitionFields.stream().filter(f -> f.getDeclaringClass() == definitionClass).toList();
 
