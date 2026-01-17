@@ -73,6 +73,11 @@ public final class ReflectionsProvider {
    * @see Reflections
    */
   public static void initializeReflectionsInstance(Class<?> mainClass) {
+    if (reflections != null) {
+      log.warn("Reflections instance is already initialized");
+      return;
+    }
+
     log.info("Initializing Reflections instance for main class: {}", mainClass.getName());
     String basePackage = mainClass.getPackageName();
     McpServerApplication application = mainClass.getAnnotation(McpServerApplication.class);

@@ -46,7 +46,7 @@ public final class McpServers {
   private static final Logger log = LoggerFactory.getLogger(McpServers.class);
 
   /** The singleton instance of McpServers. */
-  private static final McpServers INSTANCE = new McpServers();
+  private static McpServers servers;
 
   /** Private constructor to prevent instantiation of this singleton class. */
   private McpServers() {}
@@ -74,11 +74,18 @@ public final class McpServers {
    * @see ResourceBundleProvider#loadResourceBundle(Class)
    */
   public static McpServers run(Class<?> mainClass, String[] args) {
+    if (servers != null) {
+      log.warn("McpServers is already initialized");
+      return servers;
+    }
+
     log.info("Initializing McpServers with main class: {}, args: {}", mainClass.getName(), args);
     ReflectionsProvider.initializeReflectionsInstance(mainClass);
     ResourceBundleProvider.loadResourceBundle(mainClass);
+    servers = new McpServers();
     log.info("McpServers initialized successfully");
-    return INSTANCE;
+
+    return servers;
   }
 
   /**

@@ -66,6 +66,11 @@ public final class ResourceBundleProvider {
    * @see Locale#getDefault()
    */
   public static void loadResourceBundle(Class<?> mainClass) {
+    if (bundle != null) {
+      log.warn("Resource bundle is already loaded");
+      return;
+    }
+
     log.info("Loading resource bundle for main class: {}", mainClass.getName());
     McpI18nEnabled mcpI18nEnabled = mainClass.getAnnotation(McpI18nEnabled.class);
     if (mcpI18nEnabled == null) {
