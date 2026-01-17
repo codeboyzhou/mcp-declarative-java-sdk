@@ -1,11 +1,11 @@
 package com.github.thought2code.mcp.annotated.server.component;
 
 import com.github.thought2code.mcp.annotated.annotation.McpI18nEnabled;
+import com.github.thought2code.mcp.annotated.util.Immutable;
 import com.github.thought2code.mcp.annotated.util.StringHelper;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,8 +38,11 @@ public final class ResourceBundleProvider {
 
   public static final Logger log = LoggerFactory.getLogger(ResourceBundleProvider.class);
 
-  /** The singleton ResourceBundle instance loaded for internationalization support. */
-  private static ResourceBundle bundle;
+  /**
+   * The singleton ResourceBundle instance loaded for i18n support, wrapped in an {@link Immutable}
+   * wrapper for avoiding EI_EXPOSE_REP2 issue.
+   */
+  private static Immutable<ResourceBundle> bundle;
 
   /** Private constructor to prevent instantiation of this utility class. */
   private ResourceBundleProvider() {}
@@ -74,25 +77,20 @@ public final class ResourceBundleProvider {
       throw new IllegalArgumentException("resourceBundleBaseName must not be blank.");
     }
 
-    bundle = ResourceBundle.getBundle(baseName, Locale.getDefault());
+    bundle = Immutable.of(ResourceBundle.getBundle(baseName, Locale.getDefault()));
   }
 
   /**
-   * Returns a supplier that provides access to the loaded resource bundle.
+   * Returns the loaded resource bundle instance.
    *
-   * <p>This method returns a {@link Supplier} that, when called, returns the currently loaded
-   * {@link ResourceBundle} instance. The supplier pattern allows for lazy evaluation and provides a
-   * convenient way to access the resource bundle without exposing the static field directly.
+   * <p>This method returns the currently loaded {@link ResourceBundle} instance, if the main class
+   * was not annotated with {@link McpI18nEnabled}, this method returns {@code null}.
    *
-   * <p>The supplier will return null if {@link #loadResourceBundle(Class)} has not been called or
-   * if the main class was not annotated with {@link McpI18nEnabled}.
-   *
-   * @return a supplier that provides the loaded resource bundle, or null if not loaded
-   * @see Supplier
+   * @return the loaded resource bundle instance, or {@code null} if not loaded
    * @see ResourceBundle
    * @see #loadResourceBundle(Class)
    */
-  public static Supplier<ResourceBundle> supplyResourceBundle() {
-    return () -> bundle;
+  public static ResourceBundle getResourceBundle() {
+    return bundle == null ? null : bundle.get();
   }
 }

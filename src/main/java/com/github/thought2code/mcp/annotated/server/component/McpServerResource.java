@@ -103,8 +103,7 @@ public class McpServerResource
   @Override
   public void register() {
     Set<Method> methods = ReflectionsProvider.getMethodsAnnotatedWith(McpResource.class);
-    McpSyncServer mcpSyncServer = mcpSyncServerSupplier.get();
-    methods.forEach(method -> mcpSyncServer.addResource(from(method)));
+    methods.forEach(method -> mcpSyncServer.get().addResource(from(method)));
   }
 
   /**

@@ -127,8 +127,7 @@ public class McpServerTool extends McpServerComponentBase<McpServerFeatures.Sync
   @Override
   public void register() {
     Set<Method> methods = ReflectionsProvider.getMethodsAnnotatedWith(McpTool.class);
-    McpSyncServer mcpSyncServer = mcpSyncServerSupplier.get();
-    methods.forEach(method -> mcpSyncServer.addTool(from(method)));
+    methods.forEach(method -> mcpSyncServer.get().addTool(from(method)));
   }
 
   /**

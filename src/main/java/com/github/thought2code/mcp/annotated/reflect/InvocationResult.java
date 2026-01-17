@@ -1,6 +1,6 @@
 package com.github.thought2code.mcp.annotated.reflect;
 
-import com.github.thought2code.mcp.annotated.common.Immutable;
+import com.github.thought2code.mcp.annotated.util.Immutable;
 import org.jetbrains.annotations.NotNull;
 
 /**

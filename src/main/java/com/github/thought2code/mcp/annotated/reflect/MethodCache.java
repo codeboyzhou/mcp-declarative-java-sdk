@@ -5,7 +5,7 @@ import com.github.thought2code.mcp.annotated.annotation.McpPromptCompletion;
 import com.github.thought2code.mcp.annotated.annotation.McpResource;
 import com.github.thought2code.mcp.annotated.annotation.McpResourceCompletion;
 import com.github.thought2code.mcp.annotated.annotation.McpTool;
-import com.github.thought2code.mcp.annotated.common.Immutable;
+import com.github.thought2code.mcp.annotated.util.Immutable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Objects;
@@ -51,7 +51,9 @@ public final class MethodCache {
   /** Thread-safe static cache for storing MethodCache instances keyed by Method objects. */
   private static final ConcurrentHashMap<Method, MethodCache> CACHE = new ConcurrentHashMap<>();
 
-  /** The cached method wrapped in an Immutable wrapper for thread safety. */
+  /**
+   * The cached method wrapped in an {@link Immutable} wrapper for avoiding EI_EXPOSE_REP2 issue.
+   */
   private final Immutable<Method> method;
 
   /** The name of the cached method. */

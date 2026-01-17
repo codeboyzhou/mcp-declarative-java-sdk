@@ -107,8 +107,7 @@ public class McpServerPrompt
   @Override
   public void register() {
     Set<Method> methods = ReflectionsProvider.getMethodsAnnotatedWith(McpPrompt.class);
-    McpSyncServer mcpSyncServer = mcpSyncServerSupplier.get();
-    methods.forEach(method -> mcpSyncServer.addPrompt(from(method)));
+    methods.forEach(method -> mcpSyncServer.get().addPrompt(from(method)));
   }
 
   /**

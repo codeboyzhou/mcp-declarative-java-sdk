@@ -1,9 +1,9 @@
 package com.github.thought2code.mcp.annotated.server.component;
 
+import com.github.thought2code.mcp.annotated.util.Immutable;
 import com.github.thought2code.mcp.annotated.util.StringHelper;
 import io.modelcontextprotocol.server.McpSyncServer;
 import java.util.ResourceBundle;
-import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -31,10 +31,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class McpServerComponentBase<T> implements McpServerComponent<T> {
   /**
-   * Supplier for accessing the MCP synchronous server instance. Using Supplier is to avoid issue
-   * EI_EXPOSE_REP2 that SpotBugs detected.
+   * The MCP synchronous server instance wrapped in an {@link Immutable} wrapper for avoiding
+   * EI_EXPOSE_REP2 issue.
    */
-  protected final Supplier<McpSyncServer> mcpSyncServerSupplier;
+  protected final Immutable<McpSyncServer> mcpSyncServer;
 
   /** Resource bundle for i18n support */
   private final ResourceBundle bundle;
@@ -45,8 +45,8 @@ public abstract class McpServerComponentBase<T> implements McpServerComponent<T>
    * @param mcpSyncServer the MCP synchronous server instance to be used by this component
    */
   public McpServerComponentBase(@NotNull McpSyncServer mcpSyncServer) {
-    this.mcpSyncServerSupplier = () -> mcpSyncServer;
-    this.bundle = ResourceBundleProvider.supplyResourceBundle().get();
+    this.mcpSyncServer = Immutable.of(mcpSyncServer);
+    this.bundle = ResourceBundleProvider.getResourceBundle();
   }
 
   /**
