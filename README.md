@@ -1,10 +1,9 @@
 # Annotation-driven MCP Java SDK
 
 ![Java](https://img.shields.io/badge/Java-17+-blue)
-[![maven-central](https://img.shields.io/maven-central/v/io.github.thought2code/mcp-annotated-java-sdk?color=blue)](https://mvnrepository.com/artifact/io.github.thought2code/mcp-annotated-java-sdk)
+[![maven-central](https://img.shields.io/maven-central/v/io.github.thought2code/mcp-annotated-java-sdk?color=blue)](https://central.sonatype.com/artifact/io.github.thought2code/mcp-annotated-java-sdk)
 [![coverage](https://img.shields.io/codecov/c/github/thought2code/mcp-annotated-java-sdk?logo=codecov&color=brightgreen)](https://app.codecov.io/github/thought2code/mcp-annotated-java-sdk)
 [![GitHub Action](https://github.com/thought2code/mcp-annotated-java-sdk/actions/workflows/maven-build.yml/badge.svg)](https://github.com/thought2code/mcp-annotated-java-sdk/actions/workflows/maven-build.yml)
-[![License](https://img.shields.io/github/license/thought2code/mcp-annotated-java-sdk)](LICENSE)
 
 > Annotation-driven MCP dev 🚀 No Spring, Zero Boilerplate, Pure Java.
 
@@ -12,7 +11,7 @@ This SDK is a lightweight, annotation-based framework that simplifies MCP server
 
 [📖 Documentation](https://thought2code.github.io/mcp-annotated-java-sdk-docs) | [💡 Examples](https://github.com/thought2code/mcp-java-sdk-examples/tree/main/mcp-server-filesystem/mcp-server-filesystem-annotated-sdk-implementation) | [🐛 Report Issues](https://github.com/thought2code/mcp-annotated-java-sdk/issues)
 
-## ✨ Why Choose This SDK?
+## ✨ Why This SDK?
 
 ### Key Advantages
 
@@ -64,15 +63,16 @@ implementation 'io.github.thought2code:mcp-annotated-java-sdk:0.11.0'
 
 ```java
 @McpServerApplication
-// If your MCP server components don't need to be multilingual, you can remove this annotation.
-@McpI18nEnabled(resourceBundleBaseName = "i18n/mcp_server_components_info")
 public class MyFirstMcpServer {
+    /**
+     * Main method to start the MCP server.
+     *
+     * @param args Command line arguments.
+     */
     public static void main(String[] args) {
-        McpServers.run(MyFirstMcpServer.class, args)
-            .startStdioServer(McpServerInfo.builder()
-                .name("my-first-mcp-server")
-                .version("1.0.0")
-                .build());
+        McpServerConfiguration.Builder configuration =
+            McpServerConfiguration.builder().name("my-first-mcp-server").version("1.0.0");
+        McpServers.run(MyFirstMcpServer.class, args).startStdioServer(configuration);
     }
 }
 ```
@@ -184,7 +184,8 @@ Then start your server:
 
 ```java
 McpServers servers = McpServers.run(MyMcpServer.class, args);
-servers.startServer();  // Uses default mcp-server.yml
+// Uses default mcp-server.yml
+servers.startServer();
 // or
 servers.startServer("custom-config.yml");
 ```
@@ -197,12 +198,15 @@ Enable i18n for your MCP components:
 @McpServerApplication
 @McpI18nEnabled(resourceBundleBaseName = "messages")
 public class I18nMcpServer {
+    /**
+     * Main method to start the MCP server with i18n support.
+     *
+     * @param args Command line arguments.
+     */
     public static void main(String[] args) {
-        McpServers.run(I18nMcpServer.class, args)
-            .startStdioServer(McpServerInfo.builder()
-                .name("i18n-server")
-                .version("1.0.0")
-                .build());
+        McpServerConfiguration.Builder configuration =
+            McpServerConfiguration.builder().name("i18n-mcp-server").version("1.0.0");
+        McpServers.run(I18nMcpServer.class, args).startStdioServer(configuration);
     }
 }
 
@@ -262,7 +266,7 @@ your-mcp-project/
 Run the test suite:
 
 ```bash
-mvn test
+mvn clean test
 ```
 
 Run tests with coverage:
@@ -308,7 +312,7 @@ cd mcp-annotated-java-sdk
 mvn clean install
 
 # Run tests
-mvn test
+mvn clean test
 ```
 
 ## 📖 Documentation
