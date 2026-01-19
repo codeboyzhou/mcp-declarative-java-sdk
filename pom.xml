@@ -55,10 +55,10 @@
         <spotless-maven-plugin.version>2.46.1</spotless-maven-plugin.version>
         <!--==================== dependency versions ======================-->
         <annotations.version>26.0.2-1</annotations.version>
-        <jackson-dataformat-yaml.version>2.20.1</jackson-dataformat-yaml.version>
+        <jackson-dataformat-yaml.version>3.0.3</jackson-dataformat-yaml.version>
         <jetty.version>12.1.5</jetty.version>
         <junit.version>6.0.2</junit.version>
-        <logback.version>1.5.24</logback.version>
+        <logback.version>1.5.25</logback.version>
         <mcp-sdk.version>0.17.1</mcp-sdk.version>
         <mockito.version>5.21.0</mockito.version>
         <reflections.version>0.10.2</reflections.version>
@@ -82,11 +82,6 @@
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>${jackson-dataformat-yaml.version}</version>
         </dependency>
         <dependency>
             <groupId>io.modelcontextprotocol.sdk</groupId>
@@ -123,6 +118,11 @@
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>${reflections.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>tools.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <version>${jackson-dataformat-yaml.version}</version>
         </dependency>
     </dependencies>
 
