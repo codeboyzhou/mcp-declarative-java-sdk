@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.thought2code.mcp.annotated.enums.ServerMode;
 import com.github.thought2code.mcp.annotated.enums.ServerType;
 import com.github.thought2code.mcp.annotated.util.StringHelper;
+import java.time.Duration;
 
 /**
  * This record represents the configuration of an MCP (Model Context Protocol) server.
@@ -63,7 +64,7 @@ public record McpServerConfiguration(
     private String instructions = StringHelper.EMPTY;
 
     /** The request timeout. */
-    private Long requestTimeout = 20000L;
+    private Long requestTimeout = Duration.ofSeconds(20).toMillis();
 
     /** The server capabilities. */
     private McpServerCapabilities capabilities = McpServerCapabilities.builder().build();
