@@ -1,12 +1,7 @@
-# IntelliJ IDEA files
+# IDE files
 *.iml
 .idea/
-
-# Microsoft VSCode files
 .vscode/
 
 # Maven build files
 target/
-
-# MkDocs site files
-docs/site/
