@@ -53,9 +53,9 @@ public @interface McpPromptParam {
   String description() default StringHelper.EMPTY;
 
   /**
-   * Whether the prompt parameter is required. Defaults to {@code false}.
+   * Whether the prompt parameter is required. Defaults to {@code true}.
    *
    * @return whether the prompt parameter is required
    */
-  boolean required() default false;
+  boolean required() default true;
 }

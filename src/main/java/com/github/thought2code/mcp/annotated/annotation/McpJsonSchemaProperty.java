@@ -36,9 +36,9 @@ public @interface McpJsonSchemaProperty {
   String description() default StringHelper.EMPTY;
 
   /**
-   * Whether the JSON schema property is required. Defaults to {@code false}.
+   * Whether the JSON schema property is required. Defaults to {@code true}.
    *
    * @return whether the JSON schema property is required
    */
-  boolean required() default false;
+  boolean required() default true;
 }

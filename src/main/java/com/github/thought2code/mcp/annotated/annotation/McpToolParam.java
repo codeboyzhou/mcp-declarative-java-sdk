@@ -43,9 +43,9 @@ public @interface McpToolParam {
   String description() default StringHelper.EMPTY;
 
   /**
-   * Whether the tool parameter is required. Defaults to {@code false}.
+   * Whether the tool parameter is required. Defaults to {@code true}.
    *
    * @return whether the tool parameter is required
    */
-  boolean required() default false;
+  boolean required() default true;
 }
