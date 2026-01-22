@@ -71,7 +71,6 @@ public final class ResourceBundleProvider {
       return;
     }
 
-    log.info("Loading resource bundle for main class: {}", mainClass.getName());
     McpI18nEnabled mcpI18nEnabled = mainClass.getAnnotation(McpI18nEnabled.class);
     if (mcpI18nEnabled == null) {
       log.info("McpI18nEnabled annotation is not present on the main class, skip i18n support.");
@@ -83,8 +82,9 @@ public final class ResourceBundleProvider {
       throw new IllegalArgumentException("resourceBundleBaseName must not be blank.");
     }
 
+    log.info("Loading resource bundle with base name: {}", baseName);
     bundle = Immutable.of(ResourceBundle.getBundle(baseName, Locale.getDefault()));
-    log.info("Resource bundle loaded for base name: {}", baseName);
+    log.info("Resource bundle loaded successfully with base name: {}", baseName);
   }
 
   /**

@@ -66,14 +66,14 @@ public class JettyHttpServer {
   /** Start Jetty HTTP server and bind it to the specified port. */
   public void start() {
     if (server != null && server.isRunning()) {
-      log.warn("Jetty HTTP server is already started");
+      log.warn("Jetty-based MCP server is already started");
       return;
     }
 
     try {
       initServer();
       server.start();
-      log.info("Jetty-based MCP server started on port {}", port);
+      log.info("Jetty-based MCP server started successfully");
 
       final boolean isTesting = Boolean.parseBoolean(System.getProperty("mcp.server.testing"));
       if (isTesting) {
@@ -83,7 +83,7 @@ public class JettyHttpServer {
 
       await(server);
     } catch (Exception e) {
-      log.error("Error starting Jetty-based MCP server on port {}", port, e);
+      log.error("Error starting Jetty-based MCP server", e);
       stop();
     }
   }
@@ -114,7 +114,6 @@ public class JettyHttpServer {
    */
   private void await(Server server) {
     try {
-      log.info("Jetty-based MCP server is running...");
       server.join();
     } catch (InterruptedException e) {
       log.error("Error joining Jetty-based MCP server", e);
@@ -126,9 +125,9 @@ public class JettyHttpServer {
     if (server != null && server.isRunning()) {
       try {
         server.stop();
-        log.info("Jetty-based MCP server stopped on port {}", port);
+        log.info("Jetty-based MCP server stopped");
       } catch (Exception e) {
-        log.error("Error stopping Jetty-based MCP server on port {}", port, e);
+        log.error("Error stopping Jetty-based MCP server", e);
       } finally {
         server.destroy();
         server = null;

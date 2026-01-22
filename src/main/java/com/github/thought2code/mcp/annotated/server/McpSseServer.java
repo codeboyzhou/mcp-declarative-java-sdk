@@ -2,6 +2,7 @@ package com.github.thought2code.mcp.annotated.server;
 
 import com.github.thought2code.mcp.annotated.configuration.McpServerConfiguration;
 import com.github.thought2code.mcp.annotated.configuration.McpServerSSE;
+import com.github.thought2code.mcp.annotated.util.InetHelper;
 import io.modelcontextprotocol.json.McpJsonMapper;
 import io.modelcontextprotocol.server.McpServer;
 import io.modelcontextprotocol.server.transport.HttpServletSseServerTransportProvider;
@@ -88,6 +89,11 @@ public class McpSseServer extends McpServerBase {
    * @see HttpServletSseServerTransportProvider
    */
   public void startHttpServer() {
+    log.info(
+        "Starting Jetty-based MCP SSE server on http://{}:{}{}",
+        InetHelper.findFirstNonLoopbackAddress().getHostAddress(),
+        configuration.sse().port(),
+        configuration.sse().endpoint());
     JettyHttpServer httpServer = new JettyHttpServer();
     httpServer.withTransportProvider(transportProvider).bind(port).start();
   }

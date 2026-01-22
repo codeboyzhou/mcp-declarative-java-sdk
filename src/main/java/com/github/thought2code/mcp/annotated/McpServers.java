@@ -10,6 +10,7 @@ import com.github.thought2code.mcp.annotated.server.McpSseServer;
 import com.github.thought2code.mcp.annotated.server.McpStdioServer;
 import com.github.thought2code.mcp.annotated.server.McpStreamableServer;
 import com.github.thought2code.mcp.annotated.server.component.ResourceBundleProvider;
+import com.github.thought2code.mcp.annotated.util.JacksonHelper;
 import io.modelcontextprotocol.server.McpSyncServer;
 import io.modelcontextprotocol.util.Assert;
 import java.util.Objects;
@@ -76,15 +77,15 @@ public final class McpServers {
    */
   public static McpServers run(Class<?> mainClass, String[] args) {
     if (servers != null) {
-      log.warn("McpServers is already initialized");
+      log.warn("{} is already initialized", mainClass.getSimpleName());
       return servers;
     }
 
-    log.info("Initializing McpServers with main class: {}, args: {}", mainClass.getName(), args);
+    log.info("Initializing {} with args: {}", mainClass.getSimpleName(), args);
     ReflectionsProvider.initializeReflectionsInstance(mainClass);
     ResourceBundleProvider.loadResourceBundle(mainClass);
     servers = new McpServers();
-    log.info("McpServers initialized successfully");
+    log.info("{} initialized successfully", mainClass.getSimpleName());
 
     return servers;
   }
@@ -105,10 +106,7 @@ public final class McpServers {
    * @see McpServerConfiguration.Builder
    */
   public void startStdioServer(McpServerConfiguration.Builder configuration) {
-    log.info("Starting McpStdioServer with configuration: {}", configuration);
-    configuration.enabled(true).mode(ServerMode.STDIO);
-    doStartServer(configuration.build());
-    log.info("McpStdioServer started successfully");
+    doStartServer(configuration.mode(ServerMode.STDIO).build());
   }
 
   /**
@@ -127,10 +125,7 @@ public final class McpServers {
    * @see McpServerConfiguration.Builder
    */
   public void startSseServer(McpServerConfiguration.Builder configuration) {
-    log.info("Starting McpSseServer with configuration: {}", configuration);
-    configuration.enabled(true).mode(ServerMode.SSE);
-    doStartServer(configuration.build());
-    log.info("McpSseServer started successfully");
+    doStartServer(configuration.mode(ServerMode.SSE).build());
   }
 
   /**
@@ -149,10 +144,7 @@ public final class McpServers {
    * @see McpServerConfiguration.Builder
    */
   public void startStreamableServer(McpServerConfiguration.Builder configuration) {
-    log.info("Starting McpStreamableServer with configuration: {}", configuration);
-    configuration.enabled(true).mode(ServerMode.STREAMABLE);
-    doStartServer(configuration.build());
-    log.info("McpStreamableServer started successfully");
+    doStartServer(configuration.mode(ServerMode.STREAMABLE).build());
   }
 
   /**
@@ -170,10 +162,9 @@ public final class McpServers {
    */
   public void startServer(String configFileName) {
     Assert.notNull(configFileName, "configFileName must not be null");
-    log.info("Starting McpServer with configuration file: {}", configFileName);
+    log.info("Starting MCP server with configuration file: {}", configFileName);
     McpConfigurationLoader configLoader = new McpConfigurationLoader(configFileName);
     doStartServer(configLoader.loadConfig());
-    log.info("McpServer started successfully with configuration file: {}", configFileName);
   }
 
   /**
@@ -188,10 +179,9 @@ public final class McpServers {
    * @see McpServerConfiguration
    */
   public void startServer() {
-    log.info("Starting McpServer with default configuration");
+    log.info("Starting MCP server with default configuration");
     McpConfigurationLoader configLoader = new McpConfigurationLoader();
     doStartServer(configLoader.loadConfig());
-    log.info("McpServer started successfully with default configuration");
   }
 
   /**
@@ -218,6 +208,7 @@ public final class McpServers {
    * @see ServerMode
    */
   private void doStartServer(McpServerConfiguration configuration) {
+    log.info("Starting MCP server with config: {}", JacksonHelper.toJsonString(configuration));
     if (configuration.enabled()) {
       McpServer mcpServer = null;
       switch (configuration.mode()) {

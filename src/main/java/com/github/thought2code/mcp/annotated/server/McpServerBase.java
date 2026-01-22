@@ -139,7 +139,7 @@ public abstract class McpServerBase implements McpServer {
    */
   @Override
   public McpSyncServer createSyncServer() {
-    log.info("Creating McpSyncServer with configuration: {}", configuration);
+    log.info("Creating McpSyncServer with name: {}", configuration.name());
     McpSchema.ServerCapabilities serverCapabilities = defineCapabilities();
     McpSyncServer mcpSyncServer =
         createSyncSpecification()

@@ -78,7 +78,7 @@ public final class ReflectionsProvider {
       return;
     }
 
-    log.info("Initializing Reflections instance for main class: {}", mainClass.getName());
+    log.info("Initializing Reflections instance");
     String basePackage = mainClass.getPackageName();
     McpServerApplication application = mainClass.getAnnotation(McpServerApplication.class);
     if (application != null) {
@@ -90,7 +90,7 @@ public final class ReflectionsProvider {
       }
     }
     reflections = new Reflections(basePackage, MethodsAnnotated, FieldsAnnotated);
-    log.info("Reflections instance initialized for base package: {}", basePackage);
+    log.info("Reflections instance initialized successfully");
   }
 
   /**

@@ -2,10 +2,13 @@ package com.github.thought2code.mcp.annotated.server;
 
 import com.github.thought2code.mcp.annotated.configuration.McpServerConfiguration;
 import com.github.thought2code.mcp.annotated.configuration.McpServerStreamable;
+import com.github.thought2code.mcp.annotated.util.InetHelper;
 import io.modelcontextprotocol.json.McpJsonMapper;
 import io.modelcontextprotocol.server.McpServer;
 import io.modelcontextprotocol.server.transport.HttpServletStreamableServerTransportProvider;
 import java.time.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An MCP server implementation that operates in Streamable HTTP mode.
@@ -40,6 +43,9 @@ import java.time.Duration;
  * @see JettyHttpServer
  */
 public class McpStreamableServer extends McpServerBase {
+
+  private static final Logger log = LoggerFactory.getLogger(McpStreamableServer.class);
+
   /** The HTTP Streamable server transport provider used by this MCP server. */
   private HttpServletStreamableServerTransportProvider transportProvider;
 
@@ -114,6 +120,11 @@ public class McpStreamableServer extends McpServerBase {
    * @see #createSyncSpecification()
    */
   public void startHttpServer() {
+    log.info(
+        "Starting Jetty-based MCP Streamable server on http://{}:{}{}",
+        InetHelper.findFirstNonLoopbackAddress().getHostAddress(),
+        configuration.streamable().port(),
+        configuration.streamable().mcpEndpoint());
     JettyHttpServer httpServer = new JettyHttpServer();
     httpServer.withTransportProvider(transportProvider).bind(port).start();
   }
