@@ -2,7 +2,7 @@ package com.github.thought2code.mcp.annotated.server.component;
 
 import com.github.thought2code.mcp.annotated.annotation.McpPrompt;
 import com.github.thought2code.mcp.annotated.annotation.McpPromptParam;
-import com.github.thought2code.mcp.annotated.reflect.InvocationResult;
+import com.github.thought2code.mcp.annotated.reflect.Invocation;
 import com.github.thought2code.mcp.annotated.reflect.MethodCache;
 import com.github.thought2code.mcp.annotated.reflect.MethodInvoker;
 import com.github.thought2code.mcp.annotated.reflect.ReflectionsProvider;
@@ -144,7 +144,7 @@ public class McpServerPrompt
 
     Map<String, Object> arguments = request.arguments();
     List<Object> params = parameterConverter.convertAll(methodCache.getParameters(), arguments);
-    InvocationResult invocation = MethodInvoker.invoke(instance, methodCache, params);
+    Invocation invocation = MethodInvoker.invoke(instance, methodCache, params);
 
     McpSchema.Content content = new McpSchema.TextContent(invocation.result().toString());
     McpSchema.PromptMessage message = new McpSchema.PromptMessage(McpSchema.Role.USER, content);

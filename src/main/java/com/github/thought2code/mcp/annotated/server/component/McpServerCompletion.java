@@ -3,7 +3,7 @@ package com.github.thought2code.mcp.annotated.server.component;
 import com.github.thought2code.mcp.annotated.annotation.McpPromptCompletion;
 import com.github.thought2code.mcp.annotated.annotation.McpResourceCompletion;
 import com.github.thought2code.mcp.annotated.exception.McpServerComponentRegistrationException;
-import com.github.thought2code.mcp.annotated.reflect.InvocationResult;
+import com.github.thought2code.mcp.annotated.reflect.Invocation;
 import com.github.thought2code.mcp.annotated.reflect.MethodCache;
 import com.github.thought2code.mcp.annotated.reflect.MethodInvoker;
 import com.github.thought2code.mcp.annotated.reflect.ReflectionsProvider;
@@ -120,13 +120,13 @@ public class McpServerCompletion {
    * @throws RuntimeException if the method invocation fails
    * @see McpCompleteCompletion
    * @see McpSchema.CompleteResult
-   * @see InvocationResult
+   * @see Invocation
    */
   private static McpSchema.CompleteResult invoke(
       Object instance, MethodCache methodCache, McpSchema.CompleteRequest request) {
 
     McpSchema.CompleteRequest.CompleteArgument argument = request.argument();
-    InvocationResult invocation = MethodInvoker.invoke(instance, methodCache, argument);
+    Invocation invocation = MethodInvoker.invoke(instance, methodCache, argument);
     McpCompleteCompletion completion = (McpCompleteCompletion) invocation.result();
     return new McpSchema.CompleteResult(
         new McpSchema.CompleteResult.CompleteCompletion(

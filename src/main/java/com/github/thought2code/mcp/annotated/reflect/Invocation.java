@@ -1,6 +1,5 @@
 package com.github.thought2code.mcp.annotated.reflect;
 
-import com.github.thought2code.mcp.annotated.util.Immutable;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -8,17 +7,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author codeboyzhou
  */
-public record InvocationResult(@NotNull Object result, Immutable<Exception> exception) {
-
-  /**
-   * Returns whether the invocation resulted in an error.
-   *
-   * @return {@code true} if the invocation resulted in an error, {@code false} otherwise
-   */
-  public boolean isError() {
-    return exception != null && exception.get() != null;
-  }
-
+public record Invocation(@NotNull Object result, boolean isError) {
   /**
    * Returns a new instance of {@code Builder} for creating a new {@code InvocationResult}.
    *
@@ -39,8 +28,8 @@ public record InvocationResult(@NotNull Object result, Immutable<Exception> exce
     /** The result of the invocation. */
     private Object result;
 
-    /** The exception that occurred during the invocation, if any. */
-    private Immutable<Exception> exception;
+    /** Indicates whether an exception occurred during the invocation. */
+    private boolean isError;
 
     /**
      * Sets the result of the invocation.
@@ -54,13 +43,13 @@ public record InvocationResult(@NotNull Object result, Immutable<Exception> exce
     }
 
     /**
-     * Sets the exception that occurred during the invocation.
+     * Sets whether an exception occurred during the invocation.
      *
-     * @param exception the exception that occurred during the invocation
+     * @param isError {@code true} if an exception occurred, {@code false} otherwise
      * @return the builder instance
      */
-    public Builder exception(Exception exception) {
-      this.exception = Immutable.of(exception);
+    public Builder isError(boolean isError) {
+      this.isError = isError;
       return this;
     }
 
@@ -69,8 +58,8 @@ public record InvocationResult(@NotNull Object result, Immutable<Exception> exce
      *
      * @return a new instance of {@code InvocationResult}
      */
-    public InvocationResult build() {
-      return new InvocationResult(result, exception);
+    public Invocation build() {
+      return new Invocation(result, isError);
     }
   }
 }

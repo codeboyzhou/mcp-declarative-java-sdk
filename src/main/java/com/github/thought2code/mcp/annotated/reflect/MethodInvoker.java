@@ -1,6 +1,7 @@
 package com.github.thought2code.mcp.annotated.reflect;
 
 import com.github.thought2code.mcp.annotated.exception.McpServerException;
+import com.github.thought2code.mcp.annotated.util.StringHelper;
 import io.modelcontextprotocol.spec.McpSchema;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -22,12 +23,12 @@ import org.slf4j.LoggerFactory;
  * </ul>
  *
  * <p>All method invocations are wrapped with proper error handling, and results are encapsulated in
- * {@link InvocationResult} objects for consistent error reporting. The class follows the utility
- * class pattern with a private constructor to prevent instantiation.
+ * {@link Invocation} objects for consistent error reporting. The class follows the utility class
+ * pattern with a private constructor to prevent instantiation.
  *
  * @author codeboyzhou
  * @see MethodCache
- * @see InvocationResult
+ * @see Invocation
  * @see Method
  */
 public final class MethodInvoker {
@@ -71,7 +72,7 @@ public final class MethodInvoker {
    *   <li>Non-null return values: Returns the actual result
    * </ul>
    *
-   * <p>All exceptions are caught and wrapped in an {@link InvocationResult} with appropriate error
+   * <p>All exceptions are caught and wrapped in an {@link Invocation} with appropriate error
    * messages. The method signature is logged for debugging purposes when an error occurs.
    *
    * @param instance the instance on which to invoke the method
@@ -79,13 +80,12 @@ public final class MethodInvoker {
    * @param params the list of parameters to pass to the method
    * @return an InvocationResult containing the method result or error information
    * @see MethodCache
-   * @see InvocationResult
+   * @see Invocation
    * @see Method#invoke(Object, Object...)
    */
-  public static InvocationResult invoke(
-      Object instance, MethodCache methodCache, List<Object> params) {
+  public static Invocation invoke(Object instance, MethodCache methodCache, List<Object> params) {
     Method method = methodCache.getMethod();
-    InvocationResult.Builder builder = InvocationResult.builder();
+    Invocation.Builder builder = Invocation.builder();
     try {
       Object result = method.invoke(instance, params.toArray());
 
@@ -97,9 +97,20 @@ public final class MethodInvoker {
       final String resultIfNull = "The method call succeeded but the return value is null";
       return builder.result(Objects.requireNonNullElse(result, resultIfNull)).build();
     } catch (Exception e) {
-      final String errorMessage = "Error invoking method: " + methodCache.getMethodSignature();
-      log.error(errorMessage, e);
-      return builder.result(errorMessage).exception(e).build();
+      StringBuilder causes = new StringBuilder();
+      Throwable cause = e.getCause();
+      while (cause != null) {
+        causes.append("Caused by: ").append(cause).append(StringHelper.NewLine);
+        cause = cause.getCause();
+      }
+
+      final String message = "Error invoking method: " + methodCache.getMethodSignature();
+      final String result = message + StringHelper.NewLine + causes;
+      Invocation invocation = builder.result(result).isError(true).build();
+
+      log.error(message, e);
+
+      return invocation;
     }
   }
 
@@ -115,9 +126,9 @@ public final class MethodInvoker {
    * @return an InvocationResult containing the method result or error information
    * @see #invoke(Object, MethodCache, List)
    * @see MethodCache
-   * @see InvocationResult
+   * @see Invocation
    */
-  public static InvocationResult invoke(Object instance, MethodCache methodCache) {
+  public static Invocation invoke(Object instance, MethodCache methodCache) {
     return invoke(instance, methodCache, List.of());
   }
 
@@ -139,9 +150,9 @@ public final class MethodInvoker {
    * @see #invoke(Object, MethodCache, List)
    * @see McpSchema.CompleteRequest.CompleteArgument
    * @see MethodCache
-   * @see InvocationResult
+   * @see Invocation
    */
-  public static InvocationResult invoke(
+  public static Invocation invoke(
       Object instance,
       MethodCache methodCache,
       McpSchema.CompleteRequest.CompleteArgument argument) {

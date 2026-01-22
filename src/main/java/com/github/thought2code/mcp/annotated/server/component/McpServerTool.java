@@ -5,7 +5,7 @@ import com.github.thought2code.mcp.annotated.annotation.McpJsonSchemaProperty;
 import com.github.thought2code.mcp.annotated.annotation.McpTool;
 import com.github.thought2code.mcp.annotated.annotation.McpToolParam;
 import com.github.thought2code.mcp.annotated.enums.JavaTypeToJsonSchemaMapper;
-import com.github.thought2code.mcp.annotated.reflect.InvocationResult;
+import com.github.thought2code.mcp.annotated.reflect.Invocation;
 import com.github.thought2code.mcp.annotated.reflect.MethodCache;
 import com.github.thought2code.mcp.annotated.reflect.MethodInvoker;
 import com.github.thought2code.mcp.annotated.reflect.ReflectionsProvider;
@@ -89,7 +89,10 @@ public class McpServerTool extends McpServerComponentBase<McpServerFeatures.Sync
    */
   @Override
   public McpServerFeatures.SyncToolSpecification from(Method method) {
-    log.info("Creating tool specification for method: {}", method.toGenericString());
+    log.info(
+        "Creating tool specification for method: {}.{}",
+        method.getDeclaringClass().getSimpleName(),
+        method.getName());
 
     // Use reflection cache for performance optimization
     MethodCache methodCache = MethodCache.of(method);
@@ -161,7 +164,7 @@ public class McpServerTool extends McpServerComponentBase<McpServerFeatures.Sync
 
     Map<String, Object> arguments = request.arguments();
     List<Object> params = parameterConverter.convertAll(methodCache.getParameters(), arguments);
-    InvocationResult invocation = MethodInvoker.invoke(instance, methodCache, params);
+    Invocation invocation = MethodInvoker.invoke(instance, methodCache, params);
 
     Object result = invocation.result();
     String textContent = result.toString();

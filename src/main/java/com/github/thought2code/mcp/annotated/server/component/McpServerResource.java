@@ -1,7 +1,7 @@
 package com.github.thought2code.mcp.annotated.server.component;
 
 import com.github.thought2code.mcp.annotated.annotation.McpResource;
-import com.github.thought2code.mcp.annotated.reflect.InvocationResult;
+import com.github.thought2code.mcp.annotated.reflect.Invocation;
 import com.github.thought2code.mcp.annotated.reflect.MethodCache;
 import com.github.thought2code.mcp.annotated.reflect.MethodInvoker;
 import com.github.thought2code.mcp.annotated.reflect.ReflectionsProvider;
@@ -134,7 +134,7 @@ public class McpServerResource
 
     log.debug("Handling ReadResourceResult request: {}", JacksonHelper.toJsonString(resource));
 
-    InvocationResult invocation = MethodInvoker.invoke(instance, methodCache);
+    Invocation invocation = MethodInvoker.invoke(instance, methodCache);
     final String uri = resource.uri();
     final String mimeType = resource.mimeType();
     final String text = invocation.result().toString();
