@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
  * @see McpStreamableServer
  * @see McpServerConfiguration
  */
+@Deprecated(since = "0.13.0", forRemoval = true)
 public final class McpServers {
 
   private static final Logger log = LoggerFactory.getLogger(McpServers.class);
@@ -75,6 +76,7 @@ public final class McpServers {
    * @see ReflectionsProvider#initializeReflectionsInstance(Class)
    * @see ResourceBundleProvider#loadResourceBundle(Class)
    */
+  @Deprecated(since = "0.13.0", forRemoval = true)
   public static McpServers run(Class<?> mainClass, String[] args) {
     if (servers != null) {
       log.warn("{} is already initialized", mainClass.getSimpleName());
@@ -105,6 +107,7 @@ public final class McpServers {
    * @see McpStdioServer
    * @see McpServerConfiguration.Builder
    */
+  @Deprecated(since = "0.13.0", forRemoval = true)
   public void startStdioServer(McpServerConfiguration.Builder configuration) {
     doStartServer(configuration.mode(ServerMode.STDIO).build());
   }
@@ -124,6 +127,7 @@ public final class McpServers {
    * @see McpSseServer
    * @see McpServerConfiguration.Builder
    */
+  @Deprecated(since = "0.13.0", forRemoval = true)
   public void startSseServer(McpServerConfiguration.Builder configuration) {
     doStartServer(configuration.mode(ServerMode.SSE).build());
   }
@@ -143,6 +147,7 @@ public final class McpServers {
    * @see McpStreamableServer
    * @see McpServerConfiguration.Builder
    */
+  @Deprecated(since = "0.13.0", forRemoval = true)
   public void startStreamableServer(McpServerConfiguration.Builder configuration) {
     doStartServer(configuration.mode(ServerMode.STREAMABLE).build());
   }
@@ -160,6 +165,7 @@ public final class McpServers {
    * @see McpConfigurationLoader
    * @see McpServerConfiguration
    */
+  @Deprecated(since = "0.13.0", forRemoval = true)
   public void startServer(String configFileName) {
     Assert.notNull(configFileName, "configFileName must not be null");
     log.info("Starting MCP server with configuration file: {}", configFileName);
@@ -178,6 +184,7 @@ public final class McpServers {
    * @see McpConfigurationLoader
    * @see McpServerConfiguration
    */
+  @Deprecated(since = "0.13.0", forRemoval = true)
   public void startServer() {
     log.info("Starting MCP server with default configuration");
     McpConfigurationLoader configLoader = new McpConfigurationLoader();
