@@ -1,8 +1,9 @@
 # Annotation-driven MCP Java SDK
 
 ![Java](https://img.shields.io/badge/Java-17+-blue)
-[![maven-central](https://img.shields.io/maven-central/v/io.github.thought2code/mcp-annotated-java-sdk?color=blue)](https://central.sonatype.com/artifact/io.github.thought2code/mcp-annotated-java-sdk)
-[![coverage](https://img.shields.io/codecov/c/github/thought2code/mcp-annotated-java-sdk?logo=codecov&color=brightgreen)](https://app.codecov.io/github/thought2code/mcp-annotated-java-sdk)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.thought2code/mcp-annotated-java-sdk?color=blue)](https://central.sonatype.com/artifact/io.github.thought2code/mcp-annotated-java-sdk)
+[![Commit Activity](https://img.shields.io/github/commit-activity/w/thought2code/mcp-annotated-java-sdk)](https://github.com/thought2code/mcp-annotated-java-sdk/graphs/commit-activity)
+[![Coverage](https://img.shields.io/codecov/c/github/thought2code/mcp-annotated-java-sdk?logo=codecov&color=brightgreen)](https://app.codecov.io/github/thought2code/mcp-annotated-java-sdk)
 [![GitHub Action](https://github.com/thought2code/mcp-annotated-java-sdk/actions/workflows/maven-build.yml/badge.svg)](https://github.com/thought2code/mcp-annotated-java-sdk/actions/workflows/maven-build.yml)
 
 > Annotation-driven MCP dev 🚀 No Spring, Zero Boilerplate, Pure Java.
