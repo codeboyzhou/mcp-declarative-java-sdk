@@ -42,6 +42,8 @@ import org.slf4j.LoggerFactory;
  * @see McpSseServer
  * @see McpStreamableServer
  * @see McpServerConfiguration
+ * @deprecated This class is deprecated and will be removed in a future version.
+ *     <p>Please use {@link McpApplication} instead.
  */
 @Deprecated(since = "0.13.0", forRemoval = true)
 public final class McpServers {
